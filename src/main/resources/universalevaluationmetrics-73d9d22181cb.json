@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "universalevaluationmetrics",
+  "private_key_id": "73d9d22181cbe58a8b44d5d784a22b8b9e1c3686",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDolEXiOEoB/wPc\nPr1A+HtuSrwPZYWfBxAFCA6HXx+hGN1DgCWUHOR/Kj6LTsIEZqNLmxQSDB4gpgXp\nC05yKStzJTBc2ccka0vyuX4gHaGPrnNqwboSke+zi+E0B8X5+71if3FfElS09oeo\nUCSFm1RgspkTQZubxKwZO9EseieAEjJQaSXYAhAICM1YlgCtupPgp5ugXptWD4yU\n5sblBJFJYyHDRzZJcokEogjZyoFpCNOo3/DtF8UzJFTHZUX1DIzMhd9kprw8tp0s\nB6qidxgXR+572fb/1nDLOYrrS2XWUArXF+z1p9BPf28DX09ny2zDpC+K+vk6vl5n\nw8kF9KZFAgMBAAECggEARCkUE/ioI86fTIAsiapozglj9OUtVE5HERpr25tykw1M\n5xfaq34OLwBr5Pq3XH/R8nnn12Qqvim5yLLyEf3jyHKJKmT+ejthvihDgNj+PLQF\nCi/tPrz7MTTY0p1GlX0D4yZzTMf8AC7R0e9uzKMZht9AgkazemKYhyqjIjRIeD0N\n8OBoYEpfTsEz7sEEUmT11xNRt97UgIkSEMzjyr64lQf7MB3b/lFj+o5VbVDkGG0P\n5On1FPR0hk0BmcojupeYJOaKQXH4c/T/ti+lP9bmLlR5gUXcDUxkrs5bmDZjwUc4\n/BixEzJzOHyZf+ER+N4dOn9tSndKRNEH5IbtlQTvDwKBgQD00PYf1Zg80FM3kzfY\nEKLYdOBOTb9NYhAxkOaw1rAaIs16mQHypcVHKZFcxV/AQ0qhqtNm0J1dUAklkNl3\nwQKb5d8uI3q6HiZRFbx855VLcUm71pbob13yYwsYY+tPzrJAOWc+o2jby5C6I6hs\nWunWqCK4JnOmWzc4l3B7zb9K+wKBgQDzNDQWjEAElfviql72yqxrLKNFM/VseKNm\nDblsFBFdISb5ZV6zZ+RT9rENK+sLqiY8XM44fJkzy3DBu5x3XOhIWEN4d6MaR2JB\n2RwP5nqHBbLP7dNqwffN5AaP7LHP6UfAG84b02ANPAhTIJQDl+0ibokZlfvvOAOT\nfTxlBNUPvwKBgQCqX9Y5t2NYRz7yuVCu3H0IGOaVeAP/bZSJeichwHcT6U6I2H0D\nihwt9x7DqlSFsA77TbALqHkrnGyRKSo+7iLLrgFQ0b4yUpMl8POZFW3P8Ap5X9Dr\n970w1368PaVgiB+DFK/mZsCt3hBdij1HE0oTajWnZJMtneNjTfkpH7nWCwKBgQCi\nMLxUFTBUXpne7fPq7frSdrBj5GTV9BY0Zw6zbyatTwCo7ducFbsF68zjldhorQ5W\nzyWQMjgRfKkz6iRMzh7ysDo+yrpxOg3jECFQ0UoBZeF8HYUS+0yBeIKP1TA4EcER\n8vkfQXYbHWAH4AAV7Wntvn2cHJQpUte/spNmYzScDQKBgQDiLbkhVyrYlPPiVIja\nkXmhoBECAggRgISNSFUy6CEK1I2h2GqhtRNurD11HIWYNRGgMxCCvW3iNMFASxRX\nvwRGFL3KjKxxpyuzIxAC2cwMc7E+ZB12GmDzGrcYq6n7cIxrIOLhEKE7dFHt47UJ\njc9ze243V9Juw3X8dDQSnQtODg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "universalevaluationmetrics1-2@universalevaluationmetrics.iam.gserviceaccount.com",
+  "client_id": "113771324514999924206",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/universalevaluationmetrics1-2%40universalevaluationmetrics.iam.gserviceaccount.com"
+}
