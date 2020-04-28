@@ -17,11 +17,15 @@ public class GAuthenticate {
 	public static String GOOGLEAPIS_OAUTH2_TOKEN = "";
 	public static final HttpTransport TRANSPORT = new NetHttpTransport();
 	public static final JsonFactory JSON_FACTORY = new JacksonFactory();
-	static Logger logger = LogUtil.getInstance();
+	private static Logger logger = LogUtil.getInstance();
+	// universalevaluationmetrics-73d9d22181cb.json
+	// "UniversalEvaluationMetrics-b94a43ef7a72.json";
+	public static final String BIG_QUERY_JSON_FILE = "UniversalEvaluationMetrics-b94a43ef7a72.json";
+
 	public static Bigquery getAuthenticated() throws IOException {
 
 		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		InputStream inputStream = classloader.getResourceAsStream("universalevaluationmetrics-73d9d22181cb.json");
+		InputStream inputStream = classloader.getResourceAsStream(BIG_QUERY_JSON_FILE);
 		InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 		BufferedReader reader = new BufferedReader(streamReader);
 		for (String line; (line = reader.readLine()) != null;) {
