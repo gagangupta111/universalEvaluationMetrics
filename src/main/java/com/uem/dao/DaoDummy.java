@@ -7,13 +7,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Qualifier("DaoDummy")
-public class DaoDummy implements DaoInterface{
+public class DaoDummy{
 
     private static Logger logger = LogUtil.getInstance();
 
     public String test() {
         logger.debug("REQUEST_RECIEVED-DaoDummy");
         return "TEST-DaoDummy";
+    }
+
+    public String signUp(String email) {
+        return null;
     }
 
 }

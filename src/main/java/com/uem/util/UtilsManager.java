@@ -19,6 +19,11 @@ public class UtilsManager {
 
     static Logger logger = LogUtil.getInstance();
 
+    public static String generateUniqueID(){
+        String uniqueID = UUID.randomUUID().toString();
+        return uniqueID;
+    }
+
     public static Map<String, Object> retryCode(HttpClient client, HttpPost post, String url, List<NameValuePair> urlParameters, int retries) {
 
         int retry_count = 0;

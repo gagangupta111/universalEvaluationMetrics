@@ -8,7 +8,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.BigqueryScopes;
 import org.apache.log4j.Logger;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -21,25 +20,35 @@ public class GAuthenticate {
 	// universalevaluationmetrics-73d9d22181cb.json
 	// "UniversalEvaluationMetrics-b94a43ef7a72.json";
 	public static final String BIG_QUERY_JSON_FILE = "UniversalEvaluationMetrics-b94a43ef7a72.json";
+	public static Bigquery bigquery = null;
 
-	public static Bigquery getAuthenticated() throws IOException {
+	public static Bigquery getAuthenticated(boolean refresh){
 
-		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-		InputStream inputStream = classloader.getResourceAsStream(BIG_QUERY_JSON_FILE);
-		InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-		BufferedReader reader = new BufferedReader(streamReader);
-		for (String line; (line = reader.readLine()) != null;) {
-			GOOGLEAPIS_OAUTH2_TOKEN += line;
-		}
-		Bigquery bigquery = null;
-		
-		if((bigquery = createAuthorizedClient()) != null){
+		if (refresh){
+			try {
+				ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+				InputStream inputStream = classloader.getResourceAsStream(BIG_QUERY_JSON_FILE);
+				InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+				BufferedReader reader = new BufferedReader(streamReader);
+				for (String line; (line = reader.readLine()) != null;) {
+					GOOGLEAPIS_OAUTH2_TOKEN += line;
+				}
+
+				if((bigquery = createAuthorizedClient()) != null){
+					return bigquery;
+				}
+				else{
+					return null;
+				}
+			}catch (Exception e){
+				logger.debug(UtilsManager.exceptionAsString(e));
+				return null;
+			}
+		}else {
 			return bigquery;
 		}
-		else{
-			return null;
-		}
-	
+
+
 	}
 	
 	public static Bigquery createAuthorizedClient(){

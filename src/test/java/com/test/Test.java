@@ -22,7 +22,7 @@ public class Test {
 
     public static void test2() throws IOException {
 
-        Bigquery bigquery = GAuthenticate.getAuthenticated();
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
         AllBQOperations.StructureValidate(bigquery);
 
     }
@@ -51,7 +51,7 @@ public class Test {
         row3.setJson(report3);
         partition.add(row3);
 
-        Bigquery bigquery = GAuthenticate.getAuthenticated();
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
         BQOperationsTestTable.StructureValidate(bigquery);
 
         Map<String, Object> objectMap = BQOperationsTestTable.insertDataRowsWithStats(bigquery, partition);
