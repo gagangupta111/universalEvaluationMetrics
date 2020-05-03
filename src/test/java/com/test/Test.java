@@ -2,8 +2,11 @@ package com.test;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
+import com.uem.google.bigquery.main.AllBQOperations;
 import com.uem.google.bigquery.main.BQOperationsTestTable;
 import com.uem.util.GAuthenticate;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +16,14 @@ public class Test {
 
     public static void main(String[] args) throws Exception{
 
-        test1();
+        test2();
+
+    }
+
+    public static void test2() throws IOException {
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated();
+        AllBQOperations.StructureValidate(bigquery);
 
     }
 
