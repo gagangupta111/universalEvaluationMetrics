@@ -48,5 +48,25 @@ public class MainController {
         }
     }
 
+    @PostMapping("/signin/{loginType}")
+    @ResponseBody
+    public ResponseEntity<String>  signIn(@RequestBody String body, @PathVariable("loginType") String loginType) throws Exception{
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        logger.debug("REQUEST_RECIEVED-signUp");
+        String email = jsonObject.getString("email");
+        String password = jsonObject.getString("password");
+        CustomResponse customResponse =  mainService.signIN(email, password, loginType.toUpperCase());
+        if (customResponse.getSuccess()){
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(customResponse.getMessage());
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body(customResponse.getMessage());
+        }
+    }
+
 
 }

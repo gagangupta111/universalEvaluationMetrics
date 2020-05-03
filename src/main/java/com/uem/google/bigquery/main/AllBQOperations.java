@@ -3,15 +3,17 @@ package com.uem.google.bigquery.main;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
 import com.google.api.services.bigquery.model.DatasetList.Datasets;
+import com.uem.model.Student;
+import com.uem.model.Teacher;
+import com.uem.model.UnivAdmin;
 import com.uem.model.User;
 import com.uem.util.GAuthenticate;
 import com.uem.util.LogUtil;
+import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AllBQOperations {
 
@@ -23,6 +25,181 @@ public class AllBQOperations {
     }
 
     static Logger logger = LogUtil.getInstance();
+
+    public static  Map<String, Object> createUser(String email){
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String UserID = UtilsManager.generateUniqueID();
+        String Email = email;
+        String Password = UtilsManager.generateUniqueID();
+        String UEM_ID = UtilsManager.generateUniqueID();
+
+        ArrayList<TableDataInsertAllRequest.Rows> datachunk =
+                new ArrayList<TableDataInsertAllRequest.Rows>();
+        TableDataInsertAllRequest.Rows row = new TableDataInsertAllRequest.Rows();
+        Map<String, Object> data = new HashMap<>();
+        data.put("UserID", UserID);
+        data.put("Email", Email);
+        data.put("Password", Password);
+        row.setJson(data);
+        datachunk.add(row);
+        Boolean aBoolean = BQTable_User.insertDataRows(bigquery, datachunk);
+        if (aBoolean){
+            datachunk =
+                    new ArrayList<TableDataInsertAllRequest.Rows>();
+            row = new TableDataInsertAllRequest.Rows();
+            data = new HashMap<>();
+            data.put("UserID", UserID);
+            data.put("UEM_ID", UEM_ID);
+            row.setJson(data);
+            datachunk.add(row);
+            aBoolean = BQTable_UnivAdmin.insertDataRows(bigquery, datachunk);
+            if (aBoolean){
+                data = new HashMap<>();
+                data.put("UserID", UserID);
+                data.put("Email", Email);
+                data.put("Password", Password);
+                data.put("UEM_ID", UEM_ID);
+                return data;
+            }
+        }
+        return data;
+    }
+
+    public static List<Teacher> getAllTeachers(String UserID) {
+
+        String PROJECT_ID = "universalevaluationmetrics";
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String querySql = "SELECT\n" +
+                "  UEM_ID,\n" +
+                "  UserID,\n" +
+                "  UnivID\n" +
+                "FROM\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.Teacher`";
+
+        if (UserID != null) {
+            querySql = "SELECT\n" +
+                    "  UEM_ID,\n" +
+                    "  UserID,\n" +
+                    "  UnivID\n" +
+                    "FROM\n" +
+                    "  `universalevaluationmetrics.universalEvaluationMetrics.Teacher`\n" +
+                    "WHERE\n" +
+                    "  UserID = '" + UserID + "'";
+        }
+
+        JobReference jobId = null;
+        Job completedJob = null;
+        ArrayList<Teacher> univAdmins = null;
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    univAdmins = getTeachers(bigquery, PROJECT_ID, completedJob);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+        return univAdmins;
+    }
+
+    public static List<Student> getAllStudents(String UserID) {
+
+        String PROJECT_ID = "universalevaluationmetrics";
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String querySql = "SELECT\n" +
+                "  UEM_ID,\n" +
+                "  UserID,\n" +
+                "  UnivID\n" +
+                "FROM\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.Student`";
+
+        if (UserID != null) {
+            querySql = "SELECT\n" +
+                    "  UEM_ID,\n" +
+                    "  UserID,\n" +
+                    "  UnivID\n" +
+                    "FROM\n" +
+                    "  `universalevaluationmetrics.universalEvaluationMetrics.Student`\n" +
+                    "WHERE\n" +
+                    "  UserID = '" + UserID + "'";
+        }
+
+        JobReference jobId = null;
+        Job completedJob = null;
+        ArrayList<Student> univAdmins = null;
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    univAdmins = getUnivStudents(bigquery, PROJECT_ID, completedJob);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+        return univAdmins;
+    }
+
+    public static List<UnivAdmin> getAllAdmin(String UserID) {
+
+        String PROJECT_ID = "universalevaluationmetrics";
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String querySql = "SELECT\n" +
+                "  UEM_ID,\n" +
+                "  UserID,\n" +
+                "  UnivID\n" +
+                "FROM\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.UnivAdmin`";
+
+        if (UserID != null) {
+            querySql = "SELECT\n" +
+                    "  UEM_ID,\n" +
+                    "  UserID,\n" +
+                    "  UnivID\n" +
+                    "FROM\n" +
+                    "  `universalevaluationmetrics.universalEvaluationMetrics.UnivAdmin`\n" +
+                    "WHERE\n" +
+                    "  UserID = '" + UserID + "'";
+        }
+
+        JobReference jobId = null;
+        Job completedJob = null;
+        ArrayList<UnivAdmin> univAdmins = null;
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    univAdmins = getUnivAdmins(bigquery, PROJECT_ID, completedJob);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+        return univAdmins;
+    }
 
     public static List<User> getAllUsers(String email) {
 
@@ -55,7 +232,7 @@ public class AllBQOperations {
         }
         JobReference jobId = null;
         Job completedJob = null;
-        ArrayList<User> users = null;
+        ArrayList<User> users = new ArrayList<>();
         try {
             jobId = startQuery(bigquery, PROJECT_ID, querySql);
             if (jobId != null) {
@@ -74,6 +251,78 @@ public class AllBQOperations {
             completedJob = null;
         }
         return users;
+    }
+
+    private static ArrayList<UnivAdmin> getUnivAdmins(Bigquery bigquery, String projectId,
+                                            Job completedJob) throws IOException {
+        GetQueryResultsResponse queryResult = bigquery.jobs()
+                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
+        List<TableRow> rows = queryResult.getRows();
+        ArrayList<UnivAdmin> univAdmins = new ArrayList<UnivAdmin>();
+        System.out.print("\nQuery Results:\n------------\n");
+
+        if (rows != null) {
+            for (TableRow row : rows) {
+                LinkedList<TableCell> rowList = new LinkedList<TableCell>();
+                rowList.addAll(row.getF());
+                UnivAdmin univAdmin = new UnivAdmin();
+                univAdmin.setUEM_ID(rowList.get(0).getV().toString());
+                univAdmin.setUserID(rowList.get(1).getV().toString());
+                univAdmin.setUnivID(rowList.get(2).getV().toString());
+                univAdmins.add(univAdmin);
+            }
+        }
+
+        return univAdmins;
+
+    }
+
+    private static ArrayList<Student> getUnivStudents(Bigquery bigquery, String projectId,
+                                                      Job completedJob) throws IOException {
+        GetQueryResultsResponse queryResult = bigquery.jobs()
+                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
+        List<TableRow> rows = queryResult.getRows();
+        ArrayList<Student> students = new ArrayList<Student>();
+        System.out.print("\nQuery Results:\n------------\n");
+
+        if (rows != null) {
+            for (TableRow row : rows) {
+                LinkedList<TableCell> rowList = new LinkedList<TableCell>();
+                rowList.addAll(row.getF());
+                Student student = new Student();
+                student.setUEM_ID(rowList.get(0).getV().toString());
+                student.setUserID(rowList.get(1).getV().toString());
+                student.setUnivID(rowList.get(2).getV().toString());
+                students.add(student);
+            }
+        }
+
+        return students;
+
+    }
+
+    private static ArrayList<Teacher> getTeachers(Bigquery bigquery, String projectId,
+                                                      Job completedJob) throws IOException {
+        GetQueryResultsResponse queryResult = bigquery.jobs()
+                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
+        List<TableRow> rows = queryResult.getRows();
+        ArrayList<Teacher> teachers = new ArrayList<Teacher>();
+        System.out.print("\nQuery Results:\n------------\n");
+
+        if (rows != null) {
+            for (TableRow row : rows) {
+                LinkedList<TableCell> rowList = new LinkedList<TableCell>();
+                rowList.addAll(row.getF());
+                Teacher teacher = new Teacher();
+                teacher.setUEM_ID(rowList.get(0).getV().toString());
+                teacher.setUserID(rowList.get(1).getV().toString());
+                teacher.setUnivID(rowList.get(2).getV().toString());
+                teachers.add(teacher);
+            }
+        }
+
+        return teachers;
+
     }
 
     private static ArrayList<User> getUsers(Bigquery bigquery, String projectId,
@@ -163,7 +412,7 @@ public class AllBQOperations {
         }
     }
 
-    public static Boolean createAllTable(Bigquery bigquery) {
+    public static Boolean reCreateAllTable(Bigquery bigquery) {
 
         BQTable_Batch.createTable(bigquery, true, true);
         BQTable_Course.createTable(bigquery, true, true);
@@ -211,13 +460,13 @@ public class AllBQOperations {
 
     }
 
-    public static Boolean StructureValidate(Bigquery bigquery) {
+    public static Boolean reCreateWholeStructure(Bigquery bigquery) {
 
         try {
 
             if (createDataset(bigquery)) {
 
-                if (createAllTable(bigquery)) {
+                if (reCreateAllTable(bigquery)) {
 
                     return true;
 
