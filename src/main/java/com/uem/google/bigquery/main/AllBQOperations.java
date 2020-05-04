@@ -3,6 +3,7 @@ package com.uem.google.bigquery.main;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
 import com.google.api.services.bigquery.model.DatasetList.Datasets;
+import com.mongodb.Bytes;
 import com.uem.model.Student;
 import com.uem.model.Teacher;
 import com.uem.model.UnivAdmin;
@@ -11,8 +12,10 @@ import com.uem.util.GAuthenticate;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
+import org.bson.Document;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class AllBQOperations {
@@ -75,7 +78,6 @@ public class AllBQOperations {
         }
         return false;
     }
-
 
     public static  Map<String, Object> createUser(String email){
         Bigquery bigquery = GAuthenticate.getAuthenticated(true);

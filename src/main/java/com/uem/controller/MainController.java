@@ -1,6 +1,7 @@
 package com.uem.controller;
 
 import com.uem.model.CustomResponse;
+import com.uem.model.UnivAdmin;
 import com.uem.service.MainService;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
@@ -9,6 +10,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/uem")
@@ -91,6 +94,13 @@ public class MainController {
                     .header("key", "value")
                     .body(Constants.FAILURE);
         }
+    }
+
+    @GetMapping("/admin/{progress}")
+    @ResponseBody
+    public List<UnivAdmin> getAdminsInfo(@PathVariable("progress") String progress) {
+
+        return null;
 
     }
 
