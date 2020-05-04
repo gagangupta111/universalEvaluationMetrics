@@ -106,6 +106,8 @@ public class BQTable_User {
                 fields.add(new TableFieldSchema().setName("Name").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Mobile").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Photo").setType("BYTES"));
+                fields.add(new TableFieldSchema().setName("Address").setType("BYTES"));
+                fields.add(new TableFieldSchema().setName("DOB").setType("BYTES"));
 
                 Table content = new Table();
                 content.setSchema(new TableSchema().setFields(fields));
