@@ -13,5 +13,6 @@ public interface DaoInterface {
     public CustomResponse signIn(String email, String password, String loginType);
     public Boolean updateUserInfo(JSONObject body);
     public List<User> getUserInfo(String UserID);
+    public CustomResponse createUniversity(JSONObject body);
     //updateUserInfo
 }

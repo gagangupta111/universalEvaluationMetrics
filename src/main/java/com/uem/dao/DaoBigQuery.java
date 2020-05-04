@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-
 import java.util.*;
 
 @Repository
@@ -140,6 +139,40 @@ public class DaoBigQuery implements DaoInterface {
         List<User> users = new ArrayList<>();
         users = AllBQOperations.getAllUsers_UserID(UserID);
         return users;
+    }
+
+    @Override
+    public CustomResponse createUniversity(JSONObject body) {
+
+        try {
+            if (body.has("Name") && body.has("Website") && body.has("AdminID")){
+
+                Map<String, Object> map = AllBQOperations.createUniversity(body);
+                if (map == null){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    return customResponse;
+                }else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.UNIVERSITY_CREATION_FAILURE);
+                return customResponse;
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+            return customResponse;
+        }
     }
 
 }

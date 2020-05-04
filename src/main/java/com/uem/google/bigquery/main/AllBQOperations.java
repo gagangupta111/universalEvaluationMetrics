@@ -4,15 +4,14 @@ import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
 import com.google.api.services.bigquery.model.DatasetList.Datasets;
 import com.mongodb.Bytes;
-import com.uem.model.Student;
-import com.uem.model.Teacher;
-import com.uem.model.UnivAdmin;
-import com.uem.model.User;
+import com.uem.model.*;
 import com.uem.util.GAuthenticate;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
 import org.bson.Document;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -117,6 +116,107 @@ public class AllBQOperations {
             }
         }
         return data;
+    }
+
+    public static  Map<String, Object> createUniversity(JSONObject body) throws JSONException {
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String UnivID = UtilsManager.generateUniqueID();
+        String Name = body.getString("Name");
+        String Website = body.getString("Website");
+        String AdminID = body.getString("AdminID");
+
+        ArrayList<TableDataInsertAllRequest.Rows> datachunk =
+                new ArrayList<TableDataInsertAllRequest.Rows>();
+        TableDataInsertAllRequest.Rows row = new TableDataInsertAllRequest.Rows();
+        Map<String, Object> data = new HashMap<>();
+        data.put("UnivID", UnivID);
+        data.put("Name", Name);
+        data.put("Website", Website);
+        data.put("UnivAdmins", AdminID);
+        row.setJson(data);
+        datachunk.add(row);
+        Boolean aBoolean = BQTable_University.insertDataRows(bigquery, datachunk);
+        if (aBoolean){
+            datachunk =
+                    new ArrayList<TableDataInsertAllRequest.Rows>();
+            row = new TableDataInsertAllRequest.Rows();
+            data = new HashMap<>();
+            data.put("PermissionID", UtilsManager.generateUniqueID());
+            data.put("UnivID", UnivID);
+            data.put("UEM_ID", AdminID);
+            data.put("Permissions", "OWNER");
+            row.setJson(data);
+            datachunk.add(row);
+            aBoolean = BQTable_Permissions.insertDataRows(bigquery, datachunk);
+            if (aBoolean){
+                return data;
+            }
+        }
+        return null;
+    }
+
+    public static List<University> getAllUniversities_UnivAdmin_Contains(String UnivAdmin) {
+
+        String PROJECT_ID = "universalevaluationmetrics";
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String querySql = "SELECT\n" +
+                "  UnivID,\n" +
+                "  Name,\n" +
+                "  Photo,\n" +
+                "  Started,\n" +
+                "  UnivAdmins,\n" +
+                "  Students,\n" +
+                "  Teachers,\n" +
+                "  Courses,\n" +
+                "  Website,\n" +
+                "  MoreInfo,\n" +
+                "  ActionLogs\n" +
+                "FROM\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.University`";
+
+        if (UnivAdmin != null) {
+            querySql = "SELECT\n" +
+                    "  UnivID,\n" +
+                    "  Name,\n" +
+                    "  Photo,\n" +
+                    "  Started,\n" +
+                    "  UnivAdmins,\n" +
+                    "  Students,\n" +
+                    "  Teachers,\n" +
+                    "  Courses,\n" +
+                    "  Website,\n" +
+                    "  MoreInfo,\n" +
+                    "  ActionLogs\n" +
+                    "FROM\n" +
+                    "  `universalevaluationmetrics.universalEvaluationMetrics.University`\n" +
+                    "WHERE\n" +
+                    "  UnivAdmins LIKE '%" + UnivAdmin + "%'";
+        }
+
+        JobReference jobId = null;
+        Job completedJob = null;
+        ArrayList<University> universities = null;
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    universities = getUniversities(bigquery, PROJECT_ID, completedJob);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+
+        return universities;
     }
 
     public static List<Teacher> getAllTeachers(String UserID) {
@@ -414,6 +514,40 @@ public class AllBQOperations {
         List<TableRow> rows = queryResult.getRows();
 
         return true;
+
+    }
+
+    private static ArrayList<University> getUniversities(Bigquery bigquery, String projectId,
+                                                  Job completedJob) throws IOException {
+
+        GetQueryResultsResponse queryResult = bigquery.jobs()
+                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
+        List<TableRow> rows = queryResult.getRows();
+        ArrayList<University> universities = new ArrayList<>();
+        System.out.print("\nQuery Results:\n------------\n");
+
+        if (rows != null) {
+            for (TableRow row : rows) {
+                LinkedList<TableCell> rowList = new LinkedList<TableCell>();
+                rowList.addAll(row.getF());
+                University university = new University();
+                university.setUnivID(rowList.get(0).getV().toString());
+                university.setName(rowList.get(1).getV().toString());
+                university.setPhoto(rowList.get(2).getV().toString());
+                university.setStarted(rowList.get(3).getV().toString());
+                university.setUnivAdmins(rowList.get(4).getV().toString());
+                university.setStudents(rowList.get(5).getV().toString());
+                university.setTeachers(rowList.get(6).getV().toString());
+                university.setCourses(rowList.get(7).getV().toString());
+                university.setWebsite(rowList.get(8).getV().toString());
+                university.setMoreInfo(rowList.get(9).getV().toString());
+                university.setActionLogs(rowList.get(10).getV().toString());
+
+                universities.add(university);
+            }
+        }
+
+        return universities;
 
     }
 

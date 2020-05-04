@@ -25,7 +25,8 @@ public class Test {
 
     public static void test2() throws IOException {
 
-
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+        AllBQOperations.reCreateWholeStructure(bigquery);
 
     }
 

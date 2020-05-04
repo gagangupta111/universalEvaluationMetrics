@@ -104,6 +104,16 @@ public class BQTable_Student {
                 fields.add(new TableFieldSchema().setName("UserID").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("UnivID").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Batches").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Documents").setType("RECORD").setMode("REPEATED")
+                        .setFields(
+                                new ArrayList<TableFieldSchema>() {
+                                    {
+                                        add(new TableFieldSchema().setName("Course_Name").setType("STRING"));
+                                        add(new TableFieldSchema().setName("Course_Details").setType("STRING"));
+                                        add(new TableFieldSchema().setName("Attachments").setType("BYTES").setMode("REPEATED"));
+                                    }
+                                }
+                        ));
 
                 Table content = new Table();
                 content.setSchema(new TableSchema().setFields(fields));

@@ -34,6 +34,10 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
+    public CustomResponse createUniversity(JSONObject body) {
+        return dao.createUniversity(body);
+    }
+
     public Boolean updateUserInfo(JSONObject body) {
         return dao.updateUserInfo(body);
     }

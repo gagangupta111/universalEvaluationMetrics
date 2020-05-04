@@ -70,7 +70,7 @@ public class MainController {
         }
     }
 
-    @PostMapping("/user/{userID}")
+    @PutMapping("/user/{userID}")
     @ResponseBody
     public ResponseEntity<String> updateUser(@RequestBody String body, @PathVariable("userID") String userID) throws Exception{
 
@@ -108,6 +108,23 @@ public class MainController {
             return ResponseEntity.ok()
                     .header("key", "value")
                     .body(users.toString());
+        }
+    }
+
+    @PostMapping("/University")
+    @ResponseBody
+    public ResponseEntity<String> createUniversity(@RequestBody String body) throws Exception{
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse =  mainService.createUniversity(jsonObject);
+        if (customResponse.getSuccess()){
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(customResponse.getInfo().toString());
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body(customResponse.getMessage());
         }
     }
 }
