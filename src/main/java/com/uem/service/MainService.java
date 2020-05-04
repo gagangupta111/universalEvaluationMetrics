@@ -31,4 +31,7 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
+    public Boolean updateUserInfo(JSONObject body) {
+        return dao.updateUserInfo(body);
+    }
 }

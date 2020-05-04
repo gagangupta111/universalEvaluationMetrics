@@ -8,6 +8,8 @@ public class User {
     private String Name;
     private String Mobile;
     private String Photo;
+    private String Address;
+    private String DOB;
 
     public String getUserID() {
         return UserID;
@@ -57,6 +59,22 @@ public class User {
         Photo = photo;
     }
 
+    public String getAddress() {
+        return Address;
+    }
+
+    public void setAddress(String address) {
+        Address = address;
+    }
+
+    public String getDOB() {
+        return DOB;
+    }
+
+    public void setDOB(String DOB) {
+        this.DOB = DOB;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -66,6 +84,8 @@ public class User {
                 ", Name='" + Name + '\'' +
                 ", Mobile='" + Mobile + '\'' +
                 ", Photo='" + Photo + '\'' +
+                ", Address='" + Address + '\'' +
+                ", DOB='" + DOB + '\'' +
                 '}';
     }
 }

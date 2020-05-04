@@ -1,8 +1,8 @@
 package com.uem.controller;
 
-import com.google.api.client.json.Json;
 import com.uem.model.CustomResponse;
 import com.uem.service.MainService;
+import com.uem.util.Constants;
 import com.uem.util.LogUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -50,7 +50,7 @@ public class MainController {
 
     @PostMapping("/signin/{loginType}")
     @ResponseBody
-    public ResponseEntity<String>  signIn(@RequestBody String body, @PathVariable("loginType") String loginType) throws Exception{
+    public ResponseEntity<String> signIn(@RequestBody String body, @PathVariable("loginType") String loginType) throws Exception{
 
         JSONObject jsonObject = new JSONObject(body.trim());
         logger.debug("REQUEST_RECIEVED-signUp");
@@ -68,5 +68,30 @@ public class MainController {
         }
     }
 
+    @PostMapping("/user/{userID}")
+    @ResponseBody
+    public ResponseEntity<String> updateUser(@RequestBody String body, @PathVariable("userID") String userID) throws Exception{
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+
+        if (jsonObject.length() == 0){
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body("NOTHING_TO_UPDATE");
+        }
+
+        jsonObject.put("UserID", userID);
+        Boolean aBoolean =  mainService.updateUserInfo(jsonObject);
+        if (aBoolean){
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(Constants.SUCCESS);
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body(Constants.FAILURE);
+        }
+
+    }
 
 }

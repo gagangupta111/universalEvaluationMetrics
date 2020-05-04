@@ -8,5 +8,6 @@ public interface DaoInterface {
     public String test();
     public CustomResponse signUp(String email);
     public CustomResponse signIn(String email, String password, String loginType);
-
+    public Boolean updateUserInfo(JSONObject body);
+    //updateUserInfo
 }

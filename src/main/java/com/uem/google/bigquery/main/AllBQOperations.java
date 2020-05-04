@@ -26,6 +26,57 @@ public class AllBQOperations {
 
     static Logger logger = LogUtil.getInstance();
 
+    public static  Boolean updateUser(User user){
+
+        List<String> updates = new ArrayList<>();
+        if (user.getMobile() != null){
+            updates.add("Mobile = \"" + user.getMobile() + "\"");
+        }
+        if (user.getName() != null){
+            updates.add("Name = \"" + user.getName() + "\"");
+        }
+        if (user.getAddress() != null){
+            updates.add("Address = \"" + user.getAddress() + "\"");
+        }
+        if (user.getDOB() != null){
+            updates.add("DOB = \"" + user.getDOB() + "\"");
+        }
+        if (user.getPhoto() != null){
+            updates.add("Photo = " + user.getPhoto() + "");
+        }
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+        String querySql = "UPDATE\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.User`\n" +
+                "SET ";
+        String endQuery = " WHERE\n" +
+                "  UserID = \"" + user.getUserID() + "\"";
+
+        String update = String.join(",", updates);
+        querySql = querySql + update + endQuery;
+
+        JobReference jobId = null;
+        Job completedJob = null;
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    Boolean aBoolean = updatesResult(bigquery, PROJECT_ID, completedJob);
+                    return aBoolean;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+        return false;
+    }
+
+
     public static  Map<String, Object> createUser(String email){
         Bigquery bigquery = GAuthenticate.getAuthenticated(true);
 
@@ -298,6 +349,16 @@ public class AllBQOperations {
         }
 
         return students;
+
+    }
+
+    private static Boolean updatesResult(Bigquery bigquery, String projectId,
+                                                  Job completedJob) throws IOException {
+        GetQueryResultsResponse queryResult = bigquery.jobs()
+                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
+        List<TableRow> rows = queryResult.getRows();
+
+        return true;
 
     }
 

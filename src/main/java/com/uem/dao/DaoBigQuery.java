@@ -4,7 +4,9 @@ import com.uem.google.bigquery.main.AllBQOperations;
 import com.uem.model.*;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
+import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -92,6 +94,45 @@ public class DaoBigQuery implements DaoInterface {
         customResponse.setSuccess(true);
         customResponse.setMessage(Constants.SUCCESS);
         return customResponse;
+    }
+
+    @Override
+    public Boolean updateUserInfo(JSONObject body) {
+
+        try {
+            User user = new User();
+            user.setUserID(body.getString("UserID"));
+            Iterator<String> keys = body.keys();
+            while (keys.hasNext()){
+
+                String key = keys.next();
+                switch (key){
+                    case "Name":
+                        user.setName(body.getString(key));
+                        break;
+                    case "Mobile":
+                        user.setMobile(body.getString(key));
+                        break;
+                    case "Photo":
+                        user.setPhoto(body.getString(key));
+                        break;
+                    case "Address":
+                        user.setAddress(body.getString(key));
+                        break;
+                    case "DOB":
+                        user.setDOB(body.getString(key));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return AllBQOperations.updateUser(user);
+
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return false;
+        }
     }
 
 }
