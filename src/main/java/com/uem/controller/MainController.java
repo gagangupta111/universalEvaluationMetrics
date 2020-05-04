@@ -1,7 +1,7 @@
 package com.uem.controller;
 
 import com.uem.model.CustomResponse;
-import com.uem.model.UnivAdmin;
+import com.uem.model.User;
 import com.uem.service.MainService;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
@@ -10,7 +10,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -96,12 +95,19 @@ public class MainController {
         }
     }
 
-    @GetMapping("/admin/{progress}")
+    @GetMapping("/user/{userID}")
     @ResponseBody
-    public List<UnivAdmin> getAdminsInfo(@PathVariable("progress") String progress) {
+    public ResponseEntity<String> getUserInfo(@PathVariable("userID") String userID) {
 
-        return null;
-
+        List<User> users = mainService.getUserInfo(userID);
+        if (users == null || users.size() == 0){
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body(Constants.FAILURE);
+        }else {
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(users.toString());
+        }
     }
-
 }

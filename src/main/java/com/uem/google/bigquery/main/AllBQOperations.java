@@ -254,7 +254,7 @@ public class AllBQOperations {
         return univAdmins;
     }
 
-    public static List<User> getAllUsers(String email) {
+    public static List<User> getAllUsers_Email(String email) {
 
         String PROJECT_ID = "universalevaluationmetrics";
 
@@ -283,6 +283,59 @@ public class AllBQOperations {
                 "WHERE\n" +
                 "  Email LIKE '%" + email + "%'";
         }
+        JobReference jobId = null;
+        Job completedJob = null;
+        ArrayList<User> users = new ArrayList<>();
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    users = new ArrayList<User>(
+                            getUsers(bigquery, PROJECT_ID, completedJob));
+                }
+            }
+
+        } catch (Exception e) {
+            // logger.error(e);
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+        return users;
+    }
+
+    public static List<User> getAllUsers_UserID(String UserID) {
+
+        String PROJECT_ID = "universalevaluationmetrics";
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String querySql = "SELECT\n" +
+                "  UserID,\n" +
+                "  Email,\n" +
+                "  Password,\n" +
+                "  Name,\n" +
+                "  Mobile,\n" +
+                "  Photo\n" +
+                "FROM\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.User`";
+
+        if (UserID != null) {
+            querySql = "SELECT\n" +
+                    "  UserID,\n" +
+                    "  Email,\n" +
+                    "  Password,\n" +
+                    "  Name,\n" +
+                    "  Mobile,\n" +
+                    "  Photo\n" +
+                    "FROM\n" +
+                    "  `universalevaluationmetrics.universalEvaluationMetrics.User`\n" +
+                    "WHERE\n" +
+                    "  UserID = '" + UserID + "'";
+        }
+
         JobReference jobId = null;
         Job completedJob = null;
         ArrayList<User> users = new ArrayList<>();

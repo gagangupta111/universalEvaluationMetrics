@@ -2,12 +2,15 @@ package com.uem.service;
 
 import com.uem.dao.DaoInterface;
 import com.uem.model.CustomResponse;
+import com.uem.model.User;
 import com.uem.util.LogUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MainService {
@@ -33,5 +36,9 @@ public class MainService {
 
     public Boolean updateUserInfo(JSONObject body) {
         return dao.updateUserInfo(body);
+    }
+
+    public List<User> getUserInfo(String UserID) {
+        return dao.getUserInfo(UserID);
     }
 }

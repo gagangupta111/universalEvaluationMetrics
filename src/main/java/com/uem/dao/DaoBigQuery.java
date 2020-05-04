@@ -25,7 +25,7 @@ public class DaoBigQuery implements DaoInterface {
 
     @Override
     public CustomResponse signUp(String email) {
-        List<User> users = AllBQOperations.getAllUsers(email);
+        List<User> users = AllBQOperations.getAllUsers_Email(email);
         if (users == null || users.size() == 0) {
 
             Map<String, Object> data = AllBQOperations.createUser(email);
@@ -46,7 +46,7 @@ public class DaoBigQuery implements DaoInterface {
     public CustomResponse signIn(String email, String password, String loginType) {
 
         List<User> users = new ArrayList<>();
-        users = AllBQOperations.getAllUsers(email);
+        users = AllBQOperations.getAllUsers_Email(email);
 
         if (users == null || users.size() == 0 || !password.equals(users.get(0).getPassword())) {
             CustomResponse customResponse = new CustomResponse();
@@ -133,6 +133,13 @@ public class DaoBigQuery implements DaoInterface {
             logger.debug(UtilsManager.exceptionAsString(e));
             return false;
         }
+    }
+
+    @Override
+    public List<User> getUserInfo(String UserID) {
+        List<User> users = new ArrayList<>();
+        users = AllBQOperations.getAllUsers_UserID(UserID);
+        return users;
     }
 
 }
