@@ -6,7 +6,9 @@ import com.uem.google.bigquery.main.AllBQOperations;
 import com.uem.google.bigquery.main.BQOperationsTestTable;
 import com.uem.model.TestClass;
 import com.uem.util.GAuthenticate;
+import com.uem.util.MONGO_DbUtility;
 import com.uem.util.ParseUtil;
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,8 +22,26 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        getParseTest("ZfNF1he3Av");
+        deleteAllTestObjects();
 
+    }
+
+    public static void getAllTestObjects(){
+        List<Document> documents = MONGO_DbUtility.getAllTestObjects();
+        System.out.println(documents);
+    }
+
+
+    public static void deleteAllTestObjects(){
+
+        List<Document> documents = MONGO_DbUtility.getAllTestObjects();
+
+        List<String> objectIDs = new ArrayList<>();
+        for (Document document : documents){
+            objectIDs.add(document.getString("_id"));
+        }
+
+        ParseUtil.batchDeleteInParseTest(objectIDs);
     }
 
     public static void getParseTest(String objectID) throws Exception {
@@ -36,10 +56,37 @@ public class Test {
 
     }
 
+    public static void batchSaveInParseTest() throws Exception {
+
+        TestClass testClass = new TestClass();
+        testClass.setCol1("col1TestValue1");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("map", 72652L);
+
+        JSONArray array = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key3", "value");
+        jsonObject.put("key4", 15414);
+        jsonObject.put("key5", 1541427837828L);
+        jsonObject.put("key6", new JSONObject(map));
+
+        array.put(jsonObject);
+        array.put("one");
+        array.put(1233);
+        array.put(7657125L);
+        array.put(872638.2876386);
+
+        testClass.setCol2(array);
+        testClass.setCol3(jsonObject);
+        Boolean aBoolean = ParseUtil.saveInParseTest(testClass);
+        System.out.println(aBoolean);
+    }
+
     public static void saveInParseTest() throws Exception {
 
         TestClass testClass = new TestClass();
-        testClass.setCol1("col1TestValue");
+        testClass.setCol1("col1TestValue1");
 
         Map<String, Object> map = new HashMap<>();
         map.put("map", 72652L);

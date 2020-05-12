@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BQTable_User {
+public class BQTable_Universal_User {
 
     private static final String PROJECT_ID = "universalevaluationmetrics";
     private static final String DATASET_ID = "universalEvaluationMetrics";

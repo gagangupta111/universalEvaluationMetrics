@@ -3,6 +3,7 @@ package com.uem.util;
 import com.uem.model.TestClass;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -11,10 +12,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ParseUtil {
@@ -22,6 +23,121 @@ public class ParseUtil {
     public static final String PARSE_URL = "https://parseapi.back4app.com";
     public static final String PARSE_APPLICATION_ID = "6viCuXhfL9rOaJr6RU3AbGwqxDut7h42WQqS164g";
     public static final String PARSE_REST_API_KEY = "mhGiQXRJgERYXiRSmCKI6I34ctW93tWWBv1DLBCs";
+
+    public static boolean batchDeleteInParseTest(List<String> objectIDs) {
+
+        try {
+
+            String updateURL = PARSE_URL + "/batch";
+
+            HttpClient clientUpdate = new DefaultHttpClient();
+            HttpPost post = new HttpPost(updateURL);
+
+            post.setHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+            post.setHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+
+            JSONArray array = new JSONArray();
+
+            for (String objectID : objectIDs){
+
+                JSONObject request = new JSONObject();
+                request.put("method", "DELETE");
+                request.put("path", "/classes/TEST/" + objectID);
+
+                array.put(request);
+
+            }
+
+            JSONObject payload = new JSONObject();
+            payload.put("requests", array);
+
+            StringEntity requestEntity = new StringEntity(payload.toString(), ContentType.APPLICATION_JSON);
+            post.setEntity(requestEntity);
+
+            HttpResponse httpResponse = clientUpdate.execute(post);
+
+            if (httpResponse == null || httpResponse.getStatusLine() == null || httpResponse.getEntity() == null) {
+                RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", String.valueOf(httpResponse));
+            }
+
+            int status = Integer.parseInt(String.valueOf(httpResponse.getStatusLine().getStatusCode()));
+
+            StringBuffer buffer1 = new StringBuffer();
+            BufferedReader reader1 = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+            String line1 = "";
+            while ((line1 = reader1.readLine()) != null) {
+                buffer1.append(line1);
+            }
+
+
+            if (status >= 200 && status < 300) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", e);
+            return false;
+        }
+    }
+
+    public static boolean batchSaveInParseTest() {
+
+        try {
+
+            String updateURL = PARSE_URL + "/batch";
+
+            HttpClient clientUpdate = new DefaultHttpClient();
+            HttpPost post = new HttpPost(updateURL);
+
+            post.setHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+            post.setHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+
+            JSONObject body = new JSONObject();
+            body.put("col1", "Test1");
+
+            JSONObject request = new JSONObject();
+            request.put("method", "POST");
+            request.put("path", "/classes/TEST");
+            request.put("body", body);
+
+            JSONArray array = new JSONArray();
+            array.put(request);
+
+            JSONObject payload = new JSONObject();
+            payload.put("requests", array);
+
+            StringEntity requestEntity = new StringEntity(payload.toString(), ContentType.APPLICATION_JSON);
+            post.setEntity(requestEntity);
+
+            HttpResponse httpResponse = clientUpdate.execute(post);
+
+            if (httpResponse == null || httpResponse.getStatusLine() == null || httpResponse.getEntity() == null) {
+                RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", String.valueOf(httpResponse));
+            }
+
+            int status = Integer.parseInt(String.valueOf(httpResponse.getStatusLine().getStatusCode()));
+
+            StringBuffer buffer1 = new StringBuffer();
+            BufferedReader reader1 = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+            String line1 = "";
+            while ((line1 = reader1.readLine()) != null) {
+                buffer1.append(line1);
+            }
+
+
+            if (status >= 200 && status < 300) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (Exception e) {
+            RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", e);
+            return false;
+        }
+    }
 
     public static boolean saveInParseTest(TestClass testClass) {
 
@@ -115,6 +231,39 @@ public class ParseUtil {
 
         } catch (Exception e) {
             RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", e);
+            return null;
+        }
+    }
+
+    public static String deleteAll() {
+
+        try {
+
+            String updateURL = PARSE_URL + "/classes/" + "TEST";
+
+            HttpClient clientUpdate = new DefaultHttpClient();
+            HttpDelete post = new HttpDelete(updateURL);
+
+            post.setHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+            post.setHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+
+            HttpResponse httpResponse = clientUpdate.execute(post);
+
+            if (httpResponse == null || httpResponse.getStatusLine() == null || httpResponse.getEntity() == null) {
+                return null;
+            }
+
+            int status = Integer.parseInt(String.valueOf(httpResponse.getStatusLine().getStatusCode()));
+            StringBuilder buffer1 = UtilsManager.fetchResponseString(httpResponse);
+
+            if (status >= 200 && status < 300) {
+                return buffer1.toString();
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            RollbarManager.sendExceptionOnRollBar("UPDATE_ROLL_BAR_STATUS", e);
             return null;
         }
     }

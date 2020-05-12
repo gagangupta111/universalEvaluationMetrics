@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 
 public class AllBQOperations {
@@ -94,7 +93,7 @@ public class AllBQOperations {
         data.put("Password", Password);
         row.setJson(data);
         datachunk.add(row);
-        Boolean aBoolean = BQTable_User.insertDataRows(bigquery, datachunk);
+        Boolean aBoolean = BQTable_Universal_User.insertDataRows(bigquery, datachunk);
         if (aBoolean){
             datachunk =
                     new ArrayList<TableDataInsertAllRequest.Rows>();
@@ -805,7 +804,7 @@ public class AllBQOperations {
         BQTable_Teacher.createTable(bigquery, true, true);
         BQTable_UnivAdmin.createTable(bigquery, true, true);
         BQTable_University.createTable(bigquery, true, true);
-        BQTable_User.createTable(bigquery, true, true);
+        BQTable_Universal_User.createTable(bigquery, true, true);
         return true;
     }
 

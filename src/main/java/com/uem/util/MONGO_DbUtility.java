@@ -36,40 +36,28 @@ public class MONGO_DbUtility {
 
     public static MongoCollection<Document> getTest() {
         if (null == Test) {
-            Test = getDataBase().getCollection("Test");
+            Test = getDataBase().getCollection("TEST");
             return Test;
         } else {
             return Test;
         }
     }
 
-    public static List<Document> getReportRunMappings_InsightLevels(String insightLevelsComma, String statusCompleted, int days, String accountIds) {
+    public static List<Document> getAllTestObjects() {
 
         try {
-
-            int hours = days * 24;
-
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.HOUR, -hours);
-            Date oneHourBack = cal.getTime();
-
-            DateTime dateStr = new org.joda.time.DateTime(oneHourBack.getTime(), org.joda.time.DateTimeZone.UTC);
-
             MongoCollection<Document> collection = MONGO_DbUtility.getTest();
             BsonDocument filter = null;
             filter = BsonDocument
                     .parse("{ " +
-                            "accountID:{$in:[" + accountIds + "]}," +
-                            "insightsLevel:{$in:[" + insightLevelsComma + "]}," +
-                            "_updated_at : { $gt : ISODate(\"" + dateStr.toString() + "\")}," +
-                            "statusCompleted:{$eq:'" + statusCompleted + "'}" +
+                            "col1:{$exists:true}," +
+                            "$where:'this.col1.length > 0'" +
                             "}");
-
             List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
             return allDocuments;
         } catch (Exception e) {
-            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getReportRunMappings_InsightLevels \n" + UtilsManager.exceptionAsString(e));
-            RollbarManager.sendExceptionOnRollBar("getReportRunMappings_InsightLevels", UtilsManager.exceptionAsString(e));
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllTestObjects \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllTestObjects", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }
