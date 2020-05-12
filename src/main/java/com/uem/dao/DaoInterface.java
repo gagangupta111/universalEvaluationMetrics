@@ -14,5 +14,6 @@ public interface DaoInterface {
     public Boolean updateUserInfo(JSONObject body);
     public List<User> getUserInfo(String UserID);
     public CustomResponse createUniversity(JSONObject body);
+    public CustomResponse updateUniversity(JSONObject body);
     //updateUserInfo
 }

@@ -4,10 +4,11 @@ import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
 import com.uem.google.bigquery.main.AllBQOperations;
 import com.uem.google.bigquery.main.BQOperationsTestTable;
-import com.uem.google.bigquery.main.BQTable_UnivAdmin;
+import com.uem.model.TestClass;
 import com.uem.util.GAuthenticate;
-import com.uem.util.UtilsManager;
-import org.bson.Document;
+import com.uem.util.ParseUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,52 +18,59 @@ import java.util.Map;
 
 public class Test {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
-        test2();
+        getParseTest("ZfNF1he3Av");
 
     }
 
-    public static void test2() throws IOException {
+    public static void getParseTest(String objectID) throws Exception {
+
+        TestClass testClass = ParseUtil.getParseTest(objectID);
+        System.out.println(testClass);
+        testClass.setCol1("TEST");
+        testClass.setCol2(new JSONArray());
+        testClass.setCol3(new JSONObject());
+
+        ParseUtil.updateStatusInParse(testClass);
+
+    }
+
+    public static void saveInParseTest() throws Exception {
+
+        TestClass testClass = new TestClass();
+        testClass.setCol1("col1TestValue");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("map", 72652L);
+
+        JSONArray array = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key3", "value");
+        jsonObject.put("key4", 15414);
+        jsonObject.put("key5", 1541427837828L);
+        jsonObject.put("key6", new JSONObject(map));
+
+        array.put(jsonObject);
+        array.put("one");
+        array.put(1233);
+        array.put(7657125L);
+        array.put(872638.2876386);
+
+        testClass.setCol2(array);
+        testClass.setCol3(jsonObject);
+        Boolean aBoolean = ParseUtil.saveInParseTest(testClass);
+        System.out.println(aBoolean);
+    }
+
+    public static void reCreateWholeStructure() throws IOException {
 
         Bigquery bigquery = GAuthenticate.getAuthenticated(true);
         AllBQOperations.reCreateWholeStructure(bigquery);
 
     }
 
-    public static  Map<String, Object> createTestUnivUser(){
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-
-        String UserID = UtilsManager.generateUniqueID();
-        String UEM_ID = UserID;
-        String UnivID = UserID;
-
-        List<Document> array = new ArrayList<>();
-        Document document = new Document();
-        document.put("Course_Name", "Course_Name");
-        document.put("Course_Details", "Course_Details");
-        List<Object> bytes = new ArrayList<>();
-        bytes.add("ahjashjhakk");
-        bytes.add("skjhdkhdkjhkah");
-        document.put("Attachments", bytes);
-        array.add(document);
-
-        ArrayList<TableDataInsertAllRequest.Rows> datachunk =
-                new ArrayList<TableDataInsertAllRequest.Rows>();
-        TableDataInsertAllRequest.Rows row = new TableDataInsertAllRequest.Rows();
-        Map<String, Object> data = new HashMap<>();
-        data.put("UserID", UserID);
-        data.put("UEM_ID", UEM_ID);
-        data.put("UnivID", UnivID);
-        data.put("Documents", array);
-
-        row.setJson(data);
-        datachunk.add(row);
-        Boolean aBoolean = BQTable_UnivAdmin.insertDataRows(bigquery, datachunk);
-        return data;
-    }
-
-    public static void test1() throws Exception{
+    public static void test1() throws Exception {
 
         List<TableDataInsertAllRequest.Rows> partition = new ArrayList<>();
 

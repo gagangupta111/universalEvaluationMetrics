@@ -1,5 +1,9 @@
 package com.uem.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.TimeZone;
+
 public interface Constants {
 
     public static final String  GOOGLECREDENTIAL_AUTHORIZE = "GOOGLECREDENTIAL_AUTHORIZE";
@@ -8,6 +12,8 @@ public interface Constants {
     public static final String  SUCCESS = "SUCCESS";
     public static final String  LOGIN_FAILURE = "Either User does not exist or password is Incorrect!";
     public static final String  SIGN_UP_FAILURE = "User with this email already exists!";
+
+    public static final String  UNIVERSITY_DOES_NOT_EXIST = "UNIVERSITY_DOES_NOT_EXIST";
 
     public static final String  UNIVERSITY_CREATION_FAILURE = " Name, Website and AdminID is required to create University!";
 

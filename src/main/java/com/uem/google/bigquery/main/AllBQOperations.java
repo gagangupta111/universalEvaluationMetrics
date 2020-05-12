@@ -3,13 +3,12 @@ package com.uem.google.bigquery.main;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
 import com.google.api.services.bigquery.model.DatasetList.Datasets;
-import com.mongodb.Bytes;
 import com.uem.model.*;
 import com.uem.util.GAuthenticate;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
-import org.bson.Document;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -118,6 +117,68 @@ public class AllBQOperations {
         return data;
     }
 
+    public static Boolean updateUniversity(University university) throws JSONException {
+
+        List<String> updates = new ArrayList<>();
+        if (university.getName() != null){
+            updates.add("Name = \"" + university.getName() + "\"");
+        }
+        if (university.getPhoto() != null){
+            updates.add("Photo = \"" + university.getPhoto() + "\"");
+        }
+        if (university.getUnivAdmins() != null){
+            updates.add("UnivAdmins = \"" + university.getUnivAdmins() + "\"");
+        }
+        if (university.getStudents() != null){
+            updates.add("Students = \"" + university.getStudents() + "\"");
+        }
+        if (university.getTeachers() != null){
+            updates.add("Teachers = \"" + university.getTeachers() + "\"");
+        }
+        if (university.getCourses() != null){
+            updates.add("Courses = \"" + university.getCourses() + "\"");
+        }
+        if (university.getWebsite() != null){
+            updates.add("Website = \"" + university.getWebsite() + "\"");
+        }
+        if (university.getMoreInfo() != null){
+            updates.add("MoreInfo = \"" + university.getMoreInfo() + "\"");
+        }
+        if (university.getActionLogs() != null){
+            updates.add("ActionLogs = \"" + university.getActionLogs() + "\"");
+        }
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+        String querySql = "UPDATE\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.University`\n" +
+                "SET ";
+        String endQuery = " WHERE\n" +
+                "  UnivID = \"" + university.getUnivID() + "\"";
+
+        String update = String.join(",", updates);
+        querySql = querySql + update + endQuery;
+
+        JobReference jobId = null;
+        Job completedJob = null;
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    Boolean aBoolean = updatesResult(bigquery, PROJECT_ID, completedJob);
+                    return aBoolean;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+        return false;
+    }
+
     public static  Map<String, Object> createUniversity(JSONObject body) throws JSONException {
 
         Bigquery bigquery = GAuthenticate.getAuthenticated(true);
@@ -135,6 +196,16 @@ public class AllBQOperations {
         data.put("Name", Name);
         data.put("Website", Website);
         data.put("UnivAdmins", AdminID);
+        data.put("Started", UtilsManager.getUTCStandardDateFormat());
+
+        JSONArray array = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Action", "University_Started");
+        jsonObject.put("Time", UtilsManager.getUTCStandardDateFormat());
+        array.put(jsonObject);
+
+        data.put("ActionLogs", array.toString());
+
         row.setJson(data);
         datachunk.add(row);
         Boolean aBoolean = BQTable_University.insertDataRows(bigquery, datachunk);
@@ -195,6 +266,68 @@ public class AllBQOperations {
                     "  `universalevaluationmetrics.universalEvaluationMetrics.University`\n" +
                     "WHERE\n" +
                     "  UnivAdmins LIKE '%" + UnivAdmin + "%'";
+        }
+
+        JobReference jobId = null;
+        Job completedJob = null;
+        ArrayList<University> universities = null;
+        try {
+            jobId = startQuery(bigquery, PROJECT_ID, querySql);
+            if (jobId != null) {
+                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
+                if (completedJob != null) {
+                    universities = getUniversities(bigquery, PROJECT_ID, completedJob);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            jobId = null;
+            completedJob = null;
+        }
+
+        return universities;
+    }
+
+    public static List<University> getAllUniversities_UnivID(String UnivID) {
+
+        String PROJECT_ID = "universalevaluationmetrics";
+
+        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+
+        String querySql = "SELECT\n" +
+                "  UnivID,\n" +
+                "  Name,\n" +
+                "  Photo,\n" +
+                "  Started,\n" +
+                "  UnivAdmins,\n" +
+                "  Students,\n" +
+                "  Teachers,\n" +
+                "  Courses,\n" +
+                "  Website,\n" +
+                "  MoreInfo,\n" +
+                "  ActionLogs\n" +
+                "FROM\n" +
+                "  `universalevaluationmetrics.universalEvaluationMetrics.University`";
+
+        if (UnivID != null) {
+            querySql = "SELECT\n" +
+                    "  UnivID,\n" +
+                    "  Name,\n" +
+                    "  Photo,\n" +
+                    "  Started,\n" +
+                    "  UnivAdmins,\n" +
+                    "  Students,\n" +
+                    "  Teachers,\n" +
+                    "  Courses,\n" +
+                    "  Website,\n" +
+                    "  MoreInfo,\n" +
+                    "  ActionLogs\n" +
+                    "FROM\n" +
+                    "  `universalevaluationmetrics.universalEvaluationMetrics.University`\n" +
+                    "WHERE\n" +
+                    "  UnivID = \"" + UnivID + "\"";
         }
 
         JobReference jobId = null;

@@ -105,8 +105,8 @@ public class BQTable_Course {
                 fields.add(new TableFieldSchema().setName("Level").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Billing").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Status").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Starting").setType("DATE"));
-                fields.add(new TableFieldSchema().setName("Expiring").setType("DATE"));
+                fields.add(new TableFieldSchema().setName("Starting").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Expiring").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Batches").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Universities").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("ActionLogs").setType("STRING"));

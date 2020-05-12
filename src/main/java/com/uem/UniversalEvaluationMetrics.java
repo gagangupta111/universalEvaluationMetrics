@@ -13,6 +13,7 @@ public class UniversalEvaluationMetrics {
 
     public static void main(String[] args) throws IOException {
 
+        StringBuilder stringBuilder = new StringBuilder();
         logger.debug("Started-Start");
         SpringApplication.run(UniversalEvaluationMetrics.class, args);
         logger.debug("Started-End");

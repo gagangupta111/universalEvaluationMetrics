@@ -38,6 +38,10 @@ public class MainService {
         return dao.createUniversity(body);
     }
 
+    public CustomResponse updateUniversity(JSONObject body) {
+        return dao.updateUniversity(body);
+    }
+
     public Boolean updateUserInfo(JSONObject body) {
         return dao.updateUserInfo(body);
     }

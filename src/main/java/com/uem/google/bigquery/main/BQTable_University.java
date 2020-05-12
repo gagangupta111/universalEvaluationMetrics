@@ -103,7 +103,7 @@ public class BQTable_University {
                 fields.add(new TableFieldSchema().setName("UnivID").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Name").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Photo").setType("BYTES"));
-                fields.add(new TableFieldSchema().setName("Started").setType("DATE"));
+                fields.add(new TableFieldSchema().setName("Started").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("UnivAdmins").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Students").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Teachers").setType("STRING"));

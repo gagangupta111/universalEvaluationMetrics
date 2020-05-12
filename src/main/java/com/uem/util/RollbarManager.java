@@ -13,7 +13,7 @@ public class RollbarManager {
 
 	static Logger logger = LogUtil.getInstance();
 	public final static String ROLLBAR_ACCESS_TOKEN = null;
-	public final static Boolean LOCAL_LOGGONG = false;
+	public final static Boolean LOCAL_LOGGONG = true;
 
 	public static void sendExceptionOnRollBar(String message, Exception e) {
 

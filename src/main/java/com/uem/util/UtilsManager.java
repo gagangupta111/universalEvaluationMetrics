@@ -19,6 +19,13 @@ public class UtilsManager {
 
     static Logger logger = LogUtil.getInstance();
 
+    public static String getUTCStandardDateFormat(){
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return dateFormat.format(date);
+    }
+
     public static String generateUniqueID(){
         String uniqueID = UUID.randomUUID().toString();
         return uniqueID;

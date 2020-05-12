@@ -127,4 +127,27 @@ public class MainController {
                     .body(customResponse.getMessage());
         }
     }
+
+    @PostMapping("/University/{univID}")
+    @ResponseBody
+    public ResponseEntity<String> updateUniversity(@RequestBody String body, @PathVariable("univID") String univID) throws Exception{
+
+        if (univID == null || univID.equals("")){
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body("");
+        }
+        JSONObject jsonObject = new JSONObject(body.trim());
+        jsonObject.put("UnivID", univID);
+        CustomResponse customResponse =  mainService.updateUniversity(jsonObject);
+        if (customResponse.getSuccess()){
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
 }

@@ -104,8 +104,8 @@ public class BQTable_Batch {
                 fields.add(new TableFieldSchema().setName("Duration").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("SpanOver").setType("STRING"));
 
-                fields.add(new TableFieldSchema().setName("Starting").setType("DATE"));
-                fields.add(new TableFieldSchema().setName("Completion").setType("DATE"));
+                fields.add(new TableFieldSchema().setName("Starting").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Completion").setType("STRING"));
 
                 fields.add(new TableFieldSchema().setName("Calender").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Status").setType("STRING"));

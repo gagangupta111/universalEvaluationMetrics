@@ -20,26 +20,26 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-testClass -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
+            <artifactId>spring-testClass</artifactId>
             <version>4.3.2.RELEASE</version>
-            <scope>test</scope>
+            <scope>testClass</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-testClass -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-testClass</artifactId>
             <version>1.5.9.RELEASE</version>
-            <scope>test</scope>
+            <scope>testClass</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-test-autoconfigure -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-testClass-autoconfigure -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test-autoconfigure</artifactId>
+            <artifactId>spring-boot-testClass-autoconfigure</artifactId>
             <version>1.4.0.RELEASE</version>
         </dependency>
 
@@ -48,7 +48,7 @@
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <version>1.5.0</version>
-            <scope>test</scope>
+            <scope>testClass</scope>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
@@ -56,13 +56,7 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver</artifactId>
-            <version>3.4.2</version>
+            <scope>testClass</scope>
         </dependency>
 
         <dependency>
@@ -75,7 +69,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
+            <scope>testClass</scope>
         </dependency>
 
         <dependency>
@@ -135,6 +129,20 @@
             <artifactId>google-oauth-client-jetty</artifactId>
             <version>1.19.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>
