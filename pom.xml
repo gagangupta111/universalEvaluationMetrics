@@ -20,28 +20,6 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.springframework/spring-testClass -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-testClass</artifactId>
-            <version>4.3.2.RELEASE</version>
-            <scope>testClass</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-testClass -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-testClass</artifactId>
-            <version>1.5.9.RELEASE</version>
-            <scope>testClass</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-testClass-autoconfigure -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-testClass-autoconfigure</artifactId>
-            <version>1.4.0.RELEASE</version>
-        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.skyscreamer/jsonassert -->
         <dependency>

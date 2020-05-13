@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.BufferedReader;
@@ -24,10 +25,16 @@ public class ParseUtil {
     public static final String PARSE_APPLICATION_ID = "6viCuXhfL9rOaJr6RU3AbGwqxDut7h42WQqS164g";
     public static final String PARSE_REST_API_KEY = "mhGiQXRJgERYXiRSmCKI6I34ctW93tWWBv1DLBCs";
 
-    public static boolean batchDeleteInParseTest(List<String> objectIDs) {
+    private static Logger logger = LogUtil.getInstance();
+
+    public static Map<String, Object>  batchDeleteAllInParseTable(List<String> objectIDs, String className) {
+
+        Exception exception = new Exception("DUMMY");
+        Map<String, Object> res = new HashMap<>();
+        res.put("className", className);
+        res.put("objectIDs", String.join(",", objectIDs));
 
         try {
-
             String updateURL = PARSE_URL + "/batch";
 
             HttpClient clientUpdate = new DefaultHttpClient();
@@ -42,7 +49,7 @@ public class ParseUtil {
 
                 JSONObject request = new JSONObject();
                 request.put("method", "DELETE");
-                request.put("path", "/classes/TEST/" + objectID);
+                request.put("path", "/classes/" + className + "/" + objectID);
 
                 array.put(request);
 
@@ -57,32 +64,31 @@ public class ParseUtil {
             HttpResponse httpResponse = clientUpdate.execute(post);
 
             if (httpResponse == null || httpResponse.getStatusLine() == null || httpResponse.getEntity() == null) {
-                RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", String.valueOf(httpResponse));
+                RollbarManager.sendExceptionOnRollBar("batchDeleteAllInParseTable", String.valueOf(httpResponse));
             }
 
             int status = Integer.parseInt(String.valueOf(httpResponse.getStatusLine().getStatusCode()));
-
-            StringBuffer buffer1 = new StringBuffer();
-            BufferedReader reader1 = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-            String line1 = "";
-            while ((line1 = reader1.readLine()) != null) {
-                buffer1.append(line1);
-            }
-
-
-            if (status >= 200 && status < 300) {
-                return true;
-            } else {
-                return false;
-            }
+            StringBuilder response = UtilsManager.fetchResponseString(httpResponse);
+            res.put("response", response);
+            res.put("status", status);
 
         } catch (Exception e) {
-            RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", e);
-            return false;
+            exception = e;
+            RollbarManager.sendExceptionOnRollBar("batchDeleteAllInParseTable", e);
+            res.put("exception", UtilsManager.exceptionAsString(exception));
+            logger.debug(res);
         }
+
+        return res;
+
     }
 
-    public static boolean batchSaveInParseTest() {
+    public static Map<String, Object> batchSaveInParseTable(JSONObject body, String className) {
+
+        Exception exception = new Exception("DUMMY");
+        Map<String, Object> res = new HashMap<>();
+        res.put("className", className);
+        res.put("body", body);
 
         try {
 
@@ -94,12 +100,9 @@ public class ParseUtil {
             post.setHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
             post.setHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
 
-            JSONObject body = new JSONObject();
-            body.put("col1", "Test1");
-
             JSONObject request = new JSONObject();
             request.put("method", "POST");
-            request.put("path", "/classes/TEST");
+            request.put("path", "/classes/" + className);
             request.put("body", body);
 
             JSONArray array = new JSONArray();
@@ -114,29 +117,22 @@ public class ParseUtil {
             HttpResponse httpResponse = clientUpdate.execute(post);
 
             if (httpResponse == null || httpResponse.getStatusLine() == null || httpResponse.getEntity() == null) {
-                RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", String.valueOf(httpResponse));
+                RollbarManager.sendExceptionOnRollBar("batchSaveInParseTable", String.valueOf(httpResponse));
             }
 
             int status = Integer.parseInt(String.valueOf(httpResponse.getStatusLine().getStatusCode()));
-
-            StringBuffer buffer1 = new StringBuffer();
-            BufferedReader reader1 = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-            String line1 = "";
-            while ((line1 = reader1.readLine()) != null) {
-                buffer1.append(line1);
-            }
-
-
-            if (status >= 200 && status < 300) {
-                return true;
-            } else {
-                return false;
-            }
+            StringBuilder response = UtilsManager.fetchResponseString(httpResponse);
+            res.put("response", response);
+            res.put("status", status);
 
         } catch (Exception e) {
-            RollbarManager.sendExceptionOnRollBar("SAVE_IN_PARSE_NEW_REPORT_RUN_ID", e);
-            return false;
+            exception = e;
+            RollbarManager.sendExceptionOnRollBar("batchSaveInParseTable", e);
+            res.put("exception", UtilsManager.exceptionAsString(exception));
+            logger.debug(res);
         }
+
+        return res;
     }
 
     public static boolean saveInParseTest(TestClass testClass) {

@@ -6,8 +6,10 @@ import com.uem.google.bigquery.main.AllBQOperations;
 import com.uem.google.bigquery.main.BQOperationsTestTable;
 import com.uem.model.TestClass;
 import com.uem.util.GAuthenticate;
-import com.uem.util.MONGO_DbUtility;
+import com.uem.util.MongoDBCollections;
+import com.uem.util.MongoDBUtil;
 import com.uem.util.ParseUtil;
+import org.bson.BsonDocument;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,26 +24,28 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        deleteAllTestObjects();
+        MongoDBUtil.createDummyObjectsAllTables();
 
     }
 
     public static void getAllTestObjects(){
-        List<Document> documents = MONGO_DbUtility.getAllTestObjects();
+        List<Document> documents = MongoDBCollections.getAllTestObjects(BsonDocument
+                .parse("{ " + "}"));
         System.out.println(documents);
     }
 
 
     public static void deleteAllTestObjects(){
 
-        List<Document> documents = MONGO_DbUtility.getAllTestObjects();
+        List<Document> documents = MongoDBCollections.getAllTestObjects(BsonDocument
+                .parse("{ " + "}"));
 
         List<String> objectIDs = new ArrayList<>();
         for (Document document : documents){
             objectIDs.add(document.getString("_id"));
         }
 
-        ParseUtil.batchDeleteInParseTest(objectIDs);
+        ParseUtil.batchDeleteAllInParseTable(objectIDs, "TEST");
     }
 
     public static void getParseTest(String objectID) throws Exception {
