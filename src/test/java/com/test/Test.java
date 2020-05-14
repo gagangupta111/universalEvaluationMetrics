@@ -23,7 +23,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        ParseUtil.deleteAllObjectsAllTables();
+        getParseTest("1uJnB9c3rS");
     }
 
     public static void testBatchUpdate() throws Exception{

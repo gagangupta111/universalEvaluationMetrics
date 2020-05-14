@@ -1,18 +1,18 @@
 package com.uem.controller;
 
-import com.uem.model.CustomRequest;
 import com.uem.model.CustomResponse;
 import com.uem.model.User;
 import com.uem.service.MainService;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
+import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -76,7 +76,7 @@ public class MainController {
     @PutMapping("/user/{userID}")
     @ResponseBody
     public ResponseEntity<String> updateUser(
-            @RequestParam(value = "Photo", required = false) MultipartFile body,
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
             @RequestParam(value = "Email", required = false)String Email,
             @RequestParam(value = "Password", required = false) String Password,
             @RequestParam(value = "Name", required = false)String Name,
@@ -87,25 +87,46 @@ public class MainController {
 
             @PathVariable("userID") String userID) throws Exception{
 
-        JSONObject jsonObject = new JSONObject(body.toString());
+        try {
+            JSONObject body = new JSONObject();
 
-        if (jsonObject.length() == 0){
+            File file = new File("file");
+            body = Email != null ? body.put("Email", Email) : body;
+            body = Password != null ? body.put("Password", Password) : body;
+            body = Name != null ? body.put("Name", Name) : body;
+            body = Mobile != null ? body.put("Mobile", Mobile) : body;
+            body = Address != null ? body.put("Address", Address) : body;
+            body = DOB != null ? body.put("DOB", DOB) : body;
+            body = info != null ? body.put("info", info) : body;
+            if (Photo != null){
+                Photo.transferTo(file);
+                body.put("Photo", file);
+            }
+
+            if (body.length() == 0){
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body("NOTHING_TO_UPDATE");
+            }
+
+            body.put("UserID", userID);
+            Boolean aBoolean =  mainService.updateUserInfo(body);
+            if (aBoolean){
+                return ResponseEntity.ok()
+                        .header("key", "value")
+                        .body(Constants.SUCCESS);
+            }else {
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body(Constants.FAILURE);
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
             return ResponseEntity.badRequest()
-                    .header("key", "value")
-                    .body("NOTHING_TO_UPDATE");
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
         }
 
-        jsonObject.put("UserID", userID);
-        Boolean aBoolean =  mainService.updateUserInfo(jsonObject);
-        if (aBoolean){
-            return ResponseEntity.ok()
-                    .header("key", "value")
-                    .body(Constants.SUCCESS);
-        }else {
-            return ResponseEntity.badRequest()
-                    .header("key", "value")
-                    .body(Constants.FAILURE);
-        }
     }
 
     @GetMapping("/user/{userID}")

@@ -442,7 +442,7 @@ public class ParseUtil {
 
         try {
 
-            String updateURL = PARSE_URL + "/classes/" + "TEST" + "/" + objectID;
+            String updateURL = PARSE_URL + "/classes/" + "UniversalUser" + "/" + objectID;
 
             HttpClient clientUpdate = new DefaultHttpClient();
             HttpGet post = new HttpGet(updateURL);
