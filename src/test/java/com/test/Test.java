@@ -24,8 +24,15 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        MongoDBUtil.createDummyObjectsAllTables();
+        JSONObject body = new JSONObject();
+        body.put("info", "TEST");
 
+        Map<String, JSONObject> map = new HashMap<>();
+        map.put("PXHWkQLVHa", body);
+        map.put("F7Icx1marA", body);
+        map.put("IiGYm68cKx", body);
+
+        ParseUtil.batchUpdateInParseTable(map, "Batch");
     }
 
     public static void getAllTestObjects(){
