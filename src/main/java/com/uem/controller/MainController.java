@@ -75,7 +75,17 @@ public class MainController {
 
     @PutMapping("/user/{userID}")
     @ResponseBody
-    public ResponseEntity<String> updateUser(@RequestParam("Photo") MultipartFile body, @PathVariable("userID") String userID) throws Exception{
+    public ResponseEntity<String> updateUser(
+            @RequestParam(value = "Photo", required = false) MultipartFile body,
+            @RequestParam(value = "Email", required = false)String Email,
+            @RequestParam(value = "Password", required = false) String Password,
+            @RequestParam(value = "Name", required = false)String Name,
+            @RequestParam(value = "Mobile", required = false) String Mobile,
+            @RequestParam(value = "Address", required = false) String Address,
+            @RequestParam(value = "DOB", required = false) String DOB,
+            @RequestParam(value = "info", required = false) String info,
+
+            @PathVariable("userID") String userID) throws Exception{
 
         JSONObject jsonObject = new JSONObject(body.toString());
 
