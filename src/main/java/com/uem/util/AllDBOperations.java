@@ -11,16 +11,16 @@ import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.*;
 
-/*
+    /*
 
     Check this link to understand more about finding teh substrings and regex matches in Mongo DB
     https://docs.mongodb.com/manual/reference/operator/query/regex/#examples
 
-
- */
+    */
 
 public class AllDBOperations {
 
@@ -33,57 +33,41 @@ public class AllDBOperations {
 
     static Logger logger = LogUtil.getInstance();
 
-    public static  Boolean updateUser(User user){
+    public static Map<String, Object> updateUser(JSONObject body) {
 
-        List<String> updates = new ArrayList<>();
-        if (user.getMobile() != null){
-            updates.add("Mobile = \"" + user.getMobile() + "\"");
-        }
-        if (user.getName() != null){
-            updates.add("Name = \"" + user.getName() + "\"");
-        }
-        if (user.getAddress() != null){
-            updates.add("Address = \"" + user.getAddress() + "\"");
-        }
-        if (user.getDOB() != null){
-            updates.add("DOB = \"" + user.getDOB() + "\"");
-        }
-        if (user.getPhoto() != null){
-            updates.add("Photo = " + user.getPhoto() + "");
-        }
-
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-        String querySql = "UPDATE\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.User`\n" +
-                "SET ";
-        String endQuery = " WHERE\n" +
-                "  UserID = \"" + user.getUserID() + "\"";
-
-        String update = String.join(",", updates);
-        querySql = querySql + update + endQuery;
-
-        JobReference jobId = null;
-        Job completedJob = null;
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
         try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    Boolean aBoolean = updatesResult(bigquery, PROJECT_ID, completedJob);
-                    return aBoolean;
-                }
+
+            List<User> users = getAllUsers_UserID(body.getString("UserID"));
+            if (users == null || users.size() == 0) {
+                data.put("message", Constants.NO_INFO_FOUND);
+                return data;
+            }
+            body.remove("UserID");
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(users.get(0).getObjectID(), body);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "UniversalUser");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                return data;
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
         }
-        return false;
     }
 
-    public static Map<String, Object> createUser(String email){
+    public static Map<String, Object> createUser(String email) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
@@ -100,14 +84,14 @@ public class AllDBOperations {
             body.put("Password", Password);
 
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "UniversalUser");
-            Integer status  = Integer.valueOf(String.valueOf(result.get("status")));
-            if (status >= 200 && status < 300){
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
                 body = new JSONObject();
                 body.put("UserID", UserID);
                 body.put("UEM_ID", UEM_ID);
                 result = ParseUtil.batchCreateInParseTable(body, "UnivAdmin");
-                status  = Integer.valueOf(String.valueOf(result.get("status")));
-                if (status >= 200 && status < 300){
+                status = Integer.valueOf(String.valueOf(result.get("status")));
+                if (status >= 200 && status < 300) {
                     body = new JSONObject();
                     body.put("UserID", UserID);
                     body.put("Email", Email);
@@ -117,20 +101,20 @@ public class AllDBOperations {
                     data.put("success", true);
                     data.put("body", body);
                     return data;
-                }else {
+                } else {
                     data.put("success", false);
                     data.put("response", result.get("response"));
                     data.put("exception", result.get("exception"));
                     return data;
                 }
-            }else {
+            } else {
                 data.put("success", false);
                 data.put("response", result.get("response"));
                 data.put("exception", result.get("exception"));
                 return data;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             data.put("exception", UtilsManager.exceptionAsString(e));
             return data;
         }
@@ -139,31 +123,31 @@ public class AllDBOperations {
     public static Boolean updateUniversity(University university) throws JSONException {
 
         List<String> updates = new ArrayList<>();
-        if (university.getName() != null){
+        if (university.getName() != null) {
             updates.add("Name = \"" + university.getName() + "\"");
         }
-        if (university.getPhoto() != null){
+        if (university.getPhoto() != null) {
             updates.add("Photo = \"" + university.getPhoto() + "\"");
         }
-        if (university.getUnivAdmins() != null){
+        if (university.getUnivAdmins() != null) {
             updates.add("UnivAdmins = \"" + university.getUnivAdmins() + "\"");
         }
-        if (university.getStudents() != null){
+        if (university.getStudents() != null) {
             updates.add("Students = \"" + university.getStudents() + "\"");
         }
-        if (university.getTeachers() != null){
+        if (university.getTeachers() != null) {
             updates.add("Teachers = \"" + university.getTeachers() + "\"");
         }
-        if (university.getCourses() != null){
+        if (university.getCourses() != null) {
             updates.add("Courses = \"" + university.getCourses() + "\"");
         }
-        if (university.getWebsite() != null){
+        if (university.getWebsite() != null) {
             updates.add("Website = \"" + university.getWebsite() + "\"");
         }
-        if (university.getMoreInfo() != null){
+        if (university.getMoreInfo() != null) {
             updates.add("MoreInfo = \"" + university.getMoreInfo() + "\"");
         }
-        if (university.getActionLogs() != null){
+        if (university.getActionLogs() != null) {
             updates.add("ActionLogs = \"" + university.getActionLogs() + "\"");
         }
 
@@ -198,7 +182,7 @@ public class AllDBOperations {
         return false;
     }
 
-    public static  Map<String, Object> createUniversity(JSONObject body) throws JSONException {
+    public static Map<String, Object> createUniversity(JSONObject body) throws JSONException {
 
         Bigquery bigquery = GAuthenticate.getAuthenticated(true);
 
@@ -228,7 +212,7 @@ public class AllDBOperations {
         row.setJson(data);
         datachunk.add(row);
         Boolean aBoolean = BQTable_University.insertDataRows(bigquery, datachunk);
-        if (aBoolean){
+        if (aBoolean) {
             datachunk =
                     new ArrayList<TableDataInsertAllRequest.Rows>();
             row = new TableDataInsertAllRequest.Rows();
@@ -240,7 +224,7 @@ public class AllDBOperations {
             row.setJson(data);
             datachunk.add(row);
             aBoolean = BQTable_Permissions.insertDataRows(bigquery, datachunk);
-            if (aBoolean){
+            if (aBoolean) {
                 return data;
             }
         }
@@ -373,135 +357,81 @@ public class AllDBOperations {
 
     public static List<Teacher> getAllTeachers(String UserID) {
 
-        String PROJECT_ID = "universalevaluationmetrics";
-
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-
-        String querySql = "SELECT\n" +
-                "  UEM_ID,\n" +
-                "  UserID,\n" +
-                "  UnivID\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.Teacher`";
-
-        if (UserID != null) {
-            querySql = "SELECT\n" +
-                    "  UEM_ID,\n" +
-                    "  UserID,\n" +
-                    "  UnivID\n" +
-                    "FROM\n" +
-                    "  `universalevaluationmetrics.universalEvaluationMetrics.Teacher`\n" +
-                    "WHERE\n" +
-                    "  UserID = '" + UserID + "'";
-        }
-
-        JobReference jobId = null;
-        Job completedJob = null;
-        ArrayList<Teacher> univAdmins = null;
-        try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    univAdmins = getTeachers(bigquery, PROJECT_ID, completedJob);
-                }
+        List<Teacher> teachers = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UserID:{$regex:/" + UserID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllTeachers(filter);
+        if (documents == null || documents.size() == 0) {
+            return teachers;
+        } else {
+            for (Document document : documents) {
+                Teacher teacher = new Teacher();
+                teacher.setUnivID(document.getString("UnivID"));
+                teacher.setUserID(document.getString("UserID"));
+                teacher.setUEM_ID(document.getString("UEM_ID"));
+                teacher.setInfo((document.getString("info")));
+                teacher.setDocuments(document.getList("Documents", Document.class));
+                teacher.setObjectID(document.getString("_id"));
+                teacher.set_created_at(document.getDate("_created_at"));
+                teacher.set_updated_at(document.getDate("_updated_at"));
+                teachers.add(teacher);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
         }
-        return univAdmins;
+        return teachers;
     }
 
     public static List<Student> getAllStudents(String UserID) {
 
-        String PROJECT_ID = "universalevaluationmetrics";
-
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-
-        String querySql = "SELECT\n" +
-                "  UEM_ID,\n" +
-                "  UserID,\n" +
-                "  UnivID\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.Student`";
-
-        if (UserID != null) {
-            querySql = "SELECT\n" +
-                    "  UEM_ID,\n" +
-                    "  UserID,\n" +
-                    "  UnivID\n" +
-                    "FROM\n" +
-                    "  `universalevaluationmetrics.universalEvaluationMetrics.Student`\n" +
-                    "WHERE\n" +
-                    "  UserID = '" + UserID + "'";
-        }
-
-        JobReference jobId = null;
-        Job completedJob = null;
-        ArrayList<Student> univAdmins = null;
-        try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    univAdmins = getUnivStudents(bigquery, PROJECT_ID, completedJob);
-                }
+        List<Student> students = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UserID:{$regex:/" + UserID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllStudents(filter);
+        if (documents == null || documents.size() == 0) {
+            return students;
+        } else {
+            for (Document document : documents) {
+                Student student = new Student();
+                student.setUnivID(document.getString("UnivID"));
+                student.setUserID(document.getString("UserID"));
+                student.setUEM_ID(document.getString("UEM_ID"));
+                student.setInfo((document.getString("info")));
+                student.setDocuments(document.getList("Documents", Document.class));
+                student.setObjectID(document.getString("_id"));
+                student.set_created_at(document.getDate("_created_at"));
+                student.set_updated_at(document.getDate("_updated_at"));
+                students.add(student);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
         }
-        return univAdmins;
+        return students;
     }
 
     public static List<UnivAdmin> getAllAdmin(String UserID) {
 
-        String PROJECT_ID = "universalevaluationmetrics";
-
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-
-        String querySql = "SELECT\n" +
-                "  UEM_ID,\n" +
-                "  UserID,\n" +
-                "  UnivID\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.UnivAdmin`";
-
-        if (UserID != null) {
-            querySql = "SELECT\n" +
-                    "  UEM_ID,\n" +
-                    "  UserID,\n" +
-                    "  UnivID\n" +
-                    "FROM\n" +
-                    "  `universalevaluationmetrics.universalEvaluationMetrics.UnivAdmin`\n" +
-                    "WHERE\n" +
-                    "  UserID = '" + UserID + "'";
-        }
-
-        JobReference jobId = null;
-        Job completedJob = null;
-        ArrayList<UnivAdmin> univAdmins = null;
-        try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    univAdmins = getUnivAdmins(bigquery, PROJECT_ID, completedJob);
-                }
+        List<UnivAdmin> univAdmins = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UserID:{$regex:/" + UserID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversityAdmin(filter);
+        if (documents == null || documents.size() == 0) {
+            return univAdmins;
+        } else {
+            for (Document document : documents) {
+                UnivAdmin univAdmin = new UnivAdmin();
+                univAdmin.setUnivID(document.getString("UnivID"));
+                univAdmin.setUserID(document.getString("UserID"));
+                univAdmin.setUEM_ID(document.getString("UEM_ID"));
+                univAdmin.setInfo((document.getString("info")));
+                univAdmin.setDocuments(document.getList("Documents", Document.class));
+                univAdmin.setObjectID(document.getString("_id"));
+                univAdmin.set_created_at(document.getDate("_created_at"));
+                univAdmin.set_updated_at(document.getDate("_updated_at"));
+                univAdmins.add(univAdmin);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
         }
         return univAdmins;
     }
@@ -511,13 +441,13 @@ public class AllDBOperations {
         List<User> users = new ArrayList<>();
         BsonDocument filter = BsonDocument
                 .parse("{ " +
-                        "Email:{$regex:/" + email +"/}" +
+                        "Email:{$regex:/" + email + "/}" +
                         "}");
         List<Document> documents = MongoDBUtil.getAllUniversalUsers(filter);
-        if (documents == null || documents.size() == 0){
+        if (documents == null || documents.size() == 0) {
             return users;
-        }else {
-            for (Document document : documents){
+        } else {
+            for (Document document : documents) {
                 User user = new User();
                 user.setUserID(document.getString("UserID"));
                 user.setDOB(document.getString("DOB"));
@@ -530,6 +460,10 @@ public class AllDBOperations {
                 user.setPassword(document.getString("Password"));
                 user.setEmail(document.getString("Email"));
 
+                user.setObjectID(document.getString("_id"));
+                user.set_created_at(document.getDate("_created_at"));
+                user.set_updated_at(document.getDate("_updated_at"));
+
                 users.add(user);
 
             }
@@ -539,59 +473,41 @@ public class AllDBOperations {
 
     public static List<User> getAllUsers_UserID(String UserID) {
 
-        String PROJECT_ID = "universalevaluationmetrics";
+        List<User> users = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UserID:{$regex:/" + UserID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversalUsers(filter);
+        if (documents == null || documents.size() == 0) {
+            return users;
+        } else {
+            for (Document document : documents) {
+                User user = new User();
+                user.setUserID(document.getString("UserID"));
+                user.setDOB(document.getString("DOB"));
+                user.setAddress(document.getString("Address"));
 
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+                user.setPhoto(String.valueOf(document.get("Photo")));
+                user.setMobile(document.getString("Mobile"));
 
-        String querySql = "SELECT\n" +
-                "  UserID,\n" +
-                "  Email,\n" +
-                "  Password,\n" +
-                "  Name,\n" +
-                "  Mobile,\n" +
-                "  Photo\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.User`";
+                user.setName(document.getString("Name"));
+                user.setPassword(document.getString("Password"));
+                user.setEmail(document.getString("Email"));
 
-        if (UserID != null) {
-            querySql = "SELECT\n" +
-                    "  UserID,\n" +
-                    "  Email,\n" +
-                    "  Password,\n" +
-                    "  Name,\n" +
-                    "  Mobile,\n" +
-                    "  Photo\n" +
-                    "FROM\n" +
-                    "  `universalevaluationmetrics.universalEvaluationMetrics.User`\n" +
-                    "WHERE\n" +
-                    "  UserID = '" + UserID + "'";
-        }
+                user.setObjectID(document.getString("_id"));
+                user.set_created_at(document.getDate("_created_at"));
+                user.set_updated_at(document.getDate("_updated_at"));
 
-        JobReference jobId = null;
-        Job completedJob = null;
-        ArrayList<User> users = new ArrayList<>();
-        try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    users = new ArrayList<User>(
-                            getUsers(bigquery, PROJECT_ID, completedJob));
-                }
+                users.add(user);
+
             }
-
-        } catch (Exception e) {
-            // logger.error(e);
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
         }
         return users;
     }
 
     private static ArrayList<UnivAdmin> getUnivAdmins(Bigquery bigquery, String projectId,
-                                            Job completedJob) throws IOException {
+                                                      Job completedJob) throws IOException {
         GetQueryResultsResponse queryResult = bigquery.jobs()
                 .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
         List<TableRow> rows = queryResult.getRows();
@@ -639,7 +555,7 @@ public class AllDBOperations {
     }
 
     private static Boolean updatesResult(Bigquery bigquery, String projectId,
-                                                  Job completedJob) throws IOException {
+                                         Job completedJob) throws IOException {
         GetQueryResultsResponse queryResult = bigquery.jobs()
                 .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
         List<TableRow> rows = queryResult.getRows();
@@ -649,7 +565,7 @@ public class AllDBOperations {
     }
 
     private static ArrayList<University> getUniversities(Bigquery bigquery, String projectId,
-                                                  Job completedJob) throws IOException {
+                                                         Job completedJob) throws IOException {
 
         GetQueryResultsResponse queryResult = bigquery.jobs()
                 .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
@@ -683,7 +599,7 @@ public class AllDBOperations {
     }
 
     private static ArrayList<Teacher> getTeachers(Bigquery bigquery, String projectId,
-                                                      Job completedJob) throws IOException {
+                                                  Job completedJob) throws IOException {
         GetQueryResultsResponse queryResult = bigquery.jobs()
                 .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
         List<TableRow> rows = queryResult.getRows();
@@ -707,7 +623,7 @@ public class AllDBOperations {
     }
 
     private static ArrayList<User> getUsers(Bigquery bigquery, String projectId,
-                                                                 Job completedJob) throws IOException {
+                                            Job completedJob) throws IOException {
         GetQueryResultsResponse queryResult = bigquery.jobs()
                 .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
         List<TableRow> rows = queryResult.getRows();

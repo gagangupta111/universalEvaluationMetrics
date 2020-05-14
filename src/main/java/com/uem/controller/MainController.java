@@ -1,5 +1,6 @@
 package com.uem.controller;
 
+import com.uem.model.CustomRequest;
 import com.uem.model.CustomResponse;
 import com.uem.model.User;
 import com.uem.service.MainService;
@@ -10,6 +11,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
@@ -72,9 +75,9 @@ public class MainController {
 
     @PutMapping("/user/{userID}")
     @ResponseBody
-    public ResponseEntity<String> updateUser(@RequestBody String body, @PathVariable("userID") String userID) throws Exception{
+    public ResponseEntity<String> updateUser(@RequestParam("Photo") MultipartFile body, @PathVariable("userID") String userID) throws Exception{
 
-        JSONObject jsonObject = new JSONObject(body.trim());
+        JSONObject jsonObject = new JSONObject(body.toString());
 
         if (jsonObject.length() == 0){
             return ResponseEntity.badRequest()

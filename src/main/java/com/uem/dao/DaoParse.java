@@ -46,8 +46,7 @@ public class DaoParse implements DaoInterface {
     @Override
     public CustomResponse signIn(String email, String password, String loginType) {
 
-        List<User> users = new ArrayList<>();
-        users = AllDBOperations.getAllUsers_Email(email);
+        List<User> users = AllDBOperations.getAllUsers_Email(email);
 
         if (users == null || users.size() == 0 || !password.equals(users.get(0).getPassword())) {
             CustomResponse customResponse = new CustomResponse();
@@ -101,35 +100,13 @@ public class DaoParse implements DaoInterface {
     public Boolean updateUserInfo(JSONObject body) {
 
         try {
-            User user = new User();
-            user.setUserID(body.getString("UserID"));
-            Iterator<String> keys = body.keys();
-            while (keys.hasNext()) {
 
-                String key = keys.next();
-                switch (key) {
-                    case "Name":
-                        user.setName(body.getString(key));
-                        break;
-                    case "Mobile":
-                        user.setMobile(body.getString(key));
-                        break;
-                    case "Photo":
-                        user.setPhoto(body.getString(key));
-                        break;
-                    case "Address":
-                        user.setAddress(body.getString(key));
-                        break;
-                    case "DOB":
-                        user.setDOB(body.getString(key));
-                        break;
-                    default:
-                        break;
-                }
+            Map<String, Object> map = AllDBOperations.updateUser(body);
+            if (Boolean.valueOf(String.valueOf(map.get("success")))) {
+                return true;
+            } else {
+                return false;
             }
-
-            return AllDBOperations.updateUser(user);
-
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             return false;

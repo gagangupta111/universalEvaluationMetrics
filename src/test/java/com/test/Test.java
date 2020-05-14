@@ -23,8 +23,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        List<Document> list = testGetUsers("gagan");
-        System.out.println(list);
+        ParseUtil.deleteAllObjectsAllTables();
     }
 
     public static void testBatchUpdate() throws Exception{

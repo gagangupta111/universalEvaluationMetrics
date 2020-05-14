@@ -11,7 +11,15 @@ public class TestClass {
     private JSONObject col3;
     private String createdAt;
     private String updatedAt;
+    private String info;
 
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
     public String getObjectID() {
         return objectID;
     }
