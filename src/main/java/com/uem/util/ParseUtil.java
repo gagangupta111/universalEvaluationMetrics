@@ -3,7 +3,6 @@ package com.uem.util;
 import com.uem.model.TestClass;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -34,7 +33,7 @@ public class ParseUtil {
 
         BsonDocument filter = BsonDocument
                 .parse("{ " + "}");
-        List<Document> documentList = MongoDBCollections.getAllBatch(filter);
+        List<Document> documentList = MongoDBUtil.getAllBatch(filter);
         List<String> objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -47,7 +46,7 @@ public class ParseUtil {
 
         // Course
 
-        documentList = MongoDBCollections.getAllCourse(filter);
+        documentList = MongoDBUtil.getAllCourse(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -60,7 +59,7 @@ public class ParseUtil {
 
         // getAllCourseAdmin
 
-        documentList = MongoDBCollections.getAllCourseAdmin(filter);
+        documentList = MongoDBUtil.getAllCourseAdmin(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -73,7 +72,7 @@ public class ParseUtil {
 
         // getAllCourseAdmin
 
-        documentList = MongoDBCollections.getAllPermissions(filter);
+        documentList = MongoDBUtil.getAllPermissions(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -86,7 +85,7 @@ public class ParseUtil {
 
         // getAllCourseAdmin
 
-        documentList = MongoDBCollections.getAllStudents(filter);
+        documentList = MongoDBUtil.getAllStudents(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -99,7 +98,7 @@ public class ParseUtil {
 
         // getAllCourseAdmin
 
-        documentList = MongoDBCollections.getAllTeachers(filter);
+        documentList = MongoDBUtil.getAllTeachers(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -112,7 +111,7 @@ public class ParseUtil {
 
         // getAllCourseAdmin
 
-        documentList = MongoDBCollections.getAllUniversalUsers(filter);
+        documentList = MongoDBUtil.getAllUniversalUsers(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -125,7 +124,7 @@ public class ParseUtil {
 
         // getAllCourseAdmin
 
-        documentList = MongoDBCollections.getAllUniversity(filter);
+        documentList = MongoDBUtil.getAllUniversity(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {
@@ -138,7 +137,7 @@ public class ParseUtil {
 
         // getAllCourseAdmin
 
-        documentList = MongoDBCollections.getAllUniversityAdmin(filter);
+        documentList = MongoDBUtil.getAllUniversityAdmin(filter);
         objectIDs = new ArrayList<>();
 
         for (Document document : documentList) {

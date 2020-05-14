@@ -18,7 +18,7 @@ public class MainService {
     private static Logger logger = LogUtil.getInstance();
 
     @Autowired
-    @Qualifier("DaoBigQuery")
+    @Qualifier("DaoParse")
     private DaoInterface dao;
 
     public String test() {

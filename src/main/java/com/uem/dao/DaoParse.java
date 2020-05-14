@@ -1,6 +1,6 @@
 package com.uem.dao;
 
-import com.uem.google.bigquery.main.AllBQOperations;
+import com.uem.util.AllDBOperations;
 import com.uem.model.*;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
@@ -14,22 +14,22 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-@Qualifier("DaoBigQuery")
-public class DaoBigQuery implements DaoInterface {
+@Qualifier("DaoParse")
+public class DaoParse implements DaoInterface {
 
     private static Logger logger = LogUtil.getInstance();
 
     public String test() {
-        logger.debug("REQUEST_RECIEVED-DaoBigQuery");
-        return "TEST-DaoBigQuery";
+        logger.debug("REQUEST_RECIEVED-DaoParse");
+        return "TEST-DaoParse";
     }
 
     @Override
     public CustomResponse signUp(String email) {
-        List<User> users = AllBQOperations.getAllUsers_Email(email);
+        List<User> users = AllDBOperations.getAllUsers_Email(email);
         if (users == null || users.size() == 0) {
 
-            Map<String, Object> data = AllBQOperations.createUser(email);
+            Map<String, Object> data = AllDBOperations.createUser(email);
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(true);
             customResponse.setInfo(data);
@@ -47,7 +47,7 @@ public class DaoBigQuery implements DaoInterface {
     public CustomResponse signIn(String email, String password, String loginType) {
 
         List<User> users = new ArrayList<>();
-        users = AllBQOperations.getAllUsers_Email(email);
+        users = AllDBOperations.getAllUsers_Email(email);
 
         if (users == null || users.size() == 0 || !password.equals(users.get(0).getPassword())) {
             CustomResponse customResponse = new CustomResponse();
@@ -58,7 +58,7 @@ public class DaoBigQuery implements DaoInterface {
 
         switch (loginType) {
             case "ADMIN":
-                List<UnivAdmin> univAdmins = AllBQOperations.getAllAdmin(users.get(0).getUserID());
+                List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin(users.get(0).getUserID());
                 if (univAdmins == null || univAdmins.size() == 0) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
@@ -67,7 +67,7 @@ public class DaoBigQuery implements DaoInterface {
                 }
                 break;
             case "STUDENT":
-                List<Student> students = AllBQOperations.getAllStudents(users.get(0).getUserID());
+                List<Student> students = AllDBOperations.getAllStudents(users.get(0).getUserID());
                 if (students == null || students.size() == 0) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
@@ -76,7 +76,7 @@ public class DaoBigQuery implements DaoInterface {
                 }
                 break;
             case "TEACHER":
-                List<Teacher> teachers = AllBQOperations.getAllTeachers(users.get(0).getUserID());
+                List<Teacher> teachers = AllDBOperations.getAllTeachers(users.get(0).getUserID());
                 if (teachers == null || teachers.size() == 0) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
@@ -128,7 +128,7 @@ public class DaoBigQuery implements DaoInterface {
                 }
             }
 
-            return AllBQOperations.updateUser(user);
+            return AllDBOperations.updateUser(user);
 
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
@@ -139,7 +139,7 @@ public class DaoBigQuery implements DaoInterface {
     @Override
     public List<User> getUserInfo(String UserID) {
         List<User> users = new ArrayList<>();
-        users = AllBQOperations.getAllUsers_UserID(UserID);
+        users = AllDBOperations.getAllUsers_UserID(UserID);
         return users;
     }
 
@@ -149,7 +149,7 @@ public class DaoBigQuery implements DaoInterface {
         try {
             if (body.has("Name") && body.has("Website") && body.has("AdminID")) {
 
-                Map<String, Object> map = AllBQOperations.createUniversity(body);
+                Map<String, Object> map = AllDBOperations.createUniversity(body);
                 if (map == null) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
@@ -182,7 +182,7 @@ public class DaoBigQuery implements DaoInterface {
 
         try {
             Boolean replace = body.has("Replace") ? body.getBoolean("Replace") : false;
-            List<University> universities = AllBQOperations.getAllUniversities_UnivID(body.getString("UnivID"));
+            List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("UnivID"));
             University existingUniversity = null;
 
             if (universities == null || universities.size() == 0){
@@ -264,7 +264,7 @@ public class DaoBigQuery implements DaoInterface {
                 array.put(jsonObject);
                 university.setActionLogs(array.toString());
 
-                if (AllBQOperations.updateUniversity(university)){
+                if (AllDBOperations.updateUniversity(university)){
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(true);
                     customResponse.setMessage(Constants.SUCCESS);

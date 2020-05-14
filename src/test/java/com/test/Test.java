@@ -2,11 +2,10 @@ package com.test;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
-import com.uem.google.bigquery.main.AllBQOperations;
+import com.uem.util.AllDBOperations;
 import com.uem.google.bigquery.main.BQOperationsTestTable;
 import com.uem.model.TestClass;
 import com.uem.util.GAuthenticate;
-import com.uem.util.MongoDBCollections;
 import com.uem.util.MongoDBUtil;
 import com.uem.util.ParseUtil;
 import org.bson.BsonDocument;
@@ -24,6 +23,12 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
+        List<Document> list = testGetUsers("gagan");
+        System.out.println(list);
+    }
+
+    public static void testBatchUpdate() throws Exception{
+
         JSONObject body = new JSONObject();
         body.put("info", "TEST");
 
@@ -33,10 +38,33 @@ public class Test {
         map.put("IiGYm68cKx", body);
 
         ParseUtil.batchUpdateInParseTable(map, "Batch");
+
+    }
+
+    public static List<Document> testGetUsers(String email){
+
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "Email:{$regex:/" + email +"/}" +
+                        "}");
+        return MongoDBUtil.getAllUniversalUsers(filter);
+
+    }
+
+    public static List<Document> testGetTest(){
+
+        String info = "info";
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "col4:{$regex:/" + info +"/}" +
+                        "}");
+
+        return MongoDBUtil.getAllTestObjects(filter);
+
     }
 
     public static void getAllTestObjects(){
-        List<Document> documents = MongoDBCollections.getAllTestObjects(BsonDocument
+        List<Document> documents = MongoDBUtil.getAllTestObjects(BsonDocument
                 .parse("{ " + "}"));
         System.out.println(documents);
     }
@@ -44,7 +72,7 @@ public class Test {
 
     public static void deleteAllTestObjects(){
 
-        List<Document> documents = MongoDBCollections.getAllTestObjects(BsonDocument
+        List<Document> documents = MongoDBUtil.getAllTestObjects(BsonDocument
                 .parse("{ " + "}"));
 
         List<String> objectIDs = new ArrayList<>();
@@ -124,7 +152,7 @@ public class Test {
     public static void reCreateWholeStructure() throws IOException {
 
         Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-        AllBQOperations.reCreateWholeStructure(bigquery);
+        AllDBOperations.reCreateWholeStructure(bigquery);
 
     }
 

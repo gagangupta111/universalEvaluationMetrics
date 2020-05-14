@@ -1,21 +1,28 @@
-package com.uem.google.bigquery.main;
+package com.uem.util;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
 import com.google.api.services.bigquery.model.DatasetList.Datasets;
+import com.uem.google.bigquery.main.*;
 import com.uem.model.*;
-import com.uem.util.GAuthenticate;
-import com.uem.util.LogUtil;
-import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
+import org.bson.BsonDocument;
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.*;
 
-public class AllBQOperations {
+/*
+
+    Check this link to understand more about finding teh substrings and regex matches in Mongo DB
+    https://docs.mongodb.com/manual/reference/operator/query/regex/#examples
+
+
+ */
+
+public class AllDBOperations {
 
     private static final String PROJECT_ID = "universalevaluationmetrics";
     private static final String DATASET_ID = "universalEvaluationMetrics";
@@ -76,44 +83,57 @@ public class AllBQOperations {
         return false;
     }
 
-    public static  Map<String, Object> createUser(String email){
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+    public static Map<String, Object> createUser(String email){
 
-        String UserID = UtilsManager.generateUniqueID();
-        String Email = email;
-        String Password = UtilsManager.generateUniqueID();
-        String UEM_ID = UtilsManager.generateUniqueID();
-
-        ArrayList<TableDataInsertAllRequest.Rows> datachunk =
-                new ArrayList<TableDataInsertAllRequest.Rows>();
-        TableDataInsertAllRequest.Rows row = new TableDataInsertAllRequest.Rows();
         Map<String, Object> data = new HashMap<>();
-        data.put("UserID", UserID);
-        data.put("Email", Email);
-        data.put("Password", Password);
-        row.setJson(data);
-        datachunk.add(row);
-        Boolean aBoolean = BQTable_Universal_User.insertDataRows(bigquery, datachunk);
-        if (aBoolean){
-            datachunk =
-                    new ArrayList<TableDataInsertAllRequest.Rows>();
-            row = new TableDataInsertAllRequest.Rows();
-            data = new HashMap<>();
-            data.put("UserID", UserID);
-            data.put("UEM_ID", UEM_ID);
-            row.setJson(data);
-            datachunk.add(row);
-            aBoolean = BQTable_UnivAdmin.insertDataRows(bigquery, datachunk);
-            if (aBoolean){
-                data = new HashMap<>();
-                data.put("UserID", UserID);
-                data.put("Email", Email);
-                data.put("Password", Password);
-                data.put("UEM_ID", UEM_ID);
+        data.put("success", false);
+        try {
+
+            String UserID = UtilsManager.generateUniqueID();
+            String Email = email;
+            String Password = UtilsManager.generateUniqueID();
+            String UEM_ID = UtilsManager.generateUniqueID();
+
+            JSONObject body = new JSONObject();
+            body.put("UserID", UserID);
+            body.put("Email", Email);
+            body.put("Password", Password);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "UniversalUser");
+            Integer status  = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300){
+                body = new JSONObject();
+                body.put("UserID", UserID);
+                body.put("UEM_ID", UEM_ID);
+                result = ParseUtil.batchCreateInParseTable(body, "UnivAdmin");
+                status  = Integer.valueOf(String.valueOf(result.get("status")));
+                if (status >= 200 && status < 300){
+                    body = new JSONObject();
+                    body.put("UserID", UserID);
+                    body.put("Email", Email);
+                    body.put("Password", Password);
+                    body.put("UEM_ID", UEM_ID);
+
+                    data.put("success", true);
+                    data.put("body", body);
+                    return data;
+                }else {
+                    data.put("success", false);
+                    data.put("response", result.get("response"));
+                    data.put("exception", result.get("exception"));
+                    return data;
+                }
+            }else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
                 return data;
             }
+
+        }catch (Exception e){
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
         }
-        return data;
     }
 
     public static Boolean updateUniversity(University university) throws JSONException {
@@ -488,52 +508,31 @@ public class AllBQOperations {
 
     public static List<User> getAllUsers_Email(String email) {
 
-        String PROJECT_ID = "universalevaluationmetrics";
+        List<User> users = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "Email:{$regex:/" + email +"/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversalUsers(filter);
+        if (documents == null || documents.size() == 0){
+            return users;
+        }else {
+            for (Document document : documents){
+                User user = new User();
+                user.setUserID(document.getString("UserID"));
+                user.setDOB(document.getString("DOB"));
+                user.setAddress(document.getString("Address"));
 
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+                user.setPhoto(String.valueOf(document.get("Photo")));
+                user.setMobile(document.getString("Mobile"));
 
-        String querySql = "SELECT\n" +
-                "  UserID,\n" +
-                "  Email,\n" +
-                "  Password,\n" +
-                "  Name,\n" +
-                "  Mobile,\n" +
-                "  Photo\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.User`";
+                user.setName(document.getString("Name"));
+                user.setPassword(document.getString("Password"));
+                user.setEmail(document.getString("Email"));
 
-        if (email != null) {
-            querySql = "SELECT\n" +
-                "  UserID,\n" +
-                "  Email,\n" +
-                "  Password,\n" +
-                "  Name,\n" +
-                "  Mobile,\n" +
-                "  Photo\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.User`\n" +
-                "WHERE\n" +
-                "  Email LIKE '%" + email + "%'";
-        }
-        JobReference jobId = null;
-        Job completedJob = null;
-        ArrayList<User> users = new ArrayList<>();
-        try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    users = new ArrayList<User>(
-                            getUsers(bigquery, PROJECT_ID, completedJob));
-                }
+                users.add(user);
+
             }
-
-        } catch (Exception e) {
-            // logger.error(e);
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
         }
         return users;
     }
