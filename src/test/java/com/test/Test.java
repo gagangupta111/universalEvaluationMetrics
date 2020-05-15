@@ -1,19 +1,27 @@
 package com.test;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.S3Object;
+import com.google.api.client.util.IOUtils;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
-import com.uem.util.AllDBOperations;
+import com.uem.util.*;
 import com.uem.google.bigquery.main.BQOperationsTestTable;
 import com.uem.model.TestClass;
-import com.uem.util.GAuthenticate;
-import com.uem.util.MongoDBUtil;
-import com.uem.util.ParseUtil;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,10 +31,88 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        getParseTest("1uJnB9c3rS");
+        testS3Amazon();
+
     }
 
-    public static void testBatchUpdate() throws Exception{
+    public static void testS3Amazon() {
+
+        try {
+
+            String bucketName = "universalevaluationmetrics";
+            String keyName = "application1.properties";
+
+            // Admin
+            // Admin@123
+
+            AWSCredentials awsCreds = new BasicAWSCredentials("AKIA3UYRN6M2RF6QBNGC", "7USbzqfAhDuP23SrkKp3ai2CKQBuVeRXIOO6VDQX");
+            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                    .withRegion(Regions.AP_SOUTH_1)
+                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                    .build();
+
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classloader.getResourceAsStream("application.properties");
+
+            File file = new File("file");
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                IOUtils.copy(inputStream, outputStream);
+            } catch (FileNotFoundException e) {
+                // handle exception here
+            } catch (IOException e) {
+                // handle exception here
+            }
+
+            PutObjectResult putObjectResult = s3Client.putObject(bucketName, keyName, file);
+            System.out.println(putObjectResult);
+
+            S3Object s3Object = s3Client.getObject(bucketName, keyName);
+            System.out.println(s3Object);
+
+            file = new File("file");
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                IOUtils.copy(s3Object.getObjectContent(), outputStream);
+            } catch (FileNotFoundException e) {
+                // handle exception here
+            } catch (IOException e) {
+                // handle exception here
+            }
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+
+        } catch (Exception e) {
+            System.out.println(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    public static void testUploadFile() throws Exception {
+
+        JSONObject body = new JSONObject();
+        body.put("Name", "New Name");
+        body.put("UserID", "6b73317c-2655-46ae-a318-2063503b0f26");
+
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream inputStream = classloader.getResourceAsStream("application.properties");
+
+        File file = new File("file");
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            IOUtils.copy(inputStream, outputStream);
+        } catch (FileNotFoundException e) {
+            // handle exception here
+        } catch (IOException e) {
+            // handle exception here
+        }
+
+        body.put("Photo", file);
+
+        AllDBOperations.updateUser(body);
+    }
+
+    public static void testBatchUpdate() throws Exception {
 
         JSONObject body = new JSONObject();
         body.put("info", "TEST");
@@ -40,42 +126,41 @@ public class Test {
 
     }
 
-    public static List<Document> testGetUsers(String email){
+    public static List<Document> testGetUsers(String email) {
 
         BsonDocument filter = BsonDocument
                 .parse("{ " +
-                        "Email:{$regex:/" + email +"/}" +
+                        "Email:{$regex:/" + email + "/}" +
                         "}");
         return MongoDBUtil.getAllUniversalUsers(filter);
 
     }
 
-    public static List<Document> testGetTest(){
+    public static List<Document> testGetTest() {
 
         String info = "info";
         BsonDocument filter = BsonDocument
                 .parse("{ " +
-                        "col4:{$regex:/" + info +"/}" +
+                        "col4:{$regex:/" + info + "/}" +
                         "}");
 
         return MongoDBUtil.getAllTestObjects(filter);
 
     }
 
-    public static void getAllTestObjects(){
+    public static void getAllTestObjects() {
         List<Document> documents = MongoDBUtil.getAllTestObjects(BsonDocument
                 .parse("{ " + "}"));
         System.out.println(documents);
     }
 
-
-    public static void deleteAllTestObjects(){
+    public static void deleteAllTestObjects() {
 
         List<Document> documents = MongoDBUtil.getAllTestObjects(BsonDocument
                 .parse("{ " + "}"));
 
         List<String> objectIDs = new ArrayList<>();
-        for (Document document : documents){
+        for (Document document : documents) {
             objectIDs.add(document.getString("_id"));
         }
 
