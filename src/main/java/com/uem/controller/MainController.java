@@ -127,6 +127,7 @@ public class MainController {
                 object.put("ETag", putObjectResult.getETag());
                 object.put("Name", key_name);
                 body.put("Photo", object);
+                file.delete();
             }
 
             Boolean aBoolean =  mainService.updateUserInfo(body);
