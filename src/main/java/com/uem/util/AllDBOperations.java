@@ -453,7 +453,7 @@ public class AllDBOperations {
                 user.setDOB(document.getString("DOB"));
                 user.setAddress(document.getString("Address"));
 
-                user.setPhoto(String.valueOf(document.get("Photo")));
+                user.setPhoto((document.get("Photo", JSONObject.class)));
                 user.setMobile(document.getString("Mobile"));
 
                 user.setName(document.getString("Name"));
@@ -488,7 +488,7 @@ public class AllDBOperations {
                 user.setDOB(document.getString("DOB"));
                 user.setAddress(document.getString("Address"));
 
-                user.setPhoto(String.valueOf(document.get("Photo")));
+                user.setPhoto(document.get("Photo", JSONObject.class));
                 user.setMobile(document.getString("Mobile"));
 
                 user.setName(document.getString("Name"));
@@ -566,87 +566,17 @@ public class AllDBOperations {
 
     private static ArrayList<University> getUniversities(Bigquery bigquery, String projectId,
                                                          Job completedJob) throws IOException {
-
-        GetQueryResultsResponse queryResult = bigquery.jobs()
-                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
-        List<TableRow> rows = queryResult.getRows();
-        ArrayList<University> universities = new ArrayList<>();
-        System.out.print("\nQuery Results:\n------------\n");
-
-        if (rows != null) {
-            for (TableRow row : rows) {
-                LinkedList<TableCell> rowList = new LinkedList<TableCell>();
-                rowList.addAll(row.getF());
-                University university = new University();
-                university.setUnivID(rowList.get(0).getV().toString());
-                university.setName(rowList.get(1).getV().toString());
-                university.setPhoto(rowList.get(2).getV().toString());
-                university.setStarted(rowList.get(3).getV().toString());
-                university.setUnivAdmins(rowList.get(4).getV().toString());
-                university.setStudents(rowList.get(5).getV().toString());
-                university.setTeachers(rowList.get(6).getV().toString());
-                university.setCourses(rowList.get(7).getV().toString());
-                university.setWebsite(rowList.get(8).getV().toString());
-                university.setMoreInfo(rowList.get(9).getV().toString());
-                university.setActionLogs(rowList.get(10).getV().toString());
-
-                universities.add(university);
-            }
-        }
-
-        return universities;
-
+        return null;
     }
 
     private static ArrayList<Teacher> getTeachers(Bigquery bigquery, String projectId,
                                                   Job completedJob) throws IOException {
-        GetQueryResultsResponse queryResult = bigquery.jobs()
-                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
-        List<TableRow> rows = queryResult.getRows();
-        ArrayList<Teacher> teachers = new ArrayList<Teacher>();
-        System.out.print("\nQuery Results:\n------------\n");
-
-        if (rows != null) {
-            for (TableRow row : rows) {
-                LinkedList<TableCell> rowList = new LinkedList<TableCell>();
-                rowList.addAll(row.getF());
-                Teacher teacher = new Teacher();
-                teacher.setUEM_ID(rowList.get(0).getV().toString());
-                teacher.setUserID(rowList.get(1).getV().toString());
-                teacher.setUnivID(rowList.get(2).getV().toString());
-                teachers.add(teacher);
-            }
-        }
-
-        return teachers;
-
+        return null;
     }
 
     private static ArrayList<User> getUsers(Bigquery bigquery, String projectId,
                                             Job completedJob) throws IOException {
-        GetQueryResultsResponse queryResult = bigquery.jobs()
-                .getQueryResults(projectId, completedJob.getJobReference().getJobId()).execute();
-        List<TableRow> rows = queryResult.getRows();
-        ArrayList<User> users = new ArrayList<User>();
-        System.out.print("\nQuery Results:\n------------\n");
-
-        if (rows != null) {
-            for (TableRow row : rows) {
-                LinkedList<TableCell> rowList = new LinkedList<TableCell>();
-                rowList.addAll(row.getF());
-                User user = new User();
-                user.setUserID(rowList.get(0).getV().toString());
-                user.setEmail(rowList.get(1).getV().toString());
-                user.setPassword(rowList.get(2).getV().toString());
-                user.setName(rowList.get(3).getV().toString());
-                user.setMobile(rowList.get(4).getV().toString());
-                user.setPhoto(rowList.get(5).getV().toString());
-                users.add(user);
-            }
-        }
-
-        return users;
-
+        return null;
     }
 
     public static JobReference startQuery(Bigquery bigquery, String projectId, String querySql) {

@@ -59,12 +59,12 @@ public class AmazonS3Util {
         return null;
     }
 
-    public static S3Object getFileFromS3Bucket(String keyName){
+    public static File getFileFromS3Bucket(String keyName){
 
         while (retry >= 0){
             try {
                 S3Object s3Object = getS3Client().getObject(BUCKET_NAME, keyName);
-                return s3Object;
+                return s3ObjectToFile(s3Object, keyName);
             }catch (Exception e){
                 logger.debug(UtilsManager.exceptionAsString(e));
                 retry--;

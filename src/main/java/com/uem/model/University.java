@@ -1,12 +1,14 @@
 package com.uem.model;
 
+import org.json.JSONObject;
+
 import java.util.Date;
 
 public class University {
 
     private String UnivID;
     private String Name;
-    private Object Photo;
+    private JSONObject Photo;
     private String Started;
     private String UnivAdmins;
     private String Students;
@@ -67,11 +69,11 @@ public class University {
         Name = name;
     }
 
-    public Object getPhoto() {
+    public JSONObject getPhoto() {
         return Photo;
     }
 
-    public void setPhoto(Object photo) {
+    public void setPhoto(JSONObject photo) {
         Photo = photo;
     }
 

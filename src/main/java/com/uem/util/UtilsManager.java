@@ -10,14 +10,26 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UtilsManager {
 
     static Logger logger = LogUtil.getInstance();
+
+    public static void multipartFileToFile(MultipartFile file, Path dir) throws  Exception{
+        Path filepath = Paths.get(dir.toString(), file.getOriginalFilename());
+
+        try (OutputStream os = Files.newOutputStream(filepath)) {
+            os.write(file.getBytes());
+        }
+    }
 
     public static String getUTCStandardDateFormat(){
         Date date = new Date();

@@ -13,6 +13,7 @@ public interface Constants {
     public static final String  LOGIN_FAILURE = "Either User does not exist or password is Incorrect!";
     public static final String  SIGN_UP_FAILURE = "User with this email already exists!";
     public static final String  NO_INFO_FOUND = "NO_INFO_FOUND";
+    public static final String  AMAZON_S3_ERROR = "AMAZON_S3_ERROR";
 
     public static final String  UNIVERSITY_DOES_NOT_EXIST = "UNIVERSITY_DOES_NOT_EXIST";
 

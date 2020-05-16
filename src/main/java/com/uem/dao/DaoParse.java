@@ -175,7 +175,7 @@ public class DaoParse implements DaoInterface {
                 if (body.has("Name")){
                     university.setName(body.getString("Name"));
                 }else if (body.has("Photo")){
-                    university.setPhoto(body.getString("Photo"));
+                    university.setPhoto(body.getJSONObject("Photo"));
                 }else if (body.has("UnivAdmins")){
                     if (replace){
                         university.setUnivAdmins(body.getString("UnivAdmins"));

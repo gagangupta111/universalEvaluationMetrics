@@ -1,5 +1,7 @@
 package com.uem.model;
 
+import org.json.JSONObject;
+
 import java.util.Date;
 
 public class User {
@@ -9,7 +11,7 @@ public class User {
     private String Password;
     private String Name;
     private String Mobile;
-    private String Photo;
+    private JSONObject Photo;
     private String Address;
     private String DOB;
     private String info;
@@ -88,11 +90,11 @@ public class User {
         Mobile = mobile;
     }
 
-    public String getPhoto() {
+    public JSONObject getPhoto() {
         return Photo;
     }
 
-    public void setPhoto(String photo) {
+    public void setPhoto(JSONObject photo) {
         Photo = photo;
     }
 

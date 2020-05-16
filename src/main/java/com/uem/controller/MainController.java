@@ -1,13 +1,17 @@
 package com.uem.controller;
 
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.uem.model.CustomResponse;
 import com.uem.model.User;
 import com.uem.service.MainService;
+import com.uem.util.AmazonS3Util;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.mortbay.util.ajax.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -90,7 +94,6 @@ public class MainController {
         try {
             JSONObject body = new JSONObject();
 
-            File file = new File("file");
             body = Email != null ? body.put("Email", Email) : body;
             body = Password != null ? body.put("Password", Password) : body;
             body = Name != null ? body.put("Name", Name) : body;
@@ -98,10 +101,7 @@ public class MainController {
             body = Address != null ? body.put("Address", Address) : body;
             body = DOB != null ? body.put("DOB", DOB) : body;
             body = info != null ? body.put("info", info) : body;
-            if (Photo != null){
-                Photo.transferTo(file);
-                body.put("Photo", file);
-            }
+            body = userID != null ? body.put("UserID", userID) : body;
 
             if (body.length() == 0){
                 return ResponseEntity.badRequest()
@@ -109,7 +109,26 @@ public class MainController {
                         .body("NOTHING_TO_UPDATE");
             }
 
-            body.put("UserID", userID);
+            if (Photo != null){
+
+                String key_name = "USER_PHOTO_" + userID;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Photo.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null){
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("Name", key_name);
+                body.put("Photo", object);
+            }
+
             Boolean aBoolean =  mainService.updateUserInfo(body);
             if (aBoolean){
                 return ResponseEntity.ok()
