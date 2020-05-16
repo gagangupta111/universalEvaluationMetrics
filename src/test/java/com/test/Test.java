@@ -31,7 +31,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        testS3Amazon();
+        ParseUtil.deleteAllObjectsAllTables();
 
     }
 

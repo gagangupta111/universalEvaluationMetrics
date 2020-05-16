@@ -1,5 +1,6 @@
 package com.uem.model;
 
+import org.bson.Document;
 import org.json.JSONObject;
 
 import java.util.Date;
@@ -11,7 +12,7 @@ public class User {
     private String Password;
     private String Name;
     private String Mobile;
-    private JSONObject Photo;
+    private Document Photo;
     private String Address;
     private String DOB;
     private String info;
@@ -90,11 +91,11 @@ public class User {
         Mobile = mobile;
     }
 
-    public JSONObject getPhoto() {
+    public Document getPhoto() {
         return Photo;
     }
 
-    public void setPhoto(JSONObject photo) {
+    public void setPhoto(Document photo) {
         Photo = photo;
     }
 

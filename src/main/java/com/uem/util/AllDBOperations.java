@@ -182,176 +182,193 @@ public class AllDBOperations {
         return false;
     }
 
-    public static Map<String, Object> createUniversity(JSONObject body) throws JSONException {
+    public static Map<String, Object> createUniversity(JSONObject university) {
 
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-
-        String UnivID = UtilsManager.generateUniqueID();
-        String Name = body.getString("Name");
-        String Website = body.getString("Website");
-        String AdminID = body.getString("AdminID");
-
-        ArrayList<TableDataInsertAllRequest.Rows> datachunk =
-                new ArrayList<TableDataInsertAllRequest.Rows>();
-        TableDataInsertAllRequest.Rows row = new TableDataInsertAllRequest.Rows();
         Map<String, Object> data = new HashMap<>();
-        data.put("UnivID", UnivID);
-        data.put("Name", Name);
-        data.put("Website", Website);
-        data.put("UnivAdmins", AdminID);
-        data.put("Started", UtilsManager.getUTCStandardDateFormat());
+        data.put("success", false);
+        try {
+            String UnivID = UtilsManager.generateUniqueID();
+            String Name = university.getString("Name");
+            String Website = university.getString("Website");
+            String AdminID = university.getString("AdminID");
 
-        JSONArray array = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("Action", "University_Started");
-        jsonObject.put("Time", UtilsManager.getUTCStandardDateFormat());
-        array.put(jsonObject);
+            university.put("UnivID", UnivID);
+            university.remove("AdminID");
 
-        data.put("ActionLogs", array.toString());
+            JSONArray array = new JSONArray();
+            array.put(AdminID);
 
-        row.setJson(data);
-        datachunk.add(row);
-        Boolean aBoolean = BQTable_University.insertDataRows(bigquery, datachunk);
-        if (aBoolean) {
-            datachunk =
-                    new ArrayList<TableDataInsertAllRequest.Rows>();
-            row = new TableDataInsertAllRequest.Rows();
-            data = new HashMap<>();
-            data.put("PermissionID", UtilsManager.generateUniqueID());
-            data.put("UnivID", UnivID);
-            data.put("UEM_ID", AdminID);
-            data.put("Permissions", "OWNER");
-            row.setJson(data);
-            datachunk.add(row);
-            aBoolean = BQTable_Permissions.insertDataRows(bigquery, datachunk);
-            if (aBoolean) {
+            university.put("UnivAdmins", array);
+            university.put("Started", UtilsManager.getUTCStandardDateFormat());
+
+            array = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("Action", "UNIVERSITY_STARTED");
+            jsonObject.put("Time", UtilsManager.getUTCStandardDateFormat());
+            array.put(jsonObject);
+
+            university.put("ActionLogs", array);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(university, "University");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                JSONObject permission = new JSONObject();
+                permission.put("PermissionID", UtilsManager.generateUniqueID());
+                permission.put("UnivID", UnivID);
+                permission.put("UEM_ID", AdminID);
+
+                array = new JSONArray();
+                array.put("OWNER");
+
+                permission.put("Permissions", array);
+                result = ParseUtil.batchCreateInParseTable(permission, "Permissions");
+                status = Integer.valueOf(String.valueOf(result.get("status")));
+
+                for (Iterator<String> iter = university.keys(); iter.hasNext(); ) {
+                    String key  = iter.next();
+                    permission.put(key, (university.get(key)));
+                }
+
+                if (status >= 200 && status < 300) {
+                    data.put("success", true);
+                    data.put("body", permission);
+                    return data;
+                } else {
+                    data.put("success", false);
+                    data.put("response", result.get("response"));
+                    data.put("exception", result.get("exception"));
+                    data.put("body", permission);
+                    return data;
+                }
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", university);
                 return data;
             }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
         }
-        return null;
     }
 
     public static List<University> getAllUniversities_UnivAdmin_Contains(String UnivAdmin) {
 
-        String PROJECT_ID = "universalevaluationmetrics";
+        List<University> universities = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UnivAdmin:{$regex:/" + UnivAdmin + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversity(filter);
+        if (documents == null || documents.size() == 0) {
+            return universities;
+        } else {
+            for (Document document : documents) {
+                University university = new University();
+                university.setUnivID(document.getString("UnivID"));
+                university.setName((document.getString("Name")));
+                university.setStarted((document.getString("Started")));
+                university.setUnivAdmins((document.getString("UnivAdmins")));
+                university.setStudents(
+                        document.containsKey("Students")
+                        ? document.getList("Students", Document.class)
+                        : new ArrayList<>());
+                university.setTeachers(
+                        document.containsKey("Teachers")
+                                ? document.getList("Teachers", Document.class)
+                                : new ArrayList<>());
+                university.setCourses(
+                        document.containsKey("Courses")
+                                ? document.getList("Courses", Document.class)
+                                : new ArrayList<>());
+                university.setWebsite((document.getString("Website")));
+                university.setLegalInfo(
+                        document.containsKey("LegalInfo")
+                                ? document.get("LegalInfo", Document.class)
+                                : new Document());
+                university.setMoreInfo(
+                        document.containsKey("MoreInfo")
+                                ? document.get("MoreInfo", Document.class)
+                                : new Document());
 
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+                university.setActionLogs(
+                        document.containsKey("ActionLogs")
+                                ? document.getList("ActionLogs", Document.class)
+                                : new ArrayList<>());
 
-        String querySql = "SELECT\n" +
-                "  UnivID,\n" +
-                "  Name,\n" +
-                "  Photo,\n" +
-                "  Started,\n" +
-                "  UnivAdmins,\n" +
-                "  Students,\n" +
-                "  Teachers,\n" +
-                "  Courses,\n" +
-                "  Website,\n" +
-                "  MoreInfo,\n" +
-                "  ActionLogs\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.University`";
+                university.setInfo((document.getString("info")));
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
 
-        if (UnivAdmin != null) {
-            querySql = "SELECT\n" +
-                    "  UnivID,\n" +
-                    "  Name,\n" +
-                    "  Photo,\n" +
-                    "  Started,\n" +
-                    "  UnivAdmins,\n" +
-                    "  Students,\n" +
-                    "  Teachers,\n" +
-                    "  Courses,\n" +
-                    "  Website,\n" +
-                    "  MoreInfo,\n" +
-                    "  ActionLogs\n" +
-                    "FROM\n" +
-                    "  `universalevaluationmetrics.universalEvaluationMetrics.University`\n" +
-                    "WHERE\n" +
-                    "  UnivAdmins LIKE '%" + UnivAdmin + "%'";
-        }
-
-        JobReference jobId = null;
-        Job completedJob = null;
-        ArrayList<University> universities = null;
-        try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    universities = getUniversities(bigquery, PROJECT_ID, completedJob);
-                }
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                universities.add(university);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
         }
-
         return universities;
     }
 
     public static List<University> getAllUniversities_UnivID(String UnivID) {
 
-        String PROJECT_ID = "universalevaluationmetrics";
+        List<University> universities = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UnivID:{$regex:/" + UnivID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversity(filter);
+        if (documents == null || documents.size() == 0) {
+            return universities;
+        } else {
+            for (Document document : documents) {
+                University university = new University();
+                university.setUnivID(document.getString("UnivID"));
+                university.setName((document.getString("Name")));
+                university.setStarted((document.getString("Started")));
+                university.setUnivAdmins((document.getString("UnivAdmins")));
+                university.setStudents(
+                        document.containsKey("Students")
+                                ? document.getList("Students", Document.class)
+                                : new ArrayList<>());
+                university.setTeachers(
+                        document.containsKey("Teachers")
+                                ? document.getList("Teachers", Document.class)
+                                : new ArrayList<>());
+                university.setCourses(
+                        document.containsKey("Courses")
+                                ? document.getList("Courses", Document.class)
+                                : new ArrayList<>());
+                university.setWebsite((document.getString("Website")));
+                university.setLegalInfo(
+                        document.containsKey("LegalInfo")
+                                ? document.get("LegalInfo", Document.class)
+                                : new Document());
+                university.setMoreInfo(
+                        document.containsKey("MoreInfo")
+                                ? document.get("MoreInfo", Document.class)
+                                : new Document());
 
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
+                university.setActionLogs(
+                        document.containsKey("ActionLogs")
+                                ? document.getList("ActionLogs", Document.class)
+                                : new ArrayList<>());
 
-        String querySql = "SELECT\n" +
-                "  UnivID,\n" +
-                "  Name,\n" +
-                "  Photo,\n" +
-                "  Started,\n" +
-                "  UnivAdmins,\n" +
-                "  Students,\n" +
-                "  Teachers,\n" +
-                "  Courses,\n" +
-                "  Website,\n" +
-                "  MoreInfo,\n" +
-                "  ActionLogs\n" +
-                "FROM\n" +
-                "  `universalevaluationmetrics.universalEvaluationMetrics.University`";
+                university.setInfo((document.getString("info")));
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
 
-        if (UnivID != null) {
-            querySql = "SELECT\n" +
-                    "  UnivID,\n" +
-                    "  Name,\n" +
-                    "  Photo,\n" +
-                    "  Started,\n" +
-                    "  UnivAdmins,\n" +
-                    "  Students,\n" +
-                    "  Teachers,\n" +
-                    "  Courses,\n" +
-                    "  Website,\n" +
-                    "  MoreInfo,\n" +
-                    "  ActionLogs\n" +
-                    "FROM\n" +
-                    "  `universalevaluationmetrics.universalEvaluationMetrics.University`\n" +
-                    "WHERE\n" +
-                    "  UnivID = \"" + UnivID + "\"";
-        }
-
-        JobReference jobId = null;
-        Job completedJob = null;
-        ArrayList<University> universities = null;
-        try {
-            jobId = startQuery(bigquery, PROJECT_ID, querySql);
-            if (jobId != null) {
-                completedJob = checkQueryResults(bigquery, PROJECT_ID, jobId);
-                if (completedJob != null) {
-                    universities = getUniversities(bigquery, PROJECT_ID, completedJob);
-                }
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                universities.add(university);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            jobId = null;
-            completedJob = null;
         }
-
         return universities;
     }
 
@@ -454,10 +471,10 @@ public class AllDBOperations {
                     user.setDOB(document.getString("DOB"));
                     user.setAddress(document.getString("Address"));
 
-                    user.setPhoto(new JSONObject(
+                    user.setPhoto((
                             document.containsKey("Photo")
-                                    ? document.get("Photo", Document.class).toJson()
-                                    : new Document().toJson()));
+                                    ? document.get("Photo", Document.class)
+                                    : new Document()));
                     user.setMobile(document.getString("Mobile"));
 
                     user.setName(document.getString("Name"));
@@ -495,10 +512,10 @@ public class AllDBOperations {
                     user.setDOB(document.getString("DOB"));
                     user.setAddress(document.getString("Address"));
 
-                    user.setPhoto(new JSONObject(
+                    user.setPhoto((
                             document.containsKey("Photo")
-                                    ? document.get("Photo", Document.class).toJson()
-                                    : new Document().toJson()));
+                                    ? document.get("Photo", Document.class)
+                                    : new Document()));
                     user.setMobile(document.getString("Mobile"));
 
                     user.setName(document.getString("Name"));
