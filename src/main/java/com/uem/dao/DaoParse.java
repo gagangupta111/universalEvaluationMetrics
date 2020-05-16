@@ -127,10 +127,11 @@ public class DaoParse implements DaoInterface {
             if (body.has("Name") && body.has("Website") && body.has("AdminID")) {
 
                 Map<String, Object> map = AllDBOperations.createUniversity(body);
-                if (map == null) {
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
                     customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
                     return customResponse;
                 } else {
                     CustomResponse customResponse = new CustomResponse();
@@ -150,6 +151,10 @@ public class DaoParse implements DaoInterface {
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
             customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
             return customResponse;
         }
     }
@@ -159,23 +164,38 @@ public class DaoParse implements DaoInterface {
 
         try {
 
-            List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("univID"));
+            List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("UnivID"));
             if (universities == null || universities.size() == 0){
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.UNIVERSITY_DOES_NOT_EXIST);
                 return customResponse;
             }else {
-                AllDBOperations.updateUniversity(universities.get(0), body, append);
+                Map<String, Object> map = AllDBOperations.updateUniversity(universities.get(0), body, append);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
             }
-
         }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
 
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
         }
-
-
-        return null;
-
     }
-
 }
