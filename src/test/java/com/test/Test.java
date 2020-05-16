@@ -12,6 +12,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.google.api.client.util.IOUtils;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
+import com.uem.model.University;
 import com.uem.util.*;
 import com.uem.google.bigquery.main.BQOperationsTestTable;
 import com.uem.model.TestClass;
@@ -31,8 +32,12 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        ParseUtil.deleteAllObjectsAllTables();
+        List<University> universities = AllDBOperations.getAllUniversities_UnivAdmin_Contains("AdminID1234");
 
+        JSONObject object = UtilsManager.universityToJson(universities.get(0));
+        University university = UtilsManager.jsonToUniversity(object);
+
+        System.out.println(universities);
     }
 
     public static void testS3Amazon() {
@@ -231,13 +236,6 @@ public class Test {
         testClass.setCol3(jsonObject);
         Boolean aBoolean = ParseUtil.saveInParseTest(testClass);
         System.out.println(aBoolean);
-    }
-
-    public static void reCreateWholeStructure() throws IOException {
-
-        Bigquery bigquery = GAuthenticate.getAuthenticated(true);
-        AllDBOperations.reCreateWholeStructure(bigquery);
-
     }
 
     public static void test1() throws Exception {

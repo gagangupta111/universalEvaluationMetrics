@@ -1,6 +1,7 @@
 package com.uem.dao;
 
 import com.uem.model.CustomResponse;
+import com.uem.model.University;
 import com.uem.model.User;
 import org.json.JSONObject;
 
@@ -14,6 +15,6 @@ public interface DaoInterface {
     public Boolean updateUserInfo(JSONObject body);
     public List<User> getUserInfo(String UserID);
     public CustomResponse createUniversity(JSONObject body);
-    public CustomResponse updateUniversity(JSONObject body);
+    public CustomResponse updateUniversity(JSONObject body, Boolean append);
     //updateUserInfo
 }

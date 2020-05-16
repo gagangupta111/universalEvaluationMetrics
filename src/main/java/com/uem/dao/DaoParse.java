@@ -155,7 +155,24 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public CustomResponse updateUniversity(JSONObject body) {
+    public CustomResponse updateUniversity(JSONObject body, Boolean append) {
+
+        try {
+
+            List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("univID"));
+            if (universities == null || universities.size() == 0){
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.UNIVERSITY_DOES_NOT_EXIST);
+                return customResponse;
+            }else {
+                AllDBOperations.updateUniversity(universities.get(0), body, append);
+            }
+
+        }catch (Exception e){
+
+        }
+
 
         return null;
 

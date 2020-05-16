@@ -11,7 +11,7 @@ public class University {
     private String Name;
     private Document Photo;
     private String Started;
-    private String UnivAdmins;
+    private List<String> UnivAdmins;
     private List<Document> Students;
     private List<Document> Teachers;
     private List<Document> Courses;
@@ -57,11 +57,11 @@ public class University {
         Started = started;
     }
 
-    public String getUnivAdmins() {
+    public List<String> getUnivAdmins() {
         return UnivAdmins;
     }
 
-    public void setUnivAdmins(String univAdmins) {
+    public void setUnivAdmins(List<String> univAdmins) {
         UnivAdmins = univAdmins;
     }
 

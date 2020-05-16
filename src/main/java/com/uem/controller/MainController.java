@@ -182,9 +182,12 @@ public class MainController {
         }
     }
 
-    @PostMapping("/University/{univID}")
+    @PostMapping("/University/{univID}/{append}")
     @ResponseBody
-    public ResponseEntity<String> updateUniversity(@RequestBody String body, @PathVariable("univID") String univID) throws Exception{
+    public ResponseEntity<String> updateUniversity(
+            @RequestBody String body,
+            @PathVariable("univID") String univID,
+            @PathVariable("append") Boolean append) throws Exception{
 
         if (univID == null || univID.equals("")){
             return ResponseEntity.badRequest()
@@ -193,7 +196,7 @@ public class MainController {
         }
         JSONObject jsonObject = new JSONObject(body.trim());
         jsonObject.put("UnivID", univID);
-        CustomResponse customResponse =  mainService.updateUniversity(jsonObject);
+        CustomResponse customResponse =  mainService.updateUniversity(jsonObject, append);
         if (customResponse.getSuccess()){
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())

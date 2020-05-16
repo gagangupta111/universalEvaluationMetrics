@@ -2,6 +2,7 @@ package com.uem.service;
 
 import com.uem.dao.DaoInterface;
 import com.uem.model.CustomResponse;
+import com.uem.model.University;
 import com.uem.model.User;
 import com.uem.util.LogUtil;
 import org.apache.log4j.Logger;
@@ -38,8 +39,8 @@ public class MainService {
         return dao.createUniversity(body);
     }
 
-    public CustomResponse updateUniversity(JSONObject body) {
-        return dao.updateUniversity(body);
+    public CustomResponse updateUniversity(JSONObject body, Boolean append) {
+        return dao.updateUniversity(body, append);
     }
 
     public Boolean updateUserInfo(JSONObject body) {
