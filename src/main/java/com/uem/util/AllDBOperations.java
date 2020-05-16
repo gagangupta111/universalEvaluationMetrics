@@ -448,24 +448,30 @@ public class AllDBOperations {
             return users;
         } else {
             for (Document document : documents) {
-                User user = new User();
-                user.setUserID(document.getString("UserID"));
-                user.setDOB(document.getString("DOB"));
-                user.setAddress(document.getString("Address"));
+                try {
+                    User user = new User();
+                    user.setUserID(document.getString("UserID"));
+                    user.setDOB(document.getString("DOB"));
+                    user.setAddress(document.getString("Address"));
 
-                user.setPhoto((document.get("Photo", JSONObject.class)));
-                user.setMobile(document.getString("Mobile"));
+                    user.setPhoto(new JSONObject(
+                            document.containsKey("Photo")
+                                    ? document.get("Photo", Document.class).toJson()
+                                    : new Document().toJson()));
+                    user.setMobile(document.getString("Mobile"));
 
-                user.setName(document.getString("Name"));
-                user.setPassword(document.getString("Password"));
-                user.setEmail(document.getString("Email"));
+                    user.setName(document.getString("Name"));
+                    user.setPassword(document.getString("Password"));
+                    user.setEmail(document.getString("Email"));
 
-                user.setObjectID(document.getString("_id"));
-                user.set_created_at(document.getDate("_created_at"));
-                user.set_updated_at(document.getDate("_updated_at"));
+                    user.setObjectID(document.getString("_id"));
+                    user.set_created_at(document.getDate("_created_at"));
+                    user.set_updated_at(document.getDate("_updated_at"));
 
-                users.add(user);
-
+                    users.add(user);
+                }catch (Exception e){
+                    logger.debug(UtilsManager.exceptionAsString(e));
+                }
             }
         }
         return users;
@@ -483,24 +489,30 @@ public class AllDBOperations {
             return users;
         } else {
             for (Document document : documents) {
-                User user = new User();
-                user.setUserID(document.getString("UserID"));
-                user.setDOB(document.getString("DOB"));
-                user.setAddress(document.getString("Address"));
+                try {
+                    User user = new User();
+                    user.setUserID(document.getString("UserID"));
+                    user.setDOB(document.getString("DOB"));
+                    user.setAddress(document.getString("Address"));
 
-                user.setPhoto(document.get("Photo", JSONObject.class));
-                user.setMobile(document.getString("Mobile"));
+                    user.setPhoto(new JSONObject(
+                            document.containsKey("Photo")
+                                    ? document.get("Photo", Document.class).toJson()
+                                    : new Document().toJson()));
+                    user.setMobile(document.getString("Mobile"));
 
-                user.setName(document.getString("Name"));
-                user.setPassword(document.getString("Password"));
-                user.setEmail(document.getString("Email"));
+                    user.setName(document.getString("Name"));
+                    user.setPassword(document.getString("Password"));
+                    user.setEmail(document.getString("Email"));
 
-                user.setObjectID(document.getString("_id"));
-                user.set_created_at(document.getDate("_created_at"));
-                user.set_updated_at(document.getDate("_updated_at"));
+                    user.setObjectID(document.getString("_id"));
+                    user.set_created_at(document.getDate("_created_at"));
+                    user.set_updated_at(document.getDate("_updated_at"));
 
-                users.add(user);
-
+                    users.add(user);
+                }catch (Exception e){
+                    logger.debug(UtilsManager.exceptionAsString(e));
+                }
             }
         }
         return users;
