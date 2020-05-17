@@ -1,4 +1,4 @@
-package com.uem.google.bigquery.main;
+package com.uem.archieve.main;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BQTable_University {
+public class BQOperationsTestTable {
 
     private static final String PROJECT_ID = "universalevaluationmetrics";
     private static final String DATASET_ID = "universalEvaluationMetrics";
-    private static final String TABLE_ID = "University";
+    private static final String TABLE_ID = "test_table";
 
     public static String toString_() {
         return "BQOperations{PROJECT_ID:" + PROJECT_ID + ", DATASET_ID:" + DATASET_ID + ", TABLE_ID" + TABLE_ID + "}";
@@ -32,7 +32,7 @@ public class BQTable_University {
 
             if (createDataset(bigquery)) {
 
-                if (createTable(bigquery, false, false)) {
+                if (createTable(bigquery)) {
 
                     return true;
 
@@ -88,39 +88,45 @@ public class BQTable_University {
 
     }
 
-    public static Boolean createTable(Bigquery bigquery, Boolean deleteTable, Boolean createTable) {
+    public static Boolean createTable(Bigquery bigquery) {
 
         try {
 
-            if (deleteTable) {
-                bigquery.tables().delete(PROJECT_ID, DATASET_ID, TABLE_ID).execute();
+            TableList tables = bigquery.tables().list(PROJECT_ID, DATASET_ID).setMaxResults(1000L).execute();
+
+            logger.debug(tables);
+
+            Boolean deleteTable = false;
+            Boolean createTable = true;
+
+            if (null != tables && null != tables.getTables()) {
+
+                logger.debug("Inside IF.");
+
+                for (Tables table : tables.getTables()) {
+
+                    if (table.getId().equalsIgnoreCase(PROJECT_ID + ":" + DATASET_ID + "." + TABLE_ID)) {
+                        deleteTable = false;
+                        createTable = false;
+                        break;
+                    }
+
+                }
+
+                if (deleteTable) {
+                    bigquery.tables().delete(PROJECT_ID, DATASET_ID, TABLE_ID).execute();
+                }
+
             }
 
             if (createTable) {
 
                 ArrayList<TableFieldSchema> fields = new ArrayList<TableFieldSchema>();
 
-                fields.add(new TableFieldSchema().setName("UnivID").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Name").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Photo").setType("BYTES"));
-                fields.add(new TableFieldSchema().setName("Started").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("UnivAdmins").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Students").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Teachers").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Courses").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Website").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("LegalInfo").setType("RECORD").setFields(
-                        new ArrayList<TableFieldSchema>() {
-                            {
-                                add(new TableFieldSchema().setName("ID").setType("STRING"));
-                                add(new TableFieldSchema().setName("Extablished").setType("STRING"));
-                                add(new TableFieldSchema().setName("Chancellor").setType("STRING"));
-                                add(new TableFieldSchema().setName("Website").setType("STRING"));
-                            }
-                        }
-                ));
-                fields.add(new TableFieldSchema().setName("MoreInfo").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("ActionLogs").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("account_id").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("name").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("user").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("pass").setType("STRING"));
 
                 Table content = new Table();
                 content.setSchema(new TableSchema().setFields(fields));

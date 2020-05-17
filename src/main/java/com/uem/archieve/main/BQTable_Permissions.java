@@ -1,10 +1,9 @@
-package com.uem.google.bigquery.main;
+package com.uem.archieve.main;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
 import com.google.api.services.bigquery.model.DatasetList.Datasets;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest.Rows;
-import com.google.api.services.bigquery.model.TableList.Tables;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
@@ -14,11 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BQTable_CourseAdmin {
+public class BQTable_Permissions {
 
     private static final String PROJECT_ID = "universalevaluationmetrics";
     private static final String DATASET_ID = "universalEvaluationMetrics";
-    private static final String TABLE_ID = "CourseAdmin";
+    private static final String TABLE_ID = "Permissions";
 
     public static String toString_() {
         return "BQOperations{PROJECT_ID:" + PROJECT_ID + ", DATASET_ID:" + DATASET_ID + ", TABLE_ID" + TABLE_ID + "}";
@@ -100,8 +99,11 @@ public class BQTable_CourseAdmin {
 
                 ArrayList<TableFieldSchema> fields = new ArrayList<TableFieldSchema>();
 
+                fields.add(new TableFieldSchema().setName("PermissionID").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("UnivID").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("UEM_ID").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Courses").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Permissions").setType("STRING"));
+
                 Table content = new Table();
                 content.setSchema(new TableSchema().setFields(fields));
                 content.setId(TABLE_ID);

@@ -1,10 +1,9 @@
-package com.uem.google.bigquery.main;
+package com.uem.archieve.main;
 
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.*;
 import com.google.api.services.bigquery.model.DatasetList.Datasets;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest.Rows;
-import com.google.api.services.bigquery.model.TableList.Tables;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
@@ -14,11 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BQTable_Universal_User {
+public class BQTable_University {
 
     private static final String PROJECT_ID = "universalevaluationmetrics";
     private static final String DATASET_ID = "universalEvaluationMetrics";
-    private static final String TABLE_ID = "User";
+    private static final String TABLE_ID = "University";
 
     public static String toString_() {
         return "BQOperations{PROJECT_ID:" + PROJECT_ID + ", DATASET_ID:" + DATASET_ID + ", TABLE_ID" + TABLE_ID + "}";
@@ -32,7 +31,7 @@ public class BQTable_Universal_User {
 
             if (createDataset(bigquery)) {
 
-                if (createTable(bigquery, true, true)) {
+                if (createTable(bigquery, false, false)) {
 
                     return true;
 
@@ -100,14 +99,27 @@ public class BQTable_Universal_User {
 
                 ArrayList<TableFieldSchema> fields = new ArrayList<TableFieldSchema>();
 
-                fields.add(new TableFieldSchema().setName("UserID").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Email").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Password").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("UnivID").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Name").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("Mobile").setType("STRING"));
                 fields.add(new TableFieldSchema().setName("Photo").setType("BYTES"));
-                fields.add(new TableFieldSchema().setName("Address").setType("STRING"));
-                fields.add(new TableFieldSchema().setName("DOB").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Started").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("UnivAdmins").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Students").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Teachers").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Courses").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("Website").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("LegalInfo").setType("RECORD").setFields(
+                        new ArrayList<TableFieldSchema>() {
+                            {
+                                add(new TableFieldSchema().setName("ID").setType("STRING"));
+                                add(new TableFieldSchema().setName("Extablished").setType("STRING"));
+                                add(new TableFieldSchema().setName("Chancellor").setType("STRING"));
+                                add(new TableFieldSchema().setName("Website").setType("STRING"));
+                            }
+                        }
+                ));
+                fields.add(new TableFieldSchema().setName("MoreInfo").setType("STRING"));
+                fields.add(new TableFieldSchema().setName("ActionLogs").setType("STRING"));
 
                 Table content = new Table();
                 content.setSchema(new TableSchema().setFields(fields));
