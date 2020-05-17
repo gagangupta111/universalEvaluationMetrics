@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -308,5 +309,75 @@ public class MainController {
                     .body(users.toString());
         }
     }
+
+    @PostMapping("/admin/{adminID}/Document/{append}")
+    @ResponseBody
+    public ResponseEntity<String> updateAdmin(
+            @RequestParam(value = "Course", required = false) String Course,
+            @RequestParam(value = "CourseDetails", required = false) String CourseDetails,
+            @RequestParam(value = "Start", required = false) String Start,
+            @RequestParam(value = "End", required = false) String End,
+            @RequestParam(value = "Attachments", required = false) MultipartFile[] Attachments,
+
+            @PathVariable("adminID") String adminID,
+            @PathVariable("append") Boolean append) throws Exception {
+
+        try {
+            if (adminID == null || adminID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body = Course != null ? body.put("Course", Course.trim()) : body;
+            body = CourseDetails != null ? body.put("CourseDetails", CourseDetails.trim()) : body;
+            body = Start != null ? body.put("Start", Start.trim()) : body;
+            body = End != null ? body.put("End", End.trim()) : body;
+            body.put("adminID", adminID);
+            body.put("append", append);
+
+            if (Attachments != null) {
+                JSONArray attachmentsArray = new JSONArray();
+                for (int i = 0; i < Attachments.length; i++){
+                    MultipartFile multipartFile = Attachments[i];
+                    String key_name = "ADMIN_ATTACHMENTS_" + Course + "_" + CourseDetails + "_" + i;
+                    File file = new File(key_name);
+                    FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+
+                    PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                    if (putObjectResult == null) {
+                        return ResponseEntity.badRequest()
+                                .header("message", Constants.INTERNAL_ERROR)
+                                .body(Constants.AMAZON_S3_ERROR);
+                    }
+                    JSONObject object = new JSONObject();
+                    object.put("ContentMd5", putObjectResult.getContentMd5());
+                    object.put("ETag", putObjectResult.getETag());
+                    object.put("Name", key_name);
+                    attachmentsArray.put(object);
+                    file.delete();
+                }
+                body.put("Attachments", attachmentsArray);
+            }
+
+            CustomResponse customResponse = mainService.updateUniversity(body, append);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
 
 }

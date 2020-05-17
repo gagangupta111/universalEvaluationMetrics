@@ -170,6 +170,70 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateAdmin(UnivAdmin univAdmin, JSONObject body, Boolean append) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            if (append){
+
+                UnivAdmin toBeAppended = UtilsManager.jsonToUniversity(body);
+                if (toBeAppended.getActionLogs() != null && toBeAppended.getActionLogs().size() > 0){
+                    toBeAppended.getActionLogs().addAll(university.getActionLogs());
+                }
+                if (toBeAppended.getCourses() != null && toBeAppended.getCourses().size() > 0){
+                    toBeAppended.getCourses().addAll(university.getCourses());
+                }
+                if (toBeAppended.getStudents() != null && toBeAppended.getStudents().size() > 0){
+                    toBeAppended.getStudents().addAll(university.getStudents());
+                }
+                if (toBeAppended.getTeachers() != null && toBeAppended.getTeachers().size() > 0){
+                    toBeAppended.getTeachers().addAll(university.getTeachers());
+                }
+                if (toBeAppended.getUnivAdmins() != null && toBeAppended.getUnivAdmins().size() > 0){
+                    toBeAppended.getUnivAdmins().addAll(university.getUnivAdmins());
+                }
+
+                body = UtilsManager.universityToJson(toBeAppended);
+
+            }
+
+            // update ActionLogs
+            JSONObject jsonObject = UtilsManager.universityToJson(university);
+            JSONArray array = jsonObject.getJSONArray("ActionLogs");
+            JSONObject actionLog = new JSONObject();
+            actionLog.put("Action", "UNIVERSITY_UPDATED");
+            actionLog.put("Time", UtilsManager.getUTCStandardDateFormat());
+            actionLog.put("Value", body.toString());
+            array.put(actionLog);
+            body.put("ActionLogs", array);
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(university.getObjectID(), body);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "University");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> createUniversity(JSONObject university) {
 
         Map<String, Object> data = new HashMap<>();

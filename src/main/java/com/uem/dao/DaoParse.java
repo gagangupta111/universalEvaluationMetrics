@@ -218,4 +218,44 @@ public class DaoParse implements DaoInterface {
             return customResponse;
         }
     }
+
+    @Override
+    public CustomResponse updateAdmin(JSONObject body, Boolean append) {
+
+        try {
+
+            List<UnivAdmin> admins = AllDBOperations.getAllAdmin_UemID(body.getString("adminID"));
+            if (admins == null || admins.size() == 0){
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.ADMIN_DOES_NOT_EXIST);
+                return customResponse;
+            }else {
+                Map<String, Object> map = AllDBOperations.updateUniversity(universities.get(0), body, append);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
 }
