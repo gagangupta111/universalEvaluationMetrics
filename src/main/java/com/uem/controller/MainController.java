@@ -1,8 +1,7 @@
 package com.uem.controller;
 
 import com.amazonaws.services.s3.model.PutObjectResult;
-import com.uem.model.CustomResponse;
-import com.uem.model.User;
+import com.uem.model.*;
 import com.uem.service.MainService;
 import com.uem.util.AmazonS3Util;
 import com.uem.util.Constants;
@@ -266,7 +265,39 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> geAdminInfo(@PathVariable("adminID") String adminID) {
 
-        List<User> users = mainService.getUserInfo(adminID);
+        List<UnivAdmin> users = mainService.geAdminInfo(adminID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
+    @GetMapping("/student/{studentID}")
+    @ResponseBody
+    public ResponseEntity<String> geStudentInfo(@PathVariable("studentID") String studentID) {
+
+        List<Student> users = mainService.geStudentInfo(studentID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
+    @GetMapping("/teacher/{teacherID}")
+    @ResponseBody
+    public ResponseEntity<String> geTeacherInfo(@PathVariable("teacherID") String teacherID) {
+
+        List<Teacher> users = mainService.geTeacherInfo(teacherID);
         if (users == null || users.size() == 0) {
             return ResponseEntity.badRequest()
                     .header("message", "")

@@ -118,14 +118,28 @@ public class DaoParse implements DaoInterface {
         users = AllDBOperations.getAllUsers_UserID(UserID);
         return users;
     }
-    // geAdminInfo
 
     @Override
-    public List<User> geAdminInfo(String AdminID) {
-        List<User> users = new ArrayList<>();
-        users = AllDBOperations.getAllUsers_UserID(AdminID);
+    public List<UnivAdmin> geAdminInfo(String AdminID) {
+        List<UnivAdmin> users = new ArrayList<>();
+        users = AllDBOperations.getAllAdmin_UemID(AdminID);
         return users;
     }
+
+    @Override
+    public List<Student> geStudentInfo(String StudentID) {
+        List<Student> users = new ArrayList<>();
+        users = AllDBOperations.getAllStudents_UemID(StudentID);
+        return users;
+    }
+
+    @Override
+    public List<Teacher> geTeacherInfo(String StudentID) {
+        List<Teacher> users = new ArrayList<>();
+        users = AllDBOperations.getAllTeachers_UemID(StudentID);
+        return users;
+    }
+
     @Override
     public CustomResponse createUniversity(JSONObject body) {
 

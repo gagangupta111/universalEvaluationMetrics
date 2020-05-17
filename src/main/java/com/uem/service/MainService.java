@@ -1,9 +1,7 @@
 package com.uem.service;
 
 import com.uem.dao.DaoInterface;
-import com.uem.model.CustomResponse;
-import com.uem.model.University;
-import com.uem.model.User;
+import com.uem.model.*;
 import com.uem.util.LogUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -51,8 +49,17 @@ public class MainService {
         return dao.getUserInfo(UserID);
     }
 
-    // geAdminInfo
-    public List<User> geAdminInfo(String AdminID) {
-        return dao.getUserInfo(AdminID);
+    public List<UnivAdmin> geAdminInfo(String AdminID) {
+        return dao.geAdminInfo(AdminID);
     }
+
+    public List<Student> geStudentInfo(String studentID) {
+        return dao.geStudentInfo(studentID);
+    }
+
+    public List<Teacher> geTeacherInfo(String teacherID) {
+        return dao.geTeacherInfo(teacherID);
+    }
+
+
 }
