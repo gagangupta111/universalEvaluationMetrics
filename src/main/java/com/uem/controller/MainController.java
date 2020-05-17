@@ -261,4 +261,21 @@ public class MainController {
                     .body(UtilsManager.exceptionAsString(e));
         }
     }
+
+    @GetMapping("/admin/{adminID}")
+    @ResponseBody
+    public ResponseEntity<String> geAdminInfo(@PathVariable("adminID") String adminID) {
+
+        List<User> users = mainService.getUserInfo(adminID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
 }

@@ -50,4 +50,9 @@ public class MainService {
     public List<User> getUserInfo(String UserID) {
         return dao.getUserInfo(UserID);
     }
+
+    // geAdminInfo
+    public List<User> geAdminInfo(String AdminID) {
+        return dao.getUserInfo(AdminID);
+    }
 }

@@ -6,7 +6,6 @@ import com.uem.util.Constants;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -57,7 +56,7 @@ public class DaoParse implements DaoInterface {
 
         switch (loginType) {
             case "ADMIN":
-                List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin(users.get(0).getUserID());
+                List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(users.get(0).getUserID());
                 if (univAdmins == null || univAdmins.size() == 0) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
@@ -66,7 +65,7 @@ public class DaoParse implements DaoInterface {
                 }
                 break;
             case "STUDENT":
-                List<Student> students = AllDBOperations.getAllStudents(users.get(0).getUserID());
+                List<Student> students = AllDBOperations.getAllStudents_UserID(users.get(0).getUserID());
                 if (students == null || students.size() == 0) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
@@ -75,7 +74,7 @@ public class DaoParse implements DaoInterface {
                 }
                 break;
             case "TEACHER":
-                List<Teacher> teachers = AllDBOperations.getAllTeachers(users.get(0).getUserID());
+                List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(users.get(0).getUserID());
                 if (teachers == null || teachers.size() == 0) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
@@ -119,7 +118,14 @@ public class DaoParse implements DaoInterface {
         users = AllDBOperations.getAllUsers_UserID(UserID);
         return users;
     }
+    // geAdminInfo
 
+    @Override
+    public List<User> geAdminInfo(String AdminID) {
+        List<User> users = new ArrayList<>();
+        users = AllDBOperations.getAllUsers_UserID(AdminID);
+        return users;
+    }
     @Override
     public CustomResponse createUniversity(JSONObject body) {
 

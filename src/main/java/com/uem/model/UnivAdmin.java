@@ -13,6 +13,15 @@ public class UnivAdmin {
     private String UnivID;
     private String info;
     private List<Document> Documents;
+    private Document Photo;
+
+    public Document getPhoto() {
+        return Photo;
+    }
+
+    public void setPhoto(Document photo) {
+        Photo = photo;
+    }
 
     private String objectID;
     private Date _created_at;

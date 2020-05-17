@@ -255,14 +255,16 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 University university = new University();
-                university.setUnivID(document.getString("UnivID"));
-                university.setName((document.getString("Name")));
-                university.setStarted((document.getString("Started")));
-                university.setUnivAdmins((document.getList("UnivAdmins", String.class)));
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setStarted(document.containsKey("Started") ? document.getString("Started") : null);
+                university.setUnivAdmins(document.containsKey("UnivID") ? document.getList("UnivAdmins", String.class) : new ArrayList<>());
+
                 university.setStudents(
                         document.containsKey("Students")
-                        ? document.getList("Students", Document.class)
-                        : new ArrayList<>());
+                                ? document.getList("Students", Document.class)
+                                : new ArrayList<>());
                 university.setTeachers(
                         document.containsKey("Teachers")
                                 ? document.getList("Teachers", Document.class)
@@ -314,10 +316,12 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 University university = new University();
-                university.setUnivID(document.getString("UnivID"));
-                university.setName((document.getString("Name")));
-                university.setStarted((document.getString("Started")));
-                university.setUnivAdmins((document.getList("UnivAdmins", String.class)));
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setStarted(document.containsKey("Started") ? document.getString("Started") : null);
+                university.setUnivAdmins(document.containsKey("UnivID") ? document.getList("UnivAdmins", String.class) : new ArrayList<>());
+
                 university.setStudents(
                         document.containsKey("Students")
                                 ? document.getList("Students", Document.class)
@@ -360,7 +364,7 @@ public class AllDBOperations {
         return universities;
     }
 
-    public static List<Teacher> getAllTeachers(String UserID) {
+    public static List<Teacher> getAllTeachers_UserID(String UserID) {
 
         List<Teacher> teachers = new ArrayList<>();
         BsonDocument filter = BsonDocument
@@ -372,22 +376,26 @@ public class AllDBOperations {
             return teachers;
         } else {
             for (Document document : documents) {
-                Teacher teacher = new Teacher();
-                teacher.setUnivID(document.getString("UnivID"));
-                teacher.setUserID(document.getString("UserID"));
-                teacher.setUEM_ID(document.getString("UEM_ID"));
-                teacher.setInfo((document.getString("info")));
-                teacher.setDocuments(document.getList("Documents", Document.class));
-                teacher.setObjectID(document.getString("_id"));
-                teacher.set_created_at(document.getDate("_created_at"));
-                teacher.set_updated_at(document.getDate("_updated_at"));
-                teachers.add(teacher);
+                Teacher univAdmin = new Teacher();
+                univAdmin.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                univAdmin.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
+                univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                teachers.add(univAdmin);
             }
         }
         return teachers;
     }
 
-    public static List<Student> getAllStudents(String UserID) {
+    public static List<Student> getAllStudents_UserID(String UserID) {
 
         List<Student> students = new ArrayList<>();
         BsonDocument filter = BsonDocument
@@ -399,22 +407,26 @@ public class AllDBOperations {
             return students;
         } else {
             for (Document document : documents) {
-                Student student = new Student();
-                student.setUnivID(document.getString("UnivID"));
-                student.setUserID(document.getString("UserID"));
-                student.setUEM_ID(document.getString("UEM_ID"));
-                student.setInfo((document.getString("info")));
-                student.setDocuments(document.getList("Documents", Document.class));
-                student.setObjectID(document.getString("_id"));
-                student.set_created_at(document.getDate("_created_at"));
-                student.set_updated_at(document.getDate("_updated_at"));
-                students.add(student);
+                Student univAdmin = new Student();
+                univAdmin.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                univAdmin.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
+                univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                students.add(univAdmin);
             }
         }
         return students;
     }
 
-    public static List<UnivAdmin> getAllAdmin(String UserID) {
+    public static List<UnivAdmin> getAllAdmin_UserID(String UserID) {
 
         List<UnivAdmin> univAdmins = new ArrayList<>();
         BsonDocument filter = BsonDocument
@@ -427,18 +439,115 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 UnivAdmin univAdmin = new UnivAdmin();
-                univAdmin.setUnivID(document.getString("UnivID"));
-                univAdmin.setUserID(document.getString("UserID"));
-                univAdmin.setUEM_ID(document.getString("UEM_ID"));
-                univAdmin.setInfo((document.getString("info")));
-                univAdmin.setDocuments(document.getList("Documents", Document.class));
-                univAdmin.setObjectID(document.getString("_id"));
-                univAdmin.set_created_at(document.getDate("_created_at"));
-                univAdmin.set_updated_at(document.getDate("_updated_at"));
+                univAdmin.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                univAdmin.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
+                univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
                 univAdmins.add(univAdmin);
             }
         }
         return univAdmins;
+    }
+
+    public static List<UnivAdmin> getAllAdmin_UemID(String UemID) {
+
+        List<UnivAdmin> univAdmins = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UEM_ID:{$regex:/" + UemID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversityAdmin(filter);
+        if (documents == null || documents.size() == 0) {
+            return univAdmins;
+        } else {
+            for (Document document : documents) {
+                UnivAdmin univAdmin = new UnivAdmin();
+                univAdmin.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                univAdmin.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
+                univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                univAdmins.add(univAdmin);
+            }
+        }
+        return univAdmins;
+    }
+
+    public static List<Student> getAllStudents_UemID(String UemID) {
+
+        List<Student> students = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UEM_ID:{$regex:/" + UemID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllStudents(filter);
+        if (documents == null || documents.size() == 0) {
+            return students;
+        } else {
+            for (Document document : documents) {
+                Student univAdmin = new Student();
+                univAdmin.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                univAdmin.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
+                univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                students.add(univAdmin);
+            }
+        }
+        return students;
+    }
+
+    public static List<Teacher> getAllTeachers_UemID(String UemID) {
+
+        List<Teacher> teachers = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UEM_ID:{$regex:/" + UemID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllTeachers(filter);
+        if (documents == null || documents.size() == 0) {
+            return teachers;
+        } else {
+            for (Document document : documents) {
+                Teacher univAdmin = new Teacher();
+                univAdmin.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+                univAdmin.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
+                univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                teachers.add(univAdmin);
+            }
+        }
+        return teachers;
     }
 
     public static List<User> getAllUsers_Email(String email) {
@@ -455,23 +564,23 @@ public class AllDBOperations {
             for (Document document : documents) {
                 try {
                     User user = new User();
-                    user.setUserID(document.getString("UserID"));
-                    user.setDOB(document.getString("DOB"));
-                    user.setAddress(document.getString("Address"));
+                    user.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                    user.setDOB(document.containsKey("DOB") ? document.getString("DOB") : null);
+                    user.setAddress(document.containsKey("Address") ? document.getString("Address") : null);
 
                     user.setPhoto((
                             document.containsKey("Photo")
                                     ? document.get("Photo", Document.class)
                                     : new Document()));
-                    user.setMobile(document.getString("Mobile"));
+                    user.setMobile(document.containsKey("Mobile") ? document.getString("Mobile") : null);
 
-                    user.setName(document.getString("Name"));
-                    user.setPassword(document.getString("Password"));
-                    user.setEmail(document.getString("Email"));
+                    user.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                    user.setPassword(document.containsKey("Password") ? document.getString("Password") : null);
+                    user.setEmail(document.containsKey("Email") ? document.getString("Email") : null);
+                    user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
 
-                    user.setObjectID(document.getString("_id"));
-                    user.set_created_at(document.getDate("_created_at"));
-                    user.set_updated_at(document.getDate("_updated_at"));
+                    user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                    user.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
 
                     users.add(user);
                 }catch (Exception e){
@@ -496,23 +605,23 @@ public class AllDBOperations {
             for (Document document : documents) {
                 try {
                     User user = new User();
-                    user.setUserID(document.getString("UserID"));
-                    user.setDOB(document.getString("DOB"));
-                    user.setAddress(document.getString("Address"));
+                    user.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                    user.setDOB(document.containsKey("DOB") ? document.getString("DOB") : null);
+                    user.setAddress(document.containsKey("Address") ? document.getString("Address") : null);
 
                     user.setPhoto((
                             document.containsKey("Photo")
                                     ? document.get("Photo", Document.class)
                                     : new Document()));
-                    user.setMobile(document.getString("Mobile"));
+                    user.setMobile(document.containsKey("Mobile") ? document.getString("Mobile") : null);
 
-                    user.setName(document.getString("Name"));
-                    user.setPassword(document.getString("Password"));
-                    user.setEmail(document.getString("Email"));
+                    user.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                    user.setPassword(document.containsKey("Password") ? document.getString("Password") : null);
+                    user.setEmail(document.containsKey("Email") ? document.getString("Email") : null);
+                    user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
 
-                    user.setObjectID(document.getString("_id"));
-                    user.set_created_at(document.getDate("_created_at"));
-                    user.set_updated_at(document.getDate("_updated_at"));
+                    user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                    user.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
 
                     users.add(user);
                 }catch (Exception e){
