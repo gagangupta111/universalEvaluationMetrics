@@ -312,7 +312,7 @@ public class MainController {
 
     @PostMapping("/admin/{adminID}/Document/{append}")
     @ResponseBody
-    public ResponseEntity<String> updateAdmin(
+    public ResponseEntity<String> updateAdminDocument(
             @RequestParam(value = "Course", required = false) String Course,
             @RequestParam(value = "CourseDetails", required = false) String CourseDetails,
             @RequestParam(value = "Start", required = false) String Start,
@@ -358,10 +358,202 @@ public class MainController {
                     attachmentsArray.put(object);
                     file.delete();
                 }
-                body.put("Attachments", attachmentsArray);
+                body.put("Documents", attachmentsArray);
             }
 
-            CustomResponse customResponse = mainService.updateUniversity(body, append);
+            CustomResponse customResponse = mainService.updateAdmin(body, append);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PostMapping("/admin/{adminID}/Photo")
+    @ResponseBody
+    public ResponseEntity<String> updateAdminPhoto(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+
+            @PathVariable("adminID") String adminID) throws Exception {
+
+        try {
+            if (adminID == null || adminID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body.put("adminID", adminID);
+
+            if (Photo != null) {
+                MultipartFile multipartFile = Photo;
+                String key_name = "ADMIN_PHOTO";
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("Name", key_name);
+                body.put("Photo", object);
+            }
+
+            CustomResponse customResponse = mainService.updateAdmin(body, false);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PostMapping("/student/{studentID}/Document/{append}")
+    @ResponseBody
+    public ResponseEntity<String> updateStudentDocument(
+            @RequestParam(value = "Course", required = false) String Course,
+            @RequestParam(value = "CourseDetails", required = false) String CourseDetails,
+            @RequestParam(value = "Start", required = false) String Start,
+            @RequestParam(value = "End", required = false) String End,
+            @RequestParam(value = "Attachments", required = false) MultipartFile[] Attachments,
+
+            @PathVariable("studentID") String studentID,
+            @PathVariable("append") Boolean append) throws Exception {
+
+        try {
+            if (studentID == null || studentID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body = Course != null ? body.put("Course", Course.trim()) : body;
+            body = CourseDetails != null ? body.put("CourseDetails", CourseDetails.trim()) : body;
+            body = Start != null ? body.put("Start", Start.trim()) : body;
+            body = End != null ? body.put("End", End.trim()) : body;
+            body.put("studentID", studentID);
+            body.put("append", append);
+
+            if (Attachments != null) {
+                JSONArray attachmentsArray = new JSONArray();
+                for (int i = 0; i < Attachments.length; i++){
+                    MultipartFile multipartFile = Attachments[i];
+                    String key_name = "ADMIN_ATTACHMENTS_" + Course + "_" + CourseDetails + "_" + i;
+                    File file = new File(key_name);
+                    FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+
+                    PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                    if (putObjectResult == null) {
+                        return ResponseEntity.badRequest()
+                                .header("message", Constants.INTERNAL_ERROR)
+                                .body(Constants.AMAZON_S3_ERROR);
+                    }
+                    JSONObject object = new JSONObject();
+                    object.put("ContentMd5", putObjectResult.getContentMd5());
+                    object.put("ETag", putObjectResult.getETag());
+                    object.put("Name", key_name);
+                    attachmentsArray.put(object);
+                    file.delete();
+                }
+                body.put("Documents", attachmentsArray);
+            }
+
+            CustomResponse customResponse = mainService.updateStudent(body, append);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PostMapping("/teacher/{teacherID}/Document/{append}")
+    @ResponseBody
+    public ResponseEntity<String> updateTeacherDocument(
+            @RequestParam(value = "Course", required = false) String Course,
+            @RequestParam(value = "CourseDetails", required = false) String CourseDetails,
+            @RequestParam(value = "Start", required = false) String Start,
+            @RequestParam(value = "End", required = false) String End,
+            @RequestParam(value = "Attachments", required = false) MultipartFile[] Attachments,
+
+            @PathVariable("teacherID") String teacherID,
+            @PathVariable("append") Boolean append) throws Exception {
+
+        try {
+            if (teacherID == null || teacherID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body = Course != null ? body.put("Course", Course.trim()) : body;
+            body = CourseDetails != null ? body.put("CourseDetails", CourseDetails.trim()) : body;
+            body = Start != null ? body.put("Start", Start.trim()) : body;
+            body = End != null ? body.put("End", End.trim()) : body;
+            body.put("teacherID", teacherID);
+            body.put("append", append);
+
+            if (Attachments != null) {
+                JSONArray attachmentsArray = new JSONArray();
+                for (int i = 0; i < Attachments.length; i++){
+                    MultipartFile multipartFile = Attachments[i];
+                    String key_name = "ADMIN_ATTACHMENTS_" + Course + "_" + CourseDetails + "_" + i;
+                    File file = new File(key_name);
+                    FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+
+                    PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                    if (putObjectResult == null) {
+                        return ResponseEntity.badRequest()
+                                .header("message", Constants.INTERNAL_ERROR)
+                                .body(Constants.AMAZON_S3_ERROR);
+                    }
+                    JSONObject object = new JSONObject();
+                    object.put("ContentMd5", putObjectResult.getContentMd5());
+                    object.put("ETag", putObjectResult.getETag());
+                    object.put("Name", key_name);
+                    attachmentsArray.put(object);
+                    file.delete();
+                }
+                body.put("Documents", attachmentsArray);
+            }
+
+            CustomResponse customResponse = mainService.updateTeacher(body, append);
             if (customResponse.getSuccess()) {
                 return ResponseEntity.ok()
                         .header("message", customResponse.getMessage())

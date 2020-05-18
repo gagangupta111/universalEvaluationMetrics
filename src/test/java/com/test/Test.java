@@ -30,12 +30,8 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        List<University> universities = AllDBOperations.getAllUniversities_UnivAdmin_Contains("AdminID1234");
-
-        JSONObject object = UtilsManager.universityToJson(universities.get(0));
-        University university = UtilsManager.jsonToUniversity(object);
-
-        System.out.println(universities);
+        List<University> universities = new ArrayList<>();
+        universities.addAll(null);
     }
 
     public static void testS3Amazon() {

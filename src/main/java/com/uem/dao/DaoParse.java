@@ -222,6 +222,122 @@ public class DaoParse implements DaoInterface {
     @Override
     public CustomResponse updateAdmin(JSONObject body, Boolean append) {
 
-        return null;
+        try {
+
+            List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UemID(body.getString("adminID"));
+            if (univAdmins == null || univAdmins.size() == 0){
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.ADMIN_DOES_NOT_EXIST);
+                return customResponse;
+            }else {
+                Map<String, Object> map = AllDBOperations.updateAdmin(univAdmins.get(0), body, append);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
     }
+
+    @Override
+    public CustomResponse updateStudent(JSONObject body, Boolean append) {
+
+        try {
+
+            List<Student> students = AllDBOperations.getAllStudents_UemID(body.getString("studentID"));
+            if (students == null || students.size() == 0){
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.STUDENT_DOES_NOT_EXIST);
+                return customResponse;
+            }else {
+                Map<String, Object> map = AllDBOperations.updateStudent(students.get(0), body, append);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse updateTeacher(JSONObject body, Boolean append) {
+
+        try {
+
+            List<Teacher> teachers = AllDBOperations.getAllTeachers_UemID(body.getString("teacherID"));
+            if (teachers == null || teachers.size() == 0){
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.TEACHER_DOES_NOT_EXIST);
+                return customResponse;
+            }else {
+                Map<String, Object> map = AllDBOperations.updateTeacher(teachers.get(0), body, append);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    // updateStudent
 }

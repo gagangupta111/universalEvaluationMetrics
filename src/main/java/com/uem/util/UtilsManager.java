@@ -1,5 +1,6 @@
 package com.uem.util;
 
+import com.uem.model.UnivAdmin;
 import com.uem.model.University;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -172,6 +173,68 @@ public class UtilsManager {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
+    }
+
+    public static JSONObject adminToJson(UnivAdmin univAdmin){
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = univAdmin.getUnivID() != null ? object.put("UnivID", univAdmin.getUnivID()) : object;
+            object = univAdmin.getUEM_ID() != null ? object.put("UEM_ID", univAdmin.getUEM_ID()) : object;
+            object = univAdmin.getUserID() != null ? object.put("UserID", univAdmin.getUserID()) : object;
+            object = univAdmin.getInfo() != null ? object.put("info", univAdmin.getInfo()) : object;
+
+            object = univAdmin.getObjectID() != null ? object.put("_id", univAdmin.getObjectID()) : object;
+            object = univAdmin.get_created_at() != null ? object.put("_created_at", univAdmin.get_created_at()) : object;
+            object = univAdmin.get_updated_at() != null ? object.put("_updated_at", univAdmin.get_updated_at()) : object;
+
+            List<Document> documents = univAdmin.getDocuments();
+            JSONArray array = new JSONArray();
+            for (Document document : documents){
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Documents", array) : object;
+
+            Document photo = univAdmin.getPhoto();
+            object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
+
+
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
+    public static UnivAdmin jsonToAdmin(JSONObject jsonObject){
+
+        UnivAdmin univAdmin = new UnivAdmin();
+
+        try {
+            univAdmin.setUnivID(jsonObject.has("UnivID") ? jsonObject.getString("UnivID") : null);
+            univAdmin.setUEM_ID(jsonObject.has("UEM_ID") ? jsonObject.getString("UEM_ID") : null);
+            univAdmin.setUserID(jsonObject.has("UserID") ? jsonObject.getString("UserID") : null);
+            univAdmin.setInfo(jsonObject.has("info") ? jsonObject.getString("info") : null);
+
+            List<Document> courses = new ArrayList<>();
+            JSONArray array = jsonObject.has("Documents") ? jsonObject.getJSONArray("Documents") : new JSONArray();
+            for (int i = 0; i < array.length(); i++){
+                courses.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            univAdmin.setDocuments(courses);
+
+            Document photo = new Document();
+            JSONObject object = jsonObject.has("Photo") ? jsonObject.getJSONObject("Photo") : new JSONObject();
+            photo = Document.parse(object.toString());
+            univAdmin.setPhoto(photo);
+
+            univAdmin.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            univAdmin.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            univAdmin.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return univAdmin;
     }
 
     public static String getUTCStandardDateFormat(){
