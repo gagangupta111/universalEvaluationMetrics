@@ -503,6 +503,61 @@ public class MainController {
         }
     }
 
+    @PostMapping("/student/{studentID}/Photo")
+    @ResponseBody
+    public ResponseEntity<String> updateStudentPhoto(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+
+            @PathVariable("studentID") String studentID) throws Exception {
+
+        try {
+            if (studentID == null || studentID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body.put("studentID", studentID);
+
+            if (Photo != null) {
+                MultipartFile multipartFile = Photo;
+                String key_name = "STUDENT_PHOTO_" + studentID;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("Name", key_name);
+                body.put("Photo", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.updateStudent(body, false);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
     @PostMapping("/teacher/{teacherID}/Document/{append}")
     @ResponseBody
     public ResponseEntity<String> updateTeacherDocument(
@@ -555,6 +610,61 @@ public class MainController {
             }
 
             CustomResponse customResponse = mainService.updateTeacher(body, append);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PostMapping("/teacher/{teacherID}/Photo")
+    @ResponseBody
+    public ResponseEntity<String> updateTeacherPhoto(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+
+            @PathVariable("teacherID") String teacherID) throws Exception {
+
+        try {
+            if (teacherID == null || teacherID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body.put("teacherID", teacherID);
+
+            if (Photo != null) {
+                MultipartFile multipartFile = Photo;
+                String key_name = "TEACHER_PHOTO_" + teacherID;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("Name", key_name);
+                body.put("Photo", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.updateTeacher(body, false);
             if (customResponse.getSuccess()) {
                 return ResponseEntity.ok()
                         .header("message", customResponse.getMessage())
