@@ -30,8 +30,7 @@ public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        List<University> universities = new ArrayList<>();
-        universities.addAll(null);
+        ParseUtil.deleteAllObjectsAllTables();
     }
 
     public static void testS3Amazon() {

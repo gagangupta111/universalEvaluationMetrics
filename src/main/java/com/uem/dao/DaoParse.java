@@ -24,20 +24,114 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public CustomResponse signUp(String email) {
-        List<User> users = AllDBOperations.getAllUsers_Email(email);
-        if (users == null || users.size() == 0) {
+    public CustomResponse signUp(String email, String type){
 
-            Map<String, Object> data = AllDBOperations.createUser(email);
-            CustomResponse customResponse = new CustomResponse();
-            customResponse.setSuccess(true);
-            customResponse.setInfo(data);
-            customResponse.setMessage(Constants.SUCCESS);
-            return customResponse;
-        } else {
+        try {
+            List<User> users = AllDBOperations.getAllUsers_Email(email);
+            if (users == null || users.size() == 0) {
+
+                Map<String, Object> data = AllDBOperations.createUser(email);
+
+                if (Boolean.valueOf(String.valueOf(data.get("success")))){
+
+                    JSONObject body = new JSONObject( String.valueOf(data.get("body")));
+                    Map<String, Object> adminResponse = new HashMap<>();
+
+                    if ("ADMIN".equals(type.toUpperCase())){
+                        adminResponse = AllDBOperations.createAdmin(body.getString("UserID"));
+                    }else if ("TEACHER".equals(type.toUpperCase())){
+                        adminResponse = AllDBOperations.createTeacher(body.getString("UserID"));
+                    }else if ("STUDENT".equals(type.toUpperCase())){
+                        adminResponse = AllDBOperations.createStudent(body.getString("UserID"));
+                    }
+
+                    if (Boolean.valueOf(String.valueOf(adminResponse.get("success")))){
+                        JSONObject adminBody = new JSONObject( String.valueOf(adminResponse.get("body")));
+                        body.put("UEM_ID", adminBody.getString("UEM_ID"));
+                        data.put("body", body);
+
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(true);
+                        customResponse.setMessage(Constants.SUCCESS);
+                        customResponse.setInfo(data);
+                        return customResponse;
+                    }else {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.SIGN_UP_FAILURE);
+                        return customResponse;
+                    }
+                }else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.SIGN_UP_FAILURE);
+                    return customResponse;
+                }
+            } else {
+
+                Map<String, Object> data = new HashMap<>();
+
+                Map<String, Object> adminResponse = new HashMap<>();
+                if ("ADMIN".equals(type.toUpperCase())){
+                    List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(users.get(0).getUserID());
+                    if (univAdmins == null || univAdmins.size() == 0){
+                        adminResponse = AllDBOperations.createAdmin(users.get(0).getUserID());
+                    }else {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.ALREADY_EXIST);
+                        return customResponse;
+                    }
+                }else if ("TEACHER".equals(type.toUpperCase())){
+                    List<Teacher> univAdmins = AllDBOperations.getAllTeachers_UserID(users.get(0).getUserID());
+                    if (univAdmins == null || univAdmins.size() == 0){
+                        adminResponse = AllDBOperations.createTeacher(users.get(0).getUserID());
+                    }else {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.ALREADY_EXIST);
+                        return customResponse;
+                    }
+                }else if ("STUDENT".equals(type.toUpperCase())){
+                    List<Student> univAdmins = AllDBOperations.getAllStudents_UserID(users.get(0).getUserID());
+                    if (univAdmins == null || univAdmins.size() == 0){
+                        adminResponse = AllDBOperations.createStudent(users.get(0).getUserID());
+                    }else {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.ALREADY_EXIST);
+                        return customResponse;
+                    }
+                }
+
+                if (Boolean.valueOf(String.valueOf(adminResponse.get("success")))){
+                    data.put("success", true);
+                    JSONObject body = new JSONObject();
+
+                    JSONObject adminBody = new JSONObject( String.valueOf(adminResponse.get("body")));
+                    body.put("UEM_ID", adminBody.getString("UEM_ID"));
+                    body.put("UserID", users.get(0).getUserID());
+                    data.put("body", body);
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(data);
+                    return customResponse;
+                }else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.SIGN_UP_FAILURE);
+                    return customResponse;
+                }
+            }
+        }catch (Exception e){
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
             customResponse.setMessage(Constants.SIGN_UP_FAILURE);
+            Map<String, Object> info = new HashMap<>();
+            info.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(info);
             return customResponse;
         }
     }

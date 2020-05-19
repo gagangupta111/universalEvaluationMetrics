@@ -8,7 +8,7 @@ import java.util.List;
 public interface DaoInterface {
 
     public String test();
-    public CustomResponse signUp(String email);
+    public CustomResponse signUp(String email, String type);
     public CustomResponse signIn(String email, String password, String loginType);
     public Boolean updateUserInfo(JSONObject body);
     public List<User> getUserInfo(String UserID);

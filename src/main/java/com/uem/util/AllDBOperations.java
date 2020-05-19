@@ -6,6 +6,7 @@ import org.bson.BsonDocument;
 import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.util.*;
 
     /*
@@ -28,7 +29,6 @@ public class AllDBOperations {
             String UserID = UtilsManager.generateUniqueID();
             String Email = email;
             String Password = UtilsManager.generateUniqueID();
-            String UEM_ID = UtilsManager.generateUniqueID();
 
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
@@ -38,31 +38,14 @@ public class AllDBOperations {
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "UniversalUser");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
-                body = new JSONObject();
-                body.put("UserID", UserID);
-                body.put("UEM_ID", UEM_ID);
-                result = ParseUtil.batchCreateInParseTable(body, "UnivAdmin");
-                status = Integer.valueOf(String.valueOf(result.get("status")));
-                if (status >= 200 && status < 300) {
-                    body = new JSONObject();
-                    body.put("UserID", UserID);
-                    body.put("Email", Email);
-                    body.put("Password", Password);
-                    body.put("UEM_ID", UEM_ID);
 
-                    data.put("success", true);
-                    data.put("body", body);
-                    return data;
-                } else {
-                    data.put("success", false);
-                    data.put("response", result.get("response"));
-                    data.put("exception", result.get("exception"));
-                    return data;
-                }
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+
             } else {
                 data.put("success", false);
                 data.put("response", result.get("response"));
-                data.put("exception", result.get("exception"));
                 return data;
             }
 
@@ -70,6 +53,99 @@ public class AllDBOperations {
             data.put("exception", UtilsManager.exceptionAsString(e));
             return data;
         }
+    }
+
+    public static Map<String, Object> createAdmin(String UserID) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            String UEM_ID = UtilsManager.generateUniqueID();
+
+            JSONObject body = new JSONObject();
+            body.put("UserID", UserID);
+            body.put("UEM_ID", UEM_ID);
+            Map<String, Object>  result = ParseUtil.batchCreateInParseTable(body, "UnivAdmin");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+
+    }
+
+    public static Map<String, Object> createTeacher(String UserID) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            String UEM_ID = UtilsManager.generateUniqueID();
+
+            JSONObject body = new JSONObject();
+            body.put("UserID", UserID);
+            body.put("UEM_ID", UEM_ID);
+            Map<String, Object>  result = ParseUtil.batchCreateInParseTable(body, "Teacher");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+
+    }
+
+    public static Map<String, Object> createStudent(String UserID) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            String UEM_ID = UtilsManager.generateUniqueID();
+
+            JSONObject body = new JSONObject();
+            body.put("UserID", UserID);
+            body.put("UEM_ID", UEM_ID);
+            Map<String, Object>  result = ParseUtil.batchCreateInParseTable(body, "Student");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+
     }
 
     public static Map<String, Object> createUniversity(JSONObject university) {
@@ -115,7 +191,7 @@ public class AllDBOperations {
                 status = Integer.valueOf(String.valueOf(result.get("status")));
 
                 for (Iterator<String> iter = university.keys(); iter.hasNext(); ) {
-                    String key  = iter.next();
+                    String key = iter.next();
                     permission.put(key, (university.get(key)));
                 }
 
@@ -184,33 +260,33 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
-            if (append){
+            if (append) {
 
                 University toBeAppended = UtilsManager.jsonToUniversity(body);
                 if (toBeAppended.getActionLogs() != null && toBeAppended.getActionLogs().size() > 0
-                        && university.getActionLogs() != null && university.getActionLogs().size() > 0){
+                        && university.getActionLogs() != null && university.getActionLogs().size() > 0) {
                     toBeAppended.getActionLogs().addAll(university.getActionLogs());
                 }
                 if (toBeAppended.getCourses() != null && toBeAppended.getCourses().size() > 0
-                        && university.getCourses() != null && university.getCourses().size() > 0){
+                        && university.getCourses() != null && university.getCourses().size() > 0) {
                     toBeAppended.getCourses().addAll(university.getCourses());
                 }
                 if (toBeAppended.getStudents() != null && toBeAppended.getStudents().size() > 0
-                        && university.getStudents() != null && university.getStudents().size() > 0){
+                        && university.getStudents() != null && university.getStudents().size() > 0) {
                     toBeAppended.getStudents().addAll(university.getStudents());
                 }
                 if (toBeAppended.getTeachers() != null && toBeAppended.getTeachers().size() > 0
-                        && university.getTeachers() != null && university.getTeachers().size() > 0){
+                        && university.getTeachers() != null && university.getTeachers().size() > 0) {
                     toBeAppended.getTeachers().addAll(university.getTeachers());
                 }
                 if (toBeAppended.getUnivAdmins() != null && toBeAppended.getUnivAdmins().size() > 0
-                        && university.getUnivAdmins() != null && university.getUnivAdmins().size() > 0){
+                        && university.getUnivAdmins() != null && university.getUnivAdmins().size() > 0) {
                     toBeAppended.getUnivAdmins().addAll(university.getUnivAdmins());
                 }
 
                 body = UtilsManager.universityToJson(toBeAppended);
 
-            }else {
+            } else {
                 body = UtilsManager.universityToJson(UtilsManager.jsonToUniversity(body));
             }
 
@@ -255,17 +331,17 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
-            if (append){
+            if (append) {
 
                 UnivAdmin toBeAppended = UtilsManager.jsonToAdmin(body);
                 if (toBeAppended.getDocuments() != null && toBeAppended.getDocuments().size() > 0
-                        && univAdmin.getDocuments() != null && univAdmin.getDocuments().size() > 0){
+                        && univAdmin.getDocuments() != null && univAdmin.getDocuments().size() > 0) {
                     toBeAppended.getDocuments().addAll(univAdmin.getDocuments());
                 }
 
                 body = UtilsManager.adminToJson(toBeAppended);
 
-            }else {
+            } else {
                 body = UtilsManager.adminToJson(UtilsManager.jsonToAdmin(body));
             }
 
@@ -300,17 +376,17 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
-            if (append){
+            if (append) {
 
                 Student toBeAppended = UtilsManager.jsonToStudent(body);
                 if (toBeAppended.getDocuments() != null && toBeAppended.getDocuments().size() > 0
-                        && student.getDocuments() != null && student.getDocuments().size() > 0){
+                        && student.getDocuments() != null && student.getDocuments().size() > 0) {
                     toBeAppended.getDocuments().addAll(student.getDocuments());
                 }
 
                 body = UtilsManager.studentToJson(toBeAppended);
 
-            }else {
+            } else {
                 body = UtilsManager.studentToJson(UtilsManager.jsonToStudent(body));
             }
 
@@ -345,17 +421,17 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
-            if (append){
+            if (append) {
 
                 UnivAdmin toBeAppended = UtilsManager.jsonToAdmin(body);
                 if (toBeAppended.getDocuments() != null && toBeAppended.getDocuments().size() > 0
-                        && teacher.getDocuments() != null && teacher.getDocuments().size() > 0){
+                        && teacher.getDocuments() != null && teacher.getDocuments().size() > 0) {
                     toBeAppended.getDocuments().addAll(teacher.getDocuments());
                 }
 
                 body = UtilsManager.adminToJson(toBeAppended);
 
-            }else {
+            } else {
                 body = UtilsManager.teacherToJson(UtilsManager.jsonToTeacher(body));
             }
 
@@ -725,7 +801,7 @@ public class AllDBOperations {
                     user.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
 
                     users.add(user);
-                }catch (Exception e){
+                } catch (Exception e) {
                     logger.debug(UtilsManager.exceptionAsString(e));
                 }
             }
@@ -766,7 +842,7 @@ public class AllDBOperations {
                     user.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
 
                     users.add(user);
-                }catch (Exception e){
+                } catch (Exception e) {
                     logger.debug(UtilsManager.exceptionAsString(e));
                 }
             }

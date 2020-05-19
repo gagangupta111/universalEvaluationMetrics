@@ -25,8 +25,8 @@ public class MainService {
         return dao.test();
     }
 
-    public CustomResponse signUp(String email) {
-        return dao.signUp(email);
+    public CustomResponse signUp(String email, String type) {
+        return dao.signUp(email, type);
     }
 
     public CustomResponse signIN(String email, String password, String loginType) {
