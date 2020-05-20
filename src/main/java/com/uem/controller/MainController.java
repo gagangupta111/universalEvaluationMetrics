@@ -18,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/uem")
@@ -46,6 +48,19 @@ public class MainController {
         JSONObject jsonObject = new JSONObject(body.trim());
         logger.debug("REQUEST_RECIEVED-signUp");
         String email = jsonObject.getString("email");
+
+        Set<String> set = new HashSet<>();
+        set.add(Constants.ADMIN);
+        set.add(Constants.STUDENT);
+        set.add(Constants.TEACHER);
+        set.add(Constants.COURSE_ADMIN);
+
+        if (type == null || !set.contains(type.toUpperCase())){
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_TYPE")
+                    .body("INVALID_TYPE");
+        }
+
         CustomResponse customResponse = mainService.signUp(email, type);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()

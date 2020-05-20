@@ -210,6 +210,19 @@ public class MongoDBUtil {
         }
     }
 
+    public static List<Document> getAllCourseAdmins(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getCourseAdmin();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllCourseAdmins \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllCourseAdmins", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Document> getAllTeachers(BsonDocument filter ) {
 
         try {

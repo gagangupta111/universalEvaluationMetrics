@@ -30,4 +30,9 @@ public interface Constants {
 
     public static final Integer RETRY_ADACCOUNT_GETADACCOUNTS = 3;
 
+    public static final String  ADMIN = "ADMIN";
+    public static final String  TEACHER = "TEACHER";
+    public static final String  STUDENT = "STUDENT";
+    public static final String  COURSE_ADMIN = "COURSE_ADMIN";
+
 }

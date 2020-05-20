@@ -1,7 +1,6 @@
 package com.uem.model;
 
 import org.bson.Document;
-import org.json.JSONArray;
 
 import java.util.Date;
 import java.util.List;
