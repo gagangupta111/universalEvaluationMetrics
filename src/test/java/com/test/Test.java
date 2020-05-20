@@ -11,6 +11,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.google.api.client.util.IOUtils;
 import com.google.api.services.bigquery.Bigquery;
 import com.google.api.services.bigquery.model.TableDataInsertAllRequest;
+import com.uem.model.Teacher;
 import com.uem.model.University;
 import com.uem.util.*;
 import com.uem.archieve.main.BQOperationsTestTable;
@@ -21,16 +22,32 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Test {
 
     public static void main(String[] args) throws Exception {
 
-        ParseUtil.deleteAllObjectsAllTables();
+        Set<Teacher> set = new HashSet<>();
+
+        Teacher teacher = new Teacher();
+        teacher.setObjectID("A");
+        teacher.setInfo("A");
+        set.add(teacher);
+        System.out.println(set);
+
+        Teacher teacher1 = new Teacher();
+        teacher1.setObjectID("A");
+
+        System.out.println(set);
+
+        Teacher teacher2 = new Teacher();
+        teacher2.setObjectID("A");
+        teacher2.setInfo("A");
+        set.add(teacher2);
+        System.out.println(set);
+
+
     }
 
     public static void testS3Amazon() {

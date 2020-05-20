@@ -5,6 +5,7 @@ import org.json.JSONArray;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class Teacher {
 
@@ -89,11 +90,33 @@ public class Teacher {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Teacher)) return false;
+        Teacher teacher = (Teacher) o;
+        return Objects.equals(getUEM_ID(), teacher.getUEM_ID()) &&
+                Objects.equals(getUserID(), teacher.getUserID()) &&
+                Objects.equals(getUnivID(), teacher.getUnivID()) &&
+                Objects.equals(getObjectID(), teacher.getObjectID());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUEM_ID(), getUserID(), getUnivID(), getObjectID());
+    }
+
+    @Override
     public String toString() {
         return "Teacher{" +
                 "UEM_ID='" + UEM_ID + '\'' +
                 ", UserID='" + UserID + '\'' +
                 ", UnivID='" + UnivID + '\'' +
+                ", info='" + info + '\'' +
+                ", Documents=" + Documents +
+                ", Photo=" + Photo +
+                ", objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
                 '}';
     }
 }
