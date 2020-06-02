@@ -300,15 +300,15 @@ public class AllDBOperations {
                 }
                 if (toBeAppended.getCourses() != null && toBeAppended.getCourses().size() > 0
                         && university.getCourses() != null && university.getCourses().size() > 0) {
-                    toBeAppended.getCourses().addAll(university.getCourses());
+                    toBeAppended.setCourses(UtilsManager.mergeDocuments(university.getCourses(), toBeAppended.getCourses(), "id"));
                 }
                 if (toBeAppended.getStudents() != null && toBeAppended.getStudents().size() > 0
                         && university.getStudents() != null && university.getStudents().size() > 0) {
-                    toBeAppended.getStudents().addAll(university.getStudents());
+                    toBeAppended.setStudents(UtilsManager.mergeDocuments(university.getStudents(), toBeAppended.getStudents(), "id"));
                 }
                 if (toBeAppended.getTeachers() != null && toBeAppended.getTeachers().size() > 0
                         && university.getTeachers() != null && university.getTeachers().size() > 0) {
-                    toBeAppended.getTeachers().addAll(university.getTeachers());
+                    toBeAppended.setTeachers(UtilsManager.mergeDocuments(university.getTeachers(), toBeAppended.getTeachers(), "id"));
                 }
                 if (toBeAppended.getUnivAdmins() != null && toBeAppended.getUnivAdmins().size() > 0
                         && university.getUnivAdmins() != null && university.getUnivAdmins().size() > 0) {

@@ -26,7 +26,59 @@ import java.util.*;
 
 public class Test {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+
+        test9();
+
+    }
+
+    public static void test9() {
+
+        List<Document> original = new ArrayList<>();
+        Document document = new Document();
+        document.put("id", 1);
+        document.put("name", 2);
+        document.put("age", 2);
+        original.add(document);
+
+        document = new Document();
+        document.put("id", 2);
+        document.put("name", 2);
+        document.put("age", 2);
+        original.add(document);
+
+        document = new Document();
+        document.put("id", 3);
+        original.add(document);
+
+        document = new Document();
+        document.put("id", 5);
+        original.add(document);
+
+        List<Document> newDocuments = new ArrayList<>();
+        document = new Document();
+        document.put("id", 1);
+        document.put("name", 1);
+        document.put("age", 1);
+        newDocuments.add(document);
+
+        document = new Document();
+        document.put("id", 2);
+        newDocuments.add(document);
+
+        document = new Document();
+        document.put("id", 4);
+        newDocuments.add(document);
+
+        List<Document> list = new ArrayList<>();
+        list = (List<Document>)UtilsManager.mergeDocuments(original, newDocuments, "id");
+        System.out.println(list);
+
+        list = (List<Document>)UtilsManager.mergeDocuments(original, newDocuments, "id_dd");
+        System.out.println(list);
+    }
+
+    public static void test8() {
 
         Set<Teacher> set = new HashSet<>();
 

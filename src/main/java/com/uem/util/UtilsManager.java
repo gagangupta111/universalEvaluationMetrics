@@ -31,6 +31,33 @@ public class UtilsManager {
 
     static Logger logger = LogUtil.getInstance();
 
+    public static List<Document> mergeDocuments(List<Document> original, List<Document> newList, String param){
+
+        Map<String, Document> newDocuemtns = new HashMap<>();
+
+        for (Document originalDoc : original){
+            if (originalDoc.get(param) != null){
+                newDocuemtns.put(String.valueOf(originalDoc.get(param)), originalDoc);
+            }else {
+                newDocuemtns.put(String.valueOf(Math.random()), originalDoc);
+            }
+        }
+
+        for (Document newDoc : newList){
+            if (newDoc.get(param) != null){
+                newDocuemtns.put(String.valueOf(newDoc.get(param)), newDoc);
+            }else {
+                newDocuemtns.put(String.valueOf(Math.random()), newDoc);
+            }
+        }
+        List<Document> updated = new ArrayList<>();
+        for (String key : newDocuemtns.keySet()){
+            updated.add(newDocuemtns.get(key));
+        }
+        return updated;
+
+    }
+
     public static void multipartFileToFile(MultipartFile file, Path dir) throws  Exception{
         Path filepath = Paths.get(dir.toString(), file.getOriginalFilename());
 
