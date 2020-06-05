@@ -93,6 +93,70 @@ public class MainController {
         }
     }
 
+    @GetMapping("/admin/{adminID}")
+    @ResponseBody
+    public ResponseEntity<String> geAdminInfo(@PathVariable("adminID") String adminID) {
+
+        List<UnivAdmin> users = mainService.geAdminInfo(adminID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
+    @GetMapping("/course_admin/{adminID}")
+    @ResponseBody
+    public ResponseEntity<String> geCourseAdminInfo(@PathVariable("adminID") String adminID) {
+
+        List<CourseAdmin> users = mainService.geCourseAdminInfo(adminID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
+    @GetMapping("/student/{studentID}")
+    @ResponseBody
+    public ResponseEntity<String> geStudentInfo(@PathVariable("studentID") String studentID) {
+
+        List<Student> users = mainService.geStudentInfo(studentID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
+    @GetMapping("/teacher/{teacherID}")
+    @ResponseBody
+    public ResponseEntity<String> geTeacherInfo(@PathVariable("teacherID") String teacherID) {
+
+        List<Teacher> users = mainService.geTeacherInfo(teacherID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
     @GetMapping("/user/{userID}")
     @ResponseBody
     public ResponseEntity<String> getUserInfo(@PathVariable("userID") String userID) {
@@ -289,54 +353,6 @@ public class MainController {
             return ResponseEntity.badRequest()
                     .header("message", Constants.INTERNAL_ERROR)
                     .body(UtilsManager.exceptionAsString(e));
-        }
-    }
-
-    @GetMapping("/admin/{adminID}")
-    @ResponseBody
-    public ResponseEntity<String> geAdminInfo(@PathVariable("adminID") String adminID) {
-
-        List<UnivAdmin> users = mainService.geAdminInfo(adminID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
-            return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
-        }
-    }
-
-    @GetMapping("/student/{studentID}")
-    @ResponseBody
-    public ResponseEntity<String> geStudentInfo(@PathVariable("studentID") String studentID) {
-
-        List<Student> users = mainService.geStudentInfo(studentID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
-            return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
-        }
-    }
-
-    @GetMapping("/teacher/{teacherID}")
-    @ResponseBody
-    public ResponseEntity<String> geTeacherInfo(@PathVariable("teacherID") String teacherID) {
-
-        List<Teacher> users = mainService.geTeacherInfo(teacherID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
-            return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
         }
     }
 

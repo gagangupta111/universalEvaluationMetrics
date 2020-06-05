@@ -69,6 +69,10 @@ public class MainService {
         return dao.geAdminInfo(AdminID);
     }
 
+    public List<CourseAdmin> geCourseAdminInfo(String AdminID) {
+        return dao.geCourseAdminInfo(AdminID);
+    }
+
     public List<Student> geStudentInfo(String studentID) {
         return dao.geStudentInfo(studentID);
     }

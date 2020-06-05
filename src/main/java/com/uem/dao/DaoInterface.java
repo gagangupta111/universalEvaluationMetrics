@@ -13,6 +13,7 @@ public interface DaoInterface {
     public Boolean updateUserInfo(JSONObject body);
     public List<User> getUserInfo(String UserID);
     public List<UnivAdmin> geAdminInfo(String AdminID);
+    public List<CourseAdmin> geCourseAdminInfo(String AdminID);
     public List<Student> geStudentInfo(String AdminID);
     public List<Teacher> geTeacherInfo(String AdminID);
     // geTeacherInfo

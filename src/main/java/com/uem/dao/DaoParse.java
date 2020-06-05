@@ -233,6 +233,13 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public List<CourseAdmin> geCourseAdminInfo(String AdminID) {
+        List<CourseAdmin> users = new ArrayList<>();
+        users = AllDBOperations.getAllCourseAdmins_UemID(AdminID);
+        return users;
+    }
+
+    @Override
     public List<Student> geStudentInfo(String StudentID) {
         List<Student> users = new ArrayList<>();
         users = AllDBOperations.getAllStudents_UemID(StudentID);

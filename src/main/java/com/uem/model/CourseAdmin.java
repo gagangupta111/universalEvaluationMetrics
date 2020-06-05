@@ -88,4 +88,19 @@ public class CourseAdmin {
     public void setPhoto(Document photo) {
         Photo = photo;
     }
+
+    @Override
+    public String toString() {
+        return "CourseAdmin{" +
+                "objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                ", UEM_ID='" + UEM_ID + '\'' +
+                ", UserID='" + UserID + '\'' +
+                ", info='" + info + '\'' +
+                ", Documents=" + Documents +
+                ", Courses=" + Courses +
+                ", Photo=" + Photo +
+                '}';
+    }
 }

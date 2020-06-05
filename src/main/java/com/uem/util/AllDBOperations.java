@@ -705,6 +705,36 @@ public class AllDBOperations {
         return students;
     }
 
+    public static List<CourseAdmin> getAllCourseAdmins_UemID(String UemID) {
+
+        List<CourseAdmin> students = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "UEM_ID:{$regex:/" + UemID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllCourseAdmin(filter);
+        if (documents == null || documents.size() == 0) {
+            return students;
+        } else {
+            for (Document document : documents) {
+                CourseAdmin univAdmin = new CourseAdmin();
+                univAdmin.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
+                univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setCourses(document.containsKey("Courses") ? document.getList("Courses", Document.class) : null);
+                univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                students.add(univAdmin);
+            }
+        }
+        return students;
+    }
+
     public static List<UnivAdmin> getAllAdmin_UserID(String UserID) {
 
         List<UnivAdmin> univAdmins = new ArrayList<>();
