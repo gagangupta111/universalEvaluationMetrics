@@ -16,13 +16,16 @@ public interface DaoInterface {
     public List<CourseAdmin> geCourseAdminInfo(String AdminID);
     public List<Student> geStudentInfo(String AdminID);
     public List<Teacher> geTeacherInfo(String AdminID);
-    // geTeacherInfo
 
+    public List<Course> getAllCourses();
+    public List<Course> getAllCourses(String name);
+
+    public CustomResponse createCourse(JSONObject body);
     public List<University> getUniversity(String UnivID);
     public CustomResponse createUniversity(JSONObject body);
     public CustomResponse updateUniversity(JSONObject body, Boolean append);
     public CustomResponse updateAdmin(JSONObject body, Boolean append);
     public CustomResponse updateStudent(JSONObject body, Boolean append);
     public CustomResponse updateTeacher(JSONObject body, Boolean append);
-    //updateTeacher
+
 }

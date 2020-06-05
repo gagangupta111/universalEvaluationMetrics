@@ -65,6 +65,18 @@ public class MainService {
         return dao.getUserInfo(UserID);
     }
 
+    public CustomResponse createCourse(JSONObject body) {
+        return dao.createCourse(body);
+    }
+
+    public List<Course> getAllCourses() {
+        return dao.getAllCourses();
+    }
+
+    public List<Course> getAllCourses(String name) {
+        return dao.getAllCourses(name);
+    }
+
     public List<UnivAdmin> geAdminInfo(String AdminID) {
         return dao.geAdminInfo(AdminID);
     }

@@ -173,6 +173,22 @@ public class MainController {
         }
     }
 
+    @GetMapping("/courses")
+    @ResponseBody
+    public ResponseEntity<String> getAllCourses() {
+
+        List<Course> users = mainService.getAllCourses();
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
     @PutMapping("/user/{userID}")
     @ResponseBody
     public ResponseEntity<String> updateUser(
@@ -267,6 +283,39 @@ public class MainController {
 
         JSONObject jsonObject = new JSONObject(body.trim());
         CustomResponse customResponse = mainService.createUniversity(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/courses/{name}")
+    @ResponseBody
+    public ResponseEntity<String> getCoursesContainsName(@PathVariable("name") String name) throws Exception {
+
+        List<Course> courses = mainService.getAllCourses(name);
+        if (courses == null || courses.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(courses.toString());
+        }
+    }
+
+    @PostMapping("/courses")
+    @ResponseBody
+    public ResponseEntity<String> createCourse(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createCourse(jsonObject);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())

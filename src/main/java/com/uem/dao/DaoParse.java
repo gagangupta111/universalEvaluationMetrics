@@ -253,6 +253,21 @@ public class DaoParse implements DaoInterface {
         return users;
     }
 
+    // getAllCourses
+    @Override
+    public List<Course> getAllCourses() {
+        List<Course> users = new ArrayList<>();
+        users = AllDBOperations.getAllCoursesInUEM();
+        return users;
+    }
+
+    @Override
+    public List<Course> getAllCourses(String name) {
+        List<Course> users = new ArrayList<>();
+        users = AllDBOperations.getAllCoursesInUEM(name);
+        return users;
+    }
+
     @Override
     public List<University> getUniversity(String UnivID){
         List<University> users = new ArrayList<>();
@@ -260,6 +275,7 @@ public class DaoParse implements DaoInterface {
         return users;
 
     }
+
 
     @Override
     public CustomResponse createUniversity(JSONObject body) {
@@ -285,6 +301,45 @@ public class DaoParse implements DaoInterface {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.UNIVERSITY_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse createCourse(JSONObject body) {
+
+        try {
+            if (body.has("Name") && body.has("CourseAdmin")) {
+
+                Map<String, Object> map = AllDBOperations.createCourse(body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.COURSE_CREATION_FAILURE);
                 return customResponse;
             }
         } catch (Exception e) {

@@ -251,6 +251,37 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> createCourse(JSONObject course) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+            String CourseID = UtilsManager.generateUniqueID();
+            String Name = course.getString("Name");
+            String CourseAdmin = course.getString("CourseAdmin");
+
+            course.put("CourseID", CourseID);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(course, "Course");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", course);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", course);
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateUser(JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
@@ -703,6 +734,81 @@ public class AllDBOperations {
             }
         }
         return students;
+    }
+
+    public static List<Course> getAllCoursesInUEM(String name) {
+
+        List<Course> courses = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "Name:{$regex:/" + name + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllCourse(filter);
+        if (documents == null || documents.size() == 0) {
+            return courses;
+        } else {
+            for (Document document : documents) {
+                Course course = new Course();
+                course.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
+                course.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                course.setLevel(document.containsKey("Level") ? document.getString("Level") : null);
+                course.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                course.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                course.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                course.setExpiring(document.containsKey("Expiring") ? document.getString("Expiring") : null);
+                course.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                course.setCourseAdmin(document.containsKey("CourseAdmin") ? document.getString("CourseAdmin") : null);
+
+                course.setBatches(document.containsKey("Batches") ? document.getList("Batches", Document.class) : null);
+                course.setUniversities(document.containsKey("Universities") ? document.getList("Universities", Document.class) : null);
+
+                course.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                course.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                course.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                course.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                courses.add(course);
+            }
+        }
+        return courses;
+    }
+
+    public static List<Course> getAllCoursesInUEM() {
+
+        List<Course> courses = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllCourse(filter);
+        if (documents == null || documents.size() == 0) {
+            return courses;
+        } else {
+            for (Document document : documents) {
+                Course course = new Course();
+                course.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
+                course.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                course.setLevel(document.containsKey("Level") ? document.getString("Level") : null);
+                course.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                course.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                course.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                course.setExpiring(document.containsKey("Expiring") ? document.getString("Expiring") : null);
+                course.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                course.setCourseAdmin(document.containsKey("CourseAdmin") ? document.getString("CourseAdmin") : null);
+
+                course.setBatches(document.containsKey("Batches") ? document.getList("Batches", Document.class) : null);
+                course.setUniversities(document.containsKey("Universities") ? document.getList("Universities", Document.class) : null);
+
+                course.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                course.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                course.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                course.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                courses.add(course);
+            }
+        }
+        return courses;
     }
 
     public static List<CourseAdmin> getAllCourseAdmins_UemID(String UemID) {

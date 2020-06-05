@@ -6,18 +6,65 @@ import java.util.List;
 
 public class Course {
 
+    private String CourseAdmin;
     private String courseID;
     private String name;
     private String level;
     private String levelInt;
     private Document billing;
     private Document status;
+
+    private String Starting;
+    private String Expiring;
+    private String info;
+
     private List<Document> batches;
     private List<Document> universities;
     private List<Document>  actionLogs;
     private String objectID;
     private Date _created_at;
     private Date _updated_at;
+    private Document photo;
+
+    public String getCourseAdmin() {
+        return CourseAdmin;
+    }
+
+    public void setCourseAdmin(String courseAdmin) {
+        CourseAdmin = courseAdmin;
+    }
+
+    public String getStarting() {
+        return Starting;
+    }
+
+    public void setStarting(String starting) {
+        Starting = starting;
+    }
+
+    public String getExpiring() {
+        return Expiring;
+    }
+
+    public void setExpiring(String expiring) {
+        Expiring = expiring;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public Document getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Document photo) {
+        this.photo = photo;
+    }
 
     public String getCourseID() {
         return courseID;
@@ -115,5 +162,26 @@ public class Course {
         this._updated_at = _updated_at;
     }
 
-
+    @Override
+    public String toString() {
+        return "Course{" +
+                "CourseAdmin='" + CourseAdmin + '\'' +
+                ", courseID='" + courseID + '\'' +
+                ", name='" + name + '\'' +
+                ", level='" + level + '\'' +
+                ", levelInt='" + levelInt + '\'' +
+                ", billing=" + billing +
+                ", status=" + status +
+                ", Starting='" + Starting + '\'' +
+                ", Expiring='" + Expiring + '\'' +
+                ", info='" + info + '\'' +
+                ", batches=" + batches +
+                ", universities=" + universities +
+                ", actionLogs=" + actionLogs +
+                ", objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                ", photo=" + photo +
+                '}';
+    }
 }
