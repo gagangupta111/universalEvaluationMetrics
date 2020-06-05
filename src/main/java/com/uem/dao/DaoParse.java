@@ -247,6 +247,14 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public List<University> getUniversity(String UnivID){
+        List<University> users = new ArrayList<>();
+        users = AllDBOperations.getAllUniversities_UnivID(UnivID);
+        return users;
+
+    }
+
+    @Override
     public CustomResponse createUniversity(JSONObject body) {
 
         try {

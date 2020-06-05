@@ -33,6 +33,10 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
+    public List<University> getUniversity(String univID) {
+        return dao.getUniversity(univID);
+    }
+
     public CustomResponse createUniversity(JSONObject body) {
         return dao.createUniversity(body);
     }

@@ -93,6 +93,22 @@ public class MainController {
         }
     }
 
+    @GetMapping("/user/{userID}")
+    @ResponseBody
+    public ResponseEntity<String> getUserInfo(@PathVariable("userID") String userID) {
+
+        List<User> users = mainService.getUserInfo(userID);
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
     @PutMapping("/user/{userID}")
     @ResponseBody
     public ResponseEntity<String> updateUser(
@@ -165,19 +181,19 @@ public class MainController {
 
     }
 
-    @GetMapping("/user/{userID}")
+    @GetMapping("/University/{univID}")
     @ResponseBody
-    public ResponseEntity<String> getUserInfo(@PathVariable("userID") String userID) {
+    public ResponseEntity<String> getUniversity(@PathVariable("univID") String univID) throws Exception {
 
-        List<User> users = mainService.getUserInfo(userID);
-        if (users == null || users.size() == 0) {
+        List<University> universities = mainService.getUniversity(univID);
+        if (universities == null || universities.size() == 0) {
             return ResponseEntity.badRequest()
                     .header("message", "")
                     .body(Constants.FAILURE);
         } else {
             return ResponseEntity.ok()
                     .header("message", "")
-                    .body(users.toString());
+                    .body(universities.toString());
         }
     }
 

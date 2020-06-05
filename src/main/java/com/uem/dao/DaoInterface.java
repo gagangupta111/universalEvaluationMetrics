@@ -17,6 +17,7 @@ public interface DaoInterface {
     public List<Teacher> geTeacherInfo(String AdminID);
     // geTeacherInfo
 
+    public List<University> getUniversity(String UnivID);
     public CustomResponse createUniversity(JSONObject body);
     public CustomResponse updateUniversity(JSONObject body, Boolean append);
     public CustomResponse updateAdmin(JSONObject body, Boolean append);
