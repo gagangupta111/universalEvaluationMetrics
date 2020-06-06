@@ -265,7 +265,7 @@ public class DaoParse implements DaoInterface {
     public CustomResponse getAllCourses(JSONObject body) {
 
         try {
-            if (body.has("Name") || body.has("CourseID")) {
+            if (body.has("Name") || body.has("CourseID") || body.has("CourseAdmin") ) {
 
                 if (body.has("Name")){
                     List<Course> users = new ArrayList<>();
@@ -280,9 +280,21 @@ public class DaoParse implements DaoInterface {
                     customResponse.setInfo(map);
                     return customResponse;
 
-                }else{
+                }else if (body.has("CourseID")){
                     List<Course> users = new ArrayList<>();
                     users = AllDBOperations.getAllCoursesInUEMBID(body.getString("CourseID"));
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("courses", users.toString());
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }else {
+                    List<Course> users = new ArrayList<>();
+                    users = AllDBOperations.getAllCoursesInUEM_CourseAdmin(body.getString("CourseAdmin"));
 
                     Map<String, Object> map = new HashMap<>();
                     map.put("courses", users.toString());
@@ -296,7 +308,7 @@ public class DaoParse implements DaoInterface {
             } else {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
-                customResponse.setMessage(Constants.COURSE_DOES_NOT_EXIST);
+                customResponse.setMessage(Constants.INVALID_CRITERIA);
                 return customResponse;
             }
         } catch (Exception e) {

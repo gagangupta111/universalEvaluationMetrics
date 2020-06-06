@@ -302,6 +302,8 @@ public class MainController {
             }
             else if (allRequestParams.containsKey("CourseID")){
                 body.put("CourseID", String.valueOf(allRequestParams.get("CourseID")));
+            }else if (allRequestParams.containsKey("CourseAdmin")){
+                body.put("CourseAdmin", String.valueOf(allRequestParams.get("CourseAdmin")));
             }else {
                 return ResponseEntity.badRequest()
                         .header("message", "NoParamMentioned")

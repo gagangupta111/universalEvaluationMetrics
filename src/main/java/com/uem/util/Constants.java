@@ -21,6 +21,8 @@ public interface Constants {
     public static final String  TEACHER_DOES_NOT_EXIST = "TEACHER_DOES_NOT_EXIST";
     public static final String  COURSE_DOES_NOT_EXIST = "COURSE_DOES_NOT_EXIST";
 
+    public static final String  INVALID_CRITERIA = "INVALID_CRITERIA";
+
     public static final String  ALREADY_EXIST = "ALREADY_EXIST";
 
     public static final String  UNIVERSITY_CREATION_FAILURE = " Name, Website and AdminID is required to create University!";
