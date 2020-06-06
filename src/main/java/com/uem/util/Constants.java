@@ -27,6 +27,7 @@ public interface Constants {
 
     public static final String  UNIVERSITY_CREATION_FAILURE = " Name, Website and AdminID is required to create University!";
     public static final String  COURSE_CREATION_FAILURE = " Name and CourseAdmin is required to create Course!";
+    public static final String  BATCH_CREATION_FAILURE = " Duration, SpanOver, Starting, Completion, Calendar, Billing,  and CourseAdmin is required to create Course!";
 
     public static final String  ADMIN_LOGIN_FAILURE = "Not An Admin";
     public static final String  STUDENT_LOGIN_FAILURE = "Not A Student";

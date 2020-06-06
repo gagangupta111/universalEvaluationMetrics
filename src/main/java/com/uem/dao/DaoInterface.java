@@ -28,4 +28,6 @@ public interface DaoInterface {
     public CustomResponse updateStudent(JSONObject body, Boolean append);
     public CustomResponse updateTeacher(JSONObject body, Boolean append);
 
+    public CustomResponse createBatch(JSONObject body);
+
 }

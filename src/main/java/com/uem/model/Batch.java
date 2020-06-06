@@ -18,13 +18,23 @@ public class Batch {
     private String spanOver;
     private String starting;
     private String completion;
-    private List<Document> calender;
-    private String status;
+    private String AdminID;
+    private Document Calendar;
+    private Document status;
+    private Document info;
 
     private List<Document> leadTutors;
     private List<Document> fellowTutors;
     private List<Document> students;
     private List<Document> actionLogs;
+
+    public String getAdminID() {
+        return AdminID;
+    }
+
+    public void setAdminID(String adminID) {
+        AdminID = adminID;
+    }
 
     public String getObjectID() {
         return objectID;
@@ -106,20 +116,28 @@ public class Batch {
         this.completion = completion;
     }
 
-    public List<Document> getCalender() {
-        return calender;
+    public Document getCalendar() {
+        return Calendar;
     }
 
-    public void setCalender(List<Document> calender) {
-        this.calender = calender;
+    public void setCalendar(Document calendar) {
+        Calendar = calendar;
     }
 
-    public String getStatus() {
+    public Document getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Document status) {
         this.status = status;
+    }
+
+    public Document getInfo() {
+        return info;
+    }
+
+    public void setInfo(Document info) {
+        this.info = info;
     }
 
     public List<Document> getLeadTutors() {

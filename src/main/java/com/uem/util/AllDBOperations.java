@@ -179,6 +179,52 @@ public class AllDBOperations {
 
     }
 
+    public static Map<String, Object> createBatch(JSONObject batch) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+            String BatchID = UtilsManager.generateUniqueID();
+            String Duration = batch.getString("Duration");
+            String SpanOver = batch.getString("SpanOver");
+            String Starting = batch.getString("Starting");
+            String Completion = batch.getString("Completion");
+            JSONObject Calender = batch.getJSONObject("Calendar");
+            JSONObject Billing = batch.getJSONObject("Billing");
+            String CourseID = batch.getString("CourseID");
+            String AdminID = batch.getString("CourseID");
+
+            batch.put("BatchID", BatchID);
+
+            JSONArray array = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("Action", "BATCH_STARTED");
+            jsonObject.put("STARTED_BY", AdminID);
+            jsonObject.put("Time", UtilsManager.getUTCStandardDateFormat());
+            array.put(jsonObject);
+
+            batch.put("ActionLogs", array);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(batch, "Batch");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", batch);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", batch);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", batch);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createUniversity(JSONObject university) {
 
         Map<String, Object> data = new HashMap<>();

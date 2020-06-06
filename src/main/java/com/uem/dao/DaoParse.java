@@ -332,7 +332,6 @@ public class DaoParse implements DaoInterface {
 
     }
 
-
     @Override
     public CustomResponse createUniversity(JSONObject body) {
 
@@ -571,5 +570,50 @@ public class DaoParse implements DaoInterface {
         }
     }
 
-    // updateStudent
+    @Override
+    public CustomResponse createBatch(JSONObject body) {
+
+        try {
+            if (body.has("Duration")
+                    && body.has("SpanOver")
+                    && body.has("Starting")
+                    && body.has("Completion")
+                    && body.has("Calendar")
+                    && body.has("Billing")
+                    && body.has("AdminID")
+                    && body.has("CourseID")) {
+
+                Map<String, Object> map = AllDBOperations.createBatch(body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.BATCH_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
 }
