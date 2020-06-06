@@ -1,9 +1,6 @@
 package com.uem.util;
 
-import com.uem.model.Student;
-import com.uem.model.Teacher;
-import com.uem.model.UnivAdmin;
-import com.uem.model.University;
+import com.uem.model.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -64,6 +61,147 @@ public class UtilsManager {
         try (OutputStream os = Files.newOutputStream(filepath)) {
             os.write(file.getBytes());
         }
+    }
+
+    public static Batch jsonToBatch(JSONObject jsonObject){
+
+        Batch batch = new Batch();
+        try {
+            batch.setBatchID(jsonObject.has("BatchID") ? jsonObject.getString("BatchID") : null);
+            batch.setCourseID(jsonObject.has("CourseID") ? jsonObject.getString("CourseID") : null);
+            batch.setDuration(jsonObject.has("Duration") ? jsonObject.getString("Duration") : null);
+            batch.setSpanOver(jsonObject.has("SpanOver") ? jsonObject.getString("SpanOver") : null);
+            batch.setSpanOver(jsonObject.has("Starting") ? jsonObject.getString("Starting") : null);
+            batch.setSpanOver(jsonObject.has("Completion") ? jsonObject.getString("Completion") : null);
+
+            List<Document> LeadTutors = new ArrayList<>();
+            JSONArray array = jsonObject.has("LeadTutors") ? jsonObject.getJSONArray("LeadTutors") : new JSONArray();
+            for (int i = 0; i < array.length(); i++){
+                LeadTutors.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            batch.setLeadTutors(LeadTutors);
+
+            List<Document> FellowTutors = new ArrayList<>();
+            array = jsonObject.has("FellowTutors") ? jsonObject.getJSONArray("FellowTutors") : new JSONArray();
+            for (int i = 0; i < array.length(); i++){
+                FellowTutors.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            batch.setFellowTutors(FellowTutors);
+
+            List<Document> Students = new ArrayList<>();
+            array = jsonObject.has("Students") ? jsonObject.getJSONArray("Students") : new JSONArray();
+            for (int i = 0; i < array.length(); i++){
+                Students.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            batch.setStudents(Students);
+
+            Document info = new Document();
+            JSONObject object = jsonObject.has("info") ? jsonObject.getJSONObject("info") : new JSONObject();
+            info = Document.parse(object.toString());
+            batch.setInfo(info);
+
+            Document Billing = new Document();
+            object = jsonObject.has("Billing") ? jsonObject.getJSONObject("Billing") : new JSONObject();
+            Billing = Document.parse(object.toString());
+            batch.setBilling(Billing);
+
+            Document Calendar = new Document();
+            object = jsonObject.has("Calendar") ? jsonObject.getJSONObject("Calendar") : new JSONObject();
+            Calendar = Document.parse(object.toString());
+            batch.setCalendar(Calendar);
+
+            Document Status = new Document();
+            object = jsonObject.has("Status") ? jsonObject.getJSONObject("Status") : new JSONObject();
+            Status = Document.parse(object.toString());
+            batch.setCalendar(Status);
+
+            List<Document> actionLogs = new ArrayList<>();
+            array = jsonObject.has("ActionLogs") ? jsonObject.getJSONArray("ActionLogs") : new JSONArray();
+            for (int i = 0; i < array.length(); i++){
+                actionLogs.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            batch.setActionLogs(actionLogs);
+
+            batch.setObjectID(jsonObject.has("AdminID") ? jsonObject.getString("AdminID") : null);
+
+            Document photo = new Document();
+            object = jsonObject.has("Photo") ? jsonObject.getJSONObject("Photo") : new JSONObject();
+            photo = Document.parse(object.toString());
+            batch.setPhoto(photo);
+
+            batch.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            batch.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            batch.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return batch;
+    }
+
+    public static JSONObject batchToJson(Batch batch){
+
+        JSONObject object = new JSONObject();
+        try {
+            object = batch.getBatchID() != null ? object.put("BatchID", batch.getBatchID()) : object;
+            object = batch.getCourseID() != null ? object.put("CourseID", batch.getCourseID()) : object;
+            object = batch.getDuration() != null ? object.put("Duration", batch.getDuration()) : object;
+            object = batch.getSpanOver() != null ? object.put("SpanOver", batch.getSpanOver()) : object;
+            object = batch.getStarting() != null ? object.put("Starting", batch.getStarting()) : object;
+            object = batch.getCompletion() != null ? object.put("Completion", batch.getCompletion()) : object;
+
+            List<Document> students = batch.getStudents() != null ? batch.getStudents() : new ArrayList<>();
+            JSONArray array = new JSONArray();
+            for (Document document : students){
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Students", array) : object;
+
+            List<Document> FellowTutors = batch.getFellowTutors() != null ? batch.getFellowTutors() : new ArrayList<>();
+            array = new JSONArray();
+            for (Document document : FellowTutors){
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("FellowTutors", array) : object;
+
+            List<Document> LeadTutors = batch.getLeadTutors() != null ? batch.getLeadTutors() : new ArrayList<>();
+            array = new JSONArray();
+            for (Document document : LeadTutors){
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("LeadTutors", array) : object;
+
+            Document info = batch.getInfo();
+            object = info != null && info.size() > 0 ? object.put("info", new JSONObject(info.toJson())) : object;
+
+            Document Billing = batch.getBilling();
+            object = Billing != null && Billing.size() > 0 ? object.put("Billing", new JSONObject(Billing.toJson())) : object;
+
+            Document Calendar = batch.getCalendar();
+            object = Calendar != null && Calendar.size() > 0 ? object.put("Calendar", new JSONObject(Calendar.toJson())) : object;
+
+            Document Status = batch.getCalendar();
+            object = Status != null && Status.size() > 0 ? object.put("Status", new JSONObject(Status.toJson())) : object;
+
+            object = batch.getAdminID() != null ? object.put("AdminID", batch.getAdminID()) : object;
+
+            List<Document> actionLogs = batch.getActionLogs() != null ? batch.getActionLogs() : new ArrayList<>();
+            array = new JSONArray();
+            for (Document document : actionLogs){
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("ActionLogs", array) : object;
+
+            Document photo = batch.getPhoto();
+            object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
+
+            object = batch.getObjectID() != null ? object.put("_id", batch.getObjectID()) : object;
+            object = batch.get_created_at() != null ? object.put("_created_at", batch.get_created_at()) : object;
+            object = batch.get_updated_at() != null ? object.put("_updated_at", batch.get_updated_at()) : object;
+
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
     }
 
     public static University jsonToUniversity(JSONObject jsonObject){

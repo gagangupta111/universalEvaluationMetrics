@@ -49,6 +49,10 @@ public class MainService {
         return dao.updateUniversity(body, append);
     }
 
+    public CustomResponse updateBatch(JSONObject body, Boolean append) {
+        return dao.updateBatch(body, append);
+    }
+
     public CustomResponse updateAdmin(JSONObject body, Boolean append) {
         return dao.updateAdmin(body, append);
     }

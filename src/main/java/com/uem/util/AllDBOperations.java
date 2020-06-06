@@ -225,6 +225,76 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateBatch(Batch batch, JSONObject body, Boolean append) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            if (append) {
+
+                Batch toBeAppended = UtilsManager.jsonToBatch(body);
+                if (toBeAppended.getActionLogs() != null && toBeAppended.getActionLogs().size() > 0
+                        && batch.getActionLogs() != null && batch.getActionLogs().size() > 0) {
+                    toBeAppended.getActionLogs().addAll(batch.getActionLogs());
+                }
+
+                if (toBeAppended.getStudents() != null && toBeAppended.getStudents().size() > 0
+                        && batch.getStudents() != null && batch.getStudents().size() > 0) {
+                    toBeAppended.setStudents(UtilsManager.mergeDocuments(batch.getStudents(), toBeAppended.getStudents(), "id"));
+                }
+
+                if (toBeAppended.getFellowTutors() != null && toBeAppended.getFellowTutors().size() > 0
+                        && batch.getFellowTutors() != null && batch.getFellowTutors().size() > 0) {
+                    toBeAppended.setFellowTutors(UtilsManager.mergeDocuments(batch.getFellowTutors(), toBeAppended.getFellowTutors(), "id"));
+                }
+
+                if (toBeAppended.getLeadTutors() != null && toBeAppended.getLeadTutors().size() > 0
+                        && batch.getLeadTutors() != null && batch.getLeadTutors().size() > 0) {
+                    toBeAppended.setLeadTutors(UtilsManager.mergeDocuments(batch.getLeadTutors(), toBeAppended.getLeadTutors(), "id"));
+                }
+
+                body = UtilsManager.batchToJson(toBeAppended);
+
+            } else {
+                body = UtilsManager.batchToJson(UtilsManager.jsonToBatch(body));
+            }
+
+            // update ActionLogs
+            JSONObject jsonObject = UtilsManager.batchToJson(batch);
+            JSONArray array = jsonObject.has("ActionLogs") ? jsonObject.getJSONArray("ActionLogs") : new JSONArray();
+            JSONObject actionLog = new JSONObject();
+            actionLog.put("Action", "BATCH_UPDATED");
+            actionLog.put("Time", UtilsManager.getUTCStandardDateFormat());
+            actionLog.put("Value", body.toString());
+            array.put(actionLog);
+            body.put("ActionLogs", array);
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(batch.getObjectID(), body);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Batch");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> createUniversity(JSONObject university) {
 
         Map<String, Object> data = new HashMap<>();
@@ -400,7 +470,7 @@ public class AllDBOperations {
 
             // update ActionLogs
             JSONObject jsonObject = UtilsManager.universityToJson(university);
-            JSONArray array = jsonObject.getJSONArray("ActionLogs");
+            JSONArray array = jsonObject.has("ActionLogs") ? jsonObject.getJSONArray("ActionLogs") : new JSONArray();
             JSONObject actionLog = new JSONObject();
             actionLog.put("Action", "UNIVERSITY_UPDATED");
             actionLog.put("Time", UtilsManager.getUTCStandardDateFormat());
@@ -1029,7 +1099,7 @@ public class AllDBOperations {
                 batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
-                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
 
                 batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);

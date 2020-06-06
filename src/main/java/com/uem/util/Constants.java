@@ -20,6 +20,7 @@ public interface Constants {
     public static final String  STUDENT_DOES_NOT_EXIST = "STUDENT_DOES_NOT_EXIST";
     public static final String  TEACHER_DOES_NOT_EXIST = "TEACHER_DOES_NOT_EXIST";
     public static final String  COURSE_DOES_NOT_EXIST = "COURSE_DOES_NOT_EXIST";
+    public static final String  BATCH_DOES_NOT_EXIST = "BATCH_DOES_NOT_EXIST";
 
     public static final String  INVALID_CRITERIA = "INVALID_CRITERIA";
 

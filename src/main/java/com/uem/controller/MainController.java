@@ -865,7 +865,91 @@ public class MainController {
         }
     }
 
+    @PostMapping("/Batch/{batchID}/{append}")
+    @ResponseBody
+    public ResponseEntity<String> updateBatch(
+            @RequestParam(value = "CourseID", required = false) String CourseID,
+            @RequestParam(value = "Duration", required = false) String Duration,
+            @RequestParam(value = "SpanOver", required = false) String SpanOver,
+            @RequestParam(value = "Starting", required = false) String Starting,
+            @RequestParam(value = "Completion", required = false) String Completion,
+            @RequestParam(value = "LeadTutors", required = false) String LeadTutors,
+            @RequestParam(value = "FellowTutors", required = false) String FellowTutors,
+            @RequestParam(value = "Students", required = false) String Students,
+            @RequestParam(value = "info", required = false) String info,
+            @RequestParam(value = "Billing", required = false) String Billing,
+            @RequestParam(value = "Calendar", required = false) String Calendar,
+            @RequestParam(value = "AdminID", required = false) String AdminID,
+            @RequestParam(value = "Status", required = false) String Status,
 
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
 
+            @PathVariable("batchID") String batchID,
+            @PathVariable("append") Boolean append) throws Exception {
+
+        try {
+            if (batchID == null || batchID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body = CourseID != null ? body.put("CourseID", CourseID.trim()) : body;
+            body = Duration != null ? body.put("Duration", Duration.trim()) : body;
+            body = SpanOver != null ? body.put("SpanOver", (SpanOver.trim())) : body;
+            body = Starting != null ? body.put("Starting", (Starting.trim())) : body;
+            body = Completion != null ? body.put("Completion", (Completion.trim())) : body;
+
+            body = LeadTutors != null ? body.put("LeadTutors", new JSONArray(LeadTutors.trim())) : body;
+            body = FellowTutors != null ? body.put("FellowTutors", new JSONArray(FellowTutors.trim())) : body;
+            body = Students != null ? body.put("Students", new JSONArray(Students.trim())) : body;
+
+            body = info != null ? body.put("info", info.trim()) : body;
+            body = Billing != null ? body.put("Billing", new JSONObject(Billing.trim())) : body;
+            body = Calendar != null ? body.put("Calendar", new JSONObject(Calendar.trim())) : body;
+            body = AdminID != null ? body.put("AdminID", AdminID.trim()) : body;
+            body = Status != null ? body.put("Status", new JSONObject(Status.trim())) : body;
+
+            body.put("batchID", batchID);
+
+            if (Photo != null) {
+
+                String key_name = "BATCH_PHOTO_" + batchID;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Photo.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("Name", key_name);
+                body.put("Photo", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.updateBatch(body, append);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
 
 }
