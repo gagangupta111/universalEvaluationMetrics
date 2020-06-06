@@ -257,8 +257,78 @@ public class DaoParse implements DaoInterface {
     @Override
     public List<Course> getAllCourses() {
         List<Course> users = new ArrayList<>();
-        users = AllDBOperations.getAllCoursesInUEMByName();
+        users = AllDBOperations.getAllCoursesInUEM();
         return users;
+    }
+
+    @Override
+    public List<Batch> getAllBatches() {
+        List<Batch> users = new ArrayList<>();
+        users = AllDBOperations.getAllBatchesInUEM();
+        return users;
+    }
+
+    @Override
+    public CustomResponse getAllBatches(JSONObject body) {
+
+        try {
+            if (body.has("BatchID") || body.has("AdminID") || body.has("CourseID") ) {
+
+                if (body.has("BatchID")){
+                    List<Batch> users = new ArrayList<>();
+                    users = AllDBOperations.getAllBatchesInUEM_ByBatchID(body.getString("BatchID"));
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("batches", users.toString());
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+
+                }else if (body.has("AdminID")){
+                    List<Batch> users = new ArrayList<>();
+                    users = AllDBOperations.getAllBatchesInUEM_ByAdminID(body.getString("AdminID"));
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("batches", users.toString());
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }else {
+                    List<Batch> users = new ArrayList<>();
+                    users = AllDBOperations.getAllBatchesInUEM_ByCourseID(body.getString("CourseID"));
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("batches", users.toString());
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.INVALID_CRITERIA);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
     }
 
     @Override
@@ -269,7 +339,7 @@ public class DaoParse implements DaoInterface {
 
                 if (body.has("Name")){
                     List<Course> users = new ArrayList<>();
-                    users = AllDBOperations.getAllCoursesInUEMByName(body.getString("Name"));
+                    users = AllDBOperations.getAllCoursesInUEM(body.getString("Name"));
 
                     Map<String, Object> map = new HashMap<>();
                     map.put("courses", users.toString());

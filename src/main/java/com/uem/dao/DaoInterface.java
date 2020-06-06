@@ -17,6 +17,8 @@ public interface DaoInterface {
     public List<Student> geStudentInfo(String AdminID);
     public List<Teacher> geTeacherInfo(String AdminID);
 
+    public List<Batch> getAllBatches();
+    public CustomResponse getAllBatches(JSONObject body);
     public List<Course> getAllCourses();
     public CustomResponse getAllCourses(JSONObject body);
 

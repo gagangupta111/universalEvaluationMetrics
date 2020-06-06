@@ -13,6 +13,7 @@ public class Batch {
     private String batchID;
     private String courseID;
     private Document billing;
+    private Document Photo;
     // student, lead teacher, fellow teacher
     private String duration;
     private String spanOver;
@@ -27,6 +28,14 @@ public class Batch {
     private List<Document> fellowTutors;
     private List<Document> students;
     private List<Document> actionLogs;
+
+    public Document getPhoto() {
+        return Photo;
+    }
+
+    public void setPhoto(Document photo) {
+        Photo = photo;
+    }
 
     public String getAdminID() {
         return AdminID;
@@ -170,5 +179,30 @@ public class Batch {
 
     public void setActionLogs(List<Document> actionLogs) {
         this.actionLogs = actionLogs;
+    }
+
+    @Override
+    public String toString() {
+        return "Batch{" +
+                "objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                ", batchID='" + batchID + '\'' +
+                ", courseID='" + courseID + '\'' +
+                ", billing=" + billing +
+                ", Photo=" + Photo +
+                ", duration='" + duration + '\'' +
+                ", spanOver='" + spanOver + '\'' +
+                ", starting='" + starting + '\'' +
+                ", completion='" + completion + '\'' +
+                ", AdminID='" + AdminID + '\'' +
+                ", Calendar=" + Calendar +
+                ", status=" + status +
+                ", info=" + info +
+                ", leadTutors=" + leadTutors +
+                ", fellowTutors=" + fellowTutors +
+                ", students=" + students +
+                ", actionLogs=" + actionLogs +
+                '}';
     }
 }

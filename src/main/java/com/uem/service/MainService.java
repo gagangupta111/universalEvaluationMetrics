@@ -77,6 +77,18 @@ public class MainService {
         return dao.getAllCourses();
     }
 
+    public List<Batch> getAllBatches() {
+        return dao.getAllBatches();
+    }
+
+    public CustomResponse getAllBatches(JSONObject body) {
+        return dao.getAllBatches(body);
+    }
+
+    public List<Batch> getAllBatches(String batchID) {
+        return dao.getAllBatches();
+    }
+
     public CustomResponse getAllCourses(JSONObject body) {
         return dao.getAllCourses(body);
     }

@@ -796,6 +796,58 @@ public class MainController {
         }
     }
 
+    @GetMapping("/Batch")
+    @ResponseBody
+    public ResponseEntity<String> getAllBatches() {
+
+        List<Batch> users = mainService.getAllBatches();
+        if (users == null || users.size() == 0) {
+            return ResponseEntity.badRequest()
+                    .header("message", "")
+                    .body(Constants.FAILURE);
+        } else {
+            return ResponseEntity.ok()
+                    .header("message", "")
+                    .body(users.toString());
+        }
+    }
+
+    @GetMapping("/Batch/search")
+    @ResponseBody
+    public ResponseEntity<String> getBatchByID(@RequestParam Map<String,String> allRequestParams) throws Exception {
+
+        try {
+            JSONObject body = new JSONObject();
+            if (allRequestParams.containsKey("BatchID")){
+                body.put("BatchID", String.valueOf(allRequestParams.get("BatchID")));
+            }
+            else if (allRequestParams.containsKey("AdminID")){
+                body.put("AdminID", String.valueOf(allRequestParams.get("AdminID")));
+            }else if (allRequestParams.containsKey("CourseID")){
+                body.put("CourseID", String.valueOf(allRequestParams.get("CourseID")));
+            }else {
+                return ResponseEntity.badRequest()
+                        .header("message", "NoParamMentioned")
+                        .body("NoParamMentioned");
+            }
+            CustomResponse customResponse = mainService.getAllBatches(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
     @PostMapping("/Batch")
     @ResponseBody
     public ResponseEntity<String> createBatch(@RequestBody String body) throws Exception {
@@ -812,6 +864,8 @@ public class MainController {
                     .body(customResponse.getMessage());
         }
     }
+
+
 
 
 }

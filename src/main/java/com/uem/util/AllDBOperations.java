@@ -858,7 +858,7 @@ public class AllDBOperations {
         return courses;
     }
 
-    public static List<Course> getAllCoursesInUEMByName(String name) {
+    public static List<Course> getAllCoursesInUEM(String name) {
 
         List<Course> courses = new ArrayList<>();
         BsonDocument filter = BsonDocument
@@ -896,7 +896,7 @@ public class AllDBOperations {
         return courses;
     }
 
-    public static List<Course> getAllCoursesInUEMByName() {
+    public static List<Course> getAllCoursesInUEM() {
 
         List<Course> courses = new ArrayList<>();
         BsonDocument filter = BsonDocument
@@ -961,6 +961,181 @@ public class AllDBOperations {
             }
         }
         return students;
+    }
+
+    public static List<Batch> getAllBatchesInUEM() {
+
+        List<Batch> batches = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllBatch(filter);
+        if (documents == null || documents.size() == 0) {
+            return batches;
+        } else {
+            for (Document document : documents) {
+                Batch batch = new Batch();
+                batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
+                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+
+                batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
+                batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
+                batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
+                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+
+                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+
+                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+
+                batches.add(batch);
+            }
+        }
+        return batches;
+    }
+
+    public static List<Batch> getAllBatchesInUEM_ByBatchID(String BatchID) {
+
+        List<Batch> batches = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "BatchID:{$regex:/" + BatchID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllBatch(filter);
+        if (documents == null || documents.size() == 0) {
+            return batches;
+        } else {
+            for (Document document : documents) {
+                Batch batch = new Batch();
+                batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
+                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+
+                batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
+                batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
+                batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
+                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+
+                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+
+                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+
+                batches.add(batch);
+            }
+        }
+        return batches;
+    }
+
+    public static List<Batch> getAllBatchesInUEM_ByAdminID(String AdminID) {
+
+        List<Batch> batches = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "AdminID:{$regex:/" + AdminID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllBatch(filter);
+        if (documents == null || documents.size() == 0) {
+            return batches;
+        } else {
+            for (Document document : documents) {
+                Batch batch = new Batch();
+                batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
+                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+
+                batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
+                batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
+                batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
+                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+
+                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+
+                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+
+                batches.add(batch);
+            }
+        }
+        return batches;
+    }
+
+    public static List<Batch> getAllBatchesInUEM_ByCourseID(String CourseID) {
+
+        List<Batch> batches = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "CourseID:{$regex:/" + CourseID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllBatch(filter);
+        if (documents == null || documents.size() == 0) {
+            return batches;
+        } else {
+            for (Document document : documents) {
+                Batch batch = new Batch();
+                batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
+                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+
+                batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
+                batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
+                batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
+                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+
+                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+
+                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+
+                batches.add(batch);
+            }
+        }
+        return batches;
     }
 
     public static List<UnivAdmin> getAllAdmin_UserID(String UserID) {
