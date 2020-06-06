@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/uem")
@@ -294,20 +291,40 @@ public class MainController {
         }
     }
 
-    @GetMapping("/courses/{name}")
+    @GetMapping("/courses/search")
     @ResponseBody
-    public ResponseEntity<String> getCoursesContainsName(@PathVariable("name") String name) throws Exception {
+    public ResponseEntity<String> getCoursesSearch(@RequestParam Map<String,String> allRequestParams) throws Exception {
 
-        List<Course> courses = mainService.getAllCourses(name);
-        if (courses == null || courses.size() == 0) {
+        try {
+            JSONObject body = new JSONObject();
+            if (allRequestParams.containsKey("Name")){
+                body.put("Name", String.valueOf(allRequestParams.get("Name")));
+            }
+            else if (allRequestParams.containsKey("CourseID")){
+                body.put("CourseID", String.valueOf(allRequestParams.get("CourseID")));
+            }else {
+                return ResponseEntity.badRequest()
+                        .header("message", "NoParamMentioned")
+                        .body("NoParamMentioned");
+            }
+            CustomResponse customResponse = mainService.getAllCourses(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
             return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
-            return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(courses.toString());
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
         }
+
     }
 
     @PostMapping("/courses")

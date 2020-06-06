@@ -18,7 +18,7 @@ public interface DaoInterface {
     public List<Teacher> geTeacherInfo(String AdminID);
 
     public List<Course> getAllCourses();
-    public List<Course> getAllCourses(String name);
+    public CustomResponse getAllCourses(JSONObject body);
 
     public CustomResponse createCourse(JSONObject body);
     public List<University> getUniversity(String UnivID);

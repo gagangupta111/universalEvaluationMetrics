@@ -257,15 +257,59 @@ public class DaoParse implements DaoInterface {
     @Override
     public List<Course> getAllCourses() {
         List<Course> users = new ArrayList<>();
-        users = AllDBOperations.getAllCoursesInUEM();
+        users = AllDBOperations.getAllCoursesInUEMByName();
         return users;
     }
 
     @Override
-    public List<Course> getAllCourses(String name) {
-        List<Course> users = new ArrayList<>();
-        users = AllDBOperations.getAllCoursesInUEM(name);
-        return users;
+    public CustomResponse getAllCourses(JSONObject body) {
+
+        try {
+            if (body.has("Name") || body.has("CourseID")) {
+
+                if (body.has("Name")){
+                    List<Course> users = new ArrayList<>();
+                    users = AllDBOperations.getAllCoursesInUEMByName(body.getString("Name"));
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("courses", users.toString());
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+
+                }else{
+                    List<Course> users = new ArrayList<>();
+                    users = AllDBOperations.getAllCoursesInUEMBID(body.getString("CourseID"));
+
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("courses", users.toString());
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.COURSE_DOES_NOT_EXIST);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
     }
 
     @Override

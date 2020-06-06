@@ -73,8 +73,8 @@ public class MainService {
         return dao.getAllCourses();
     }
 
-    public List<Course> getAllCourses(String name) {
-        return dao.getAllCourses(name);
+    public CustomResponse getAllCourses(JSONObject body) {
+        return dao.getAllCourses(body);
     }
 
     public List<UnivAdmin> geAdminInfo(String AdminID) {
