@@ -455,8 +455,15 @@ public class UtilsManager {
             object = student.get_created_at() != null ? object.put("_created_at", student.get_created_at()) : object;
             object = student.get_updated_at() != null ? object.put("_updated_at", student.get_updated_at()) : object;
 
-            List<Document> documents = student.getDocuments();
+            List<Document> batches = student.getBatches();
             JSONArray array = new JSONArray();
+            for (Document document : batches){
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Batches", array) : object;
+
+            List<Document> documents = student.getDocuments();
+            array = new JSONArray();
             for (Document document : documents){
                 array.put(new JSONObject(document.toJson()));
             }
@@ -482,8 +489,15 @@ public class UtilsManager {
             univAdmin.setUserID(jsonObject.has("UserID") ? jsonObject.getString("UserID") : null);
             univAdmin.setInfo(jsonObject.has("info") ? jsonObject.getString("info") : null);
 
+            List<Document> batches = new ArrayList<>();
+            JSONArray array = jsonObject.has("Batches") ? jsonObject.getJSONArray("Batches") : new JSONArray();
+            for (int i = 0; i < array.length(); i++){
+                batches.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            univAdmin.setBatches(batches);
+
             List<Document> courses = new ArrayList<>();
-            JSONArray array = jsonObject.has("Documents") ? jsonObject.getJSONArray("Documents") : new JSONArray();
+            array = jsonObject.has("Documents") ? jsonObject.getJSONArray("Documents") : new JSONArray();
             for (int i = 0; i < array.length(); i++){
                 courses.add(Document.parse(String.valueOf(array.get(i))));
             }
