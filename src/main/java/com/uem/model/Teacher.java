@@ -14,7 +14,16 @@ public class Teacher {
     private String UnivID;
     private String info;
     private List<Document> Documents;
+    private List<Document> Batches;
     private Document Photo;
+
+    public List<Document> getBatches() {
+        return Batches;
+    }
+
+    public void setBatches(List<Document> batches) {
+        Batches = batches;
+    }
 
     public Document getPhoto() {
         return Photo;

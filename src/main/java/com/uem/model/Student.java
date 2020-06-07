@@ -12,7 +12,20 @@ public class Student {
     private String UnivID;
     private String info;
     private List<Document> Documents;
+    private List<Document> Batches;
     private Document Photo;
+
+    private String objectID;
+    private Date _created_at;
+    private Date _updated_at;
+
+    public List<Document> getBatches() {
+        return Batches;
+    }
+
+    public void setBatches(List<Document> batches) {
+        Batches = batches;
+    }
 
     public Document getPhoto() {
         return Photo;
@@ -22,9 +35,6 @@ public class Student {
         Photo = photo;
     }
 
-    private String objectID;
-    private Date _created_at;
-    private Date _updated_at;
     public String getObjectID() {
         return objectID;
     }

@@ -705,6 +705,11 @@ public class AllDBOperations {
                     toBeAppended.getDocuments().addAll(student.getDocuments());
                 }
 
+                if (toBeAppended.getBatches() != null && toBeAppended.getBatches().size() > 0
+                        && student.getBatches() != null && student.getBatches().size() > 0) {
+                    toBeAppended.setBatches(UtilsManager.mergeDocuments(student.getBatches(), toBeAppended.getBatches(), "id"));
+                }
+
                 body = UtilsManager.studentToJson(toBeAppended);
 
             } else {
@@ -744,13 +749,18 @@ public class AllDBOperations {
 
             if (append) {
 
-                UnivAdmin toBeAppended = UtilsManager.jsonToAdmin(body);
+                Teacher toBeAppended = UtilsManager.jsonToTeacher(body);
                 if (toBeAppended.getDocuments() != null && toBeAppended.getDocuments().size() > 0
                         && teacher.getDocuments() != null && teacher.getDocuments().size() > 0) {
                     toBeAppended.getDocuments().addAll(teacher.getDocuments());
                 }
 
-                body = UtilsManager.adminToJson(toBeAppended);
+                if (toBeAppended.getBatches() != null && toBeAppended.getBatches().size() > 0
+                        && teacher.getBatches() != null && teacher.getBatches().size() > 0) {
+                    toBeAppended.setBatches(UtilsManager.mergeDocuments(teacher.getBatches(), toBeAppended.getBatches(), "id"));
+                }
+
+                body = UtilsManager.teacherToJson(toBeAppended);
 
             } else {
                 body = UtilsManager.teacherToJson(UtilsManager.jsonToTeacher(body));

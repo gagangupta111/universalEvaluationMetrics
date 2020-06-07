@@ -9,6 +9,7 @@ import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -548,14 +549,13 @@ public class MainController {
         }
     }
 
-    @PostMapping("/student/{studentID}/Document/{append}")
+    @PostMapping("/student/update/{studentID}/{append}")
     @ResponseBody
-    public ResponseEntity<String> updateStudentDocument(
-            @RequestParam(value = "Course", required = false) String Course,
-            @RequestParam(value = "CourseDetails", required = false) String CourseDetails,
-            @RequestParam(value = "Start", required = false) String Start,
-            @RequestParam(value = "End", required = false) String End,
-            @RequestParam(value = "Attachments", required = false) MultipartFile[] Attachments,
+    public ResponseEntity<String> updateStudent(
+            @RequestParam(value = "UserID", required = false) String UserID,
+            @RequestParam(value = "UnivID", required = false) String UnivID,
+            @RequestParam(value = "Batches", required = false) String Batches,
+            @RequestParam(value = "info", required = false) String info,
 
             @PathVariable("studentID") String studentID,
             @PathVariable("append") Boolean append) throws Exception {
@@ -568,36 +568,12 @@ public class MainController {
             }
             JSONObject body = new JSONObject();
 
-            body = Course != null ? body.put("Course", Course.trim()) : body;
-            body = CourseDetails != null ? body.put("CourseDetails", CourseDetails.trim()) : body;
-            body = Start != null ? body.put("Start", Start.trim()) : body;
-            body = End != null ? body.put("End", End.trim()) : body;
+            body = UserID != null ? body.put("UserID", UserID.trim()) : body;
+            body = UnivID != null ? body.put("UnivID", UnivID.trim()) : body;
+            body = info != null ? body.put("info", new JSONObject(info.trim())) : body;
+            body = Batches != null ? body.put("Batches", new JSONArray(Batches.trim())) : body;
             body.put("studentID", studentID);
             body.put("append", append);
-
-            if (Attachments != null) {
-                JSONArray attachmentsArray = new JSONArray();
-                for (int i = 0; i < Attachments.length; i++){
-                    MultipartFile multipartFile = Attachments[i];
-                    String key_name = "ADMIN_ATTACHMENTS_" + Course + "_" + CourseDetails + "_" + i;
-                    File file = new File(key_name);
-                    FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
-
-                    PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
-                    if (putObjectResult == null) {
-                        return ResponseEntity.badRequest()
-                                .header("message", Constants.INTERNAL_ERROR)
-                                .body(Constants.AMAZON_S3_ERROR);
-                    }
-                    JSONObject object = new JSONObject();
-                    object.put("ContentMd5", putObjectResult.getContentMd5());
-                    object.put("ETag", putObjectResult.getETag());
-                    object.put("Name", key_name);
-                    attachmentsArray.put(object);
-                    file.delete();
-                }
-                body.put("Documents", attachmentsArray);
-            }
 
             CustomResponse customResponse = mainService.updateStudent(body, append);
             if (customResponse.getSuccess()) {
@@ -617,7 +593,77 @@ public class MainController {
         }
     }
 
-    @PostMapping("/student/{studentID}/Photo")
+    @PostMapping("/student/Document/{studentID}/{append}")
+    @ResponseBody
+    public ResponseEntity<String> updateStudentDocument(
+            @RequestParam(value = "Course", required = false) String Course,
+            @RequestParam(value = "CourseDetails", required = false) String CourseDetails,
+            @RequestParam(value = "Start", required = false) String Start,
+            @RequestParam(value = "End", required = false) String End,
+            @RequestParam(value = "Attachments", required = false) MultipartFile Attachments,
+
+            @PathVariable("studentID") String studentID,
+            @PathVariable("append") Boolean append) throws Exception {
+
+        try {
+            if (studentID == null || studentID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            JSONArray documents = new JSONArray();
+            JSONObject document = new JSONObject();
+
+            document = Course != null ? document.put("Course", Course.trim()) : document;
+            document = CourseDetails != null ? document.put("CourseDetails", CourseDetails.trim()) : document;
+            body = Start != null ? body.put("Start", Start.trim()) : body;
+            body = End != null ? body.put("End", End.trim()) : body;
+            body.put("studentID", studentID);
+            body.put("append", append);
+
+            if (Attachments != null) {
+                MultipartFile multipartFile = Attachments;
+                String key_name = "STUDENT_DOCUMENT_" + studentID + "_" + Math.random();
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, multipartFile.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                object.put("Name", key_name);
+                document.put("Attachment", object);
+                file.delete();
+            }
+
+            documents.put(document);
+            body.put("Documents", documents);
+            CustomResponse customResponse = mainService.updateStudent(body, append);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PostMapping("/student/Photo/{studentID}")
     @ResponseBody
     public ResponseEntity<String> updateStudentPhoto(
             @RequestParam(value = "Photo", required = false) MultipartFile Photo,
