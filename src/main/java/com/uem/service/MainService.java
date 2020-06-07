@@ -53,6 +53,10 @@ public class MainService {
         return dao.updateBatch(body, append);
     }
 
+    public CustomResponse deleteFromBatch(JSONObject body) {
+        return dao.deleteFromBatch(body);
+    }
+
     public CustomResponse updateAdmin(JSONObject body, Boolean append) {
         return dao.updateAdmin(body, append);
     }

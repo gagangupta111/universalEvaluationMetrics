@@ -66,7 +66,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
-            Map<String, Object>  result = ParseUtil.batchCreateInParseTable(body, "UnivAdmin");
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "UnivAdmin");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
 
@@ -97,7 +97,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
-            Map<String, Object>  result = ParseUtil.batchCreateInParseTable(body, "Teacher");
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "Teacher");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
 
@@ -128,7 +128,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
-            Map<String, Object>  result = ParseUtil.batchCreateInParseTable(body, "Student");
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "Student");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
 
@@ -159,7 +159,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
-            Map<String, Object>  result = ParseUtil.batchCreateInParseTable(body, "CourseAdmin");
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "CourseAdmin");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
 
@@ -285,6 +285,149 @@ public class AllDBOperations {
                 data.put("response", result.get("response"));
                 data.put("exception", result.get("exception"));
                 data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
+    public static Map<String, Object> deleteFromBatch(Batch batch, JSONObject tobeDeleted) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            JSONObject tobeDeletedBody = new JSONObject();
+            Batch tobeDeletedBatch = new Batch();
+
+            if (tobeDeleted.has("LeadTutors") && batch.getLeadTutors() != null && batch.getLeadTutors().size() > 0){
+
+                String LeadTutors = tobeDeleted.getString("LeadTutors");
+                String[] deleteList = LeadTutors.split(",");
+
+                List<Document> list = (UtilsManager.deleteDocuments(batch.getLeadTutors(), deleteList, "id"));
+
+                if (list != null && list.size() > 0){
+                    tobeDeletedBatch.setLeadTutors(list);
+                }else {
+                    tobeDeletedBody.put("LeadTutors", new JSONArray());
+                }
+            }
+
+            if (tobeDeleted.has("FellowTutors") && batch.getFellowTutors() != null && batch.getFellowTutors().size() > 0){
+
+                String LeadTutors = tobeDeleted.getString("FellowTutors");
+                String[] deleteList = LeadTutors.split(",");
+
+                List<Document> list = (UtilsManager.deleteDocuments(batch.getFellowTutors(), deleteList, "id"));
+                if (list != null && list.size() > 0){
+                    tobeDeletedBatch.setFellowTutors(list);
+                }else {
+                    tobeDeletedBody.put("FellowTutors", new JSONArray());
+                }
+            }
+
+            if (tobeDeleted.has("Students") && batch.getStudents() != null && batch.getStudents().size() > 0){
+
+                String LeadTutors = tobeDeleted.getString("Students");
+                String[] deleteList = LeadTutors.split(",");
+
+                List<Document> list = (UtilsManager.deleteDocuments(batch.getStudents(), deleteList, "id"));
+                if (list != null && list.size() > 0){
+                    tobeDeletedBatch.setStudents(list);
+                }else {
+                    tobeDeletedBody.put("Students", new JSONArray());
+                }
+            }
+
+            if (tobeDeleted.has("info") && batch.getInfo() != null && batch.getInfo().size() > 0){
+
+                String LeadTutors = tobeDeleted.getString("info");
+                String[] deleteList = LeadTutors.split(",");
+
+                Document document = (UtilsManager.deleteKeysFromDocument(batch.getInfo(), deleteList));
+                if (document != null && document.size() > 0){
+                    tobeDeletedBatch.setInfo(document);
+                }else {
+                    tobeDeletedBody.put("info", new JSONObject());
+                }
+            }
+
+            if (tobeDeleted.has("Billing") && batch.getBilling() != null && batch.getBilling().size() > 0){
+
+                String LeadTutors = tobeDeleted.getString("Billing");
+                String[] deleteList = LeadTutors.split(",");
+
+                Document document = (UtilsManager.deleteKeysFromDocument(batch.getBilling(), deleteList));
+                if (document != null && document.size() > 0){
+                    tobeDeletedBatch.setBilling(document);
+                }else {
+                    tobeDeletedBody.put("Billing", new JSONObject());
+                }
+
+            }
+
+            if (tobeDeleted.has("Calendar") && batch.getCalendar() != null && batch.getCalendar().size() > 0){
+
+                String LeadTutors = tobeDeleted.getString("Calendar");
+                String[] deleteList = LeadTutors.split(",");
+
+                Document document = (UtilsManager.deleteKeysFromDocument(batch.getCalendar(), deleteList));
+                if (document != null && document.size() > 0){
+                    tobeDeletedBatch.setCalendar(document);
+                }else {
+                    tobeDeletedBody.put("Calendar", new JSONObject());
+                }
+            }
+
+            if (tobeDeleted.has("Status") && batch.getStatus() != null && batch.getStatus().size() > 0){
+
+                String LeadTutors = tobeDeleted.getString("Status");
+                String[] deleteList = LeadTutors.split(",");
+
+                Document document = (UtilsManager.deleteKeysFromDocument(batch.getStatus(), deleteList));
+                if (document != null && document.size() > 0){
+                    tobeDeletedBatch.setStatus(document);
+                }else {
+                    tobeDeletedBody.put("Status", new JSONObject());
+                }
+            }
+
+            JSONObject merge = UtilsManager.batchToJson(tobeDeletedBatch);
+            for (Iterator it = merge.keys(); it.hasNext(); ) {
+                String key = String.valueOf(it.next());
+                tobeDeletedBody.put(key, merge.get(key));
+            }
+
+            // update ActionLogs
+            JSONObject jsonObject = UtilsManager.batchToJson(batch);
+            JSONArray array = jsonObject.has("ActionLogs") ? jsonObject.getJSONArray("ActionLogs") : new JSONArray();
+            JSONObject actionLog = new JSONObject();
+            actionLog.put("Action", "DELETED_FROM_BATCH");
+            actionLog.put("Time", UtilsManager.getUTCStandardDateFormat());
+            actionLog.put("Value", tobeDeleted.toString());
+            array.put(actionLog);
+            tobeDeletedBody.put("ActionLogs", array);
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(batch.getObjectID(), tobeDeletedBody);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Batch");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", tobeDeletedBody);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", tobeDeletedBody);
                 return data;
             }
 
@@ -1048,27 +1191,26 @@ public class AllDBOperations {
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
                 batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
-                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
-                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
-                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+                batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setCompletion(document.containsKey("Completion") ? document.getString("Completion") : null);
 
                 batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
-                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
 
-                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
-                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
-                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+                batch.setCalendar(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
 
-                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
                 batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
 
                 batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
-
 
                 batches.add(batch);
             }
@@ -1092,27 +1234,26 @@ public class AllDBOperations {
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
                 batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
-                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
-                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
-                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+                batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setCompletion(document.containsKey("Completion") ? document.getString("Completion") : null);
 
                 batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
                 batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
 
-                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
-                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
-                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+                batch.setCalendar(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
 
-                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
                 batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
 
                 batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
-
 
                 batches.add(batch);
             }
@@ -1136,27 +1277,26 @@ public class AllDBOperations {
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
                 batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
-                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
-                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
-                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+                batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setCompletion(document.containsKey("Completion") ? document.getString("Completion") : null);
 
                 batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
-                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
 
-                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
-                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
-                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+                batch.setCalendar(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
 
-                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
                 batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
 
                 batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
-
 
                 batches.add(batch);
             }
@@ -1180,27 +1320,26 @@ public class AllDBOperations {
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
                 batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
-                batch.setBatchID(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
-                batch.setBatchID(document.containsKey("Starting") ? document.getString("Starting") : null);
-                batch.setBatchID(document.containsKey("Completion") ? document.getString("Completion") : null);
+                batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setCompletion(document.containsKey("Completion") ? document.getString("Completion") : null);
 
                 batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
-                batch.setLeadTutors(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
 
-                batch.setBatchID(document.containsKey("info") ? document.getString("info") : null);
+                batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
-                batch.setBilling(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
-                batch.setBatchID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+                batch.setCalendar(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
 
-                batch.setBilling(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
                 batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
 
                 batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
-
 
                 batches.add(batch);
             }

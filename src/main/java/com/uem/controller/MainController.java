@@ -952,4 +952,55 @@ public class MainController {
         }
     }
 
+    // this will delete any object from array field, delete one key from object field
+    @PostMapping("/Delete/Batch/{batchID}")
+    @ResponseBody
+    public ResponseEntity<String> deleteBatch(
+            @RequestParam(value = "LeadTutors", required = false) String LeadTutors,
+            @RequestParam(value = "FellowTutors", required = false) String FellowTutors,
+            @RequestParam(value = "Students", required = false) String Students,
+            @RequestParam(value = "info", required = false) String info,
+            @RequestParam(value = "Billing", required = false) String Billing,
+            @RequestParam(value = "Calendar", required = false) String Calendar,
+            @RequestParam(value = "Status", required = false) String Status,
+
+            @PathVariable("batchID") String batchID) throws Exception {
+
+        try {
+            if (batchID == null || batchID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+
+            body = LeadTutors != null ? body.put("LeadTutors", (LeadTutors.trim())) : body;
+            body = FellowTutors != null ? body.put("FellowTutors", (FellowTutors.trim())) : body;
+            body = Students != null ? body.put("Students", (Students.trim())) : body;
+
+            body = info != null ? body.put("info", info.trim()) : body;
+            body = Billing != null ? body.put("Billing", (Billing.trim())) : body;
+            body = Calendar != null ? body.put("Calendar", (Calendar.trim())) : body;
+            body = Status != null ? body.put("Status", (Status.trim())) : body;
+
+            body.put("batchID", batchID);
+
+            CustomResponse customResponse = mainService.deleteFromBatch(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
 }

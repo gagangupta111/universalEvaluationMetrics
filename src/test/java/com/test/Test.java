@@ -28,8 +28,40 @@ public class Test {
 
     public static void main(String[] args) {
 
-        test9();
+        deleteDocuments();
 
+    }
+
+    public static void deleteDocuments() {
+
+        List<Document> original = new ArrayList<>();
+        Document document = new Document();
+        document.put("id", 1);
+        document.put("name", 2);
+        document.put("age", 2);
+        original.add(document);
+
+        document = new Document();
+        document.put("id", 2);
+        document.put("name", 2);
+        document.put("age", 2);
+        original.add(document);
+
+        document = new Document();
+        document.put("id", 3);
+        original.add(document);
+
+        document = new Document();
+        document.put("id", 5);
+        original.add(document);
+
+        String[] toBeDeleted = {"1","2"};
+        List<Document> list = new ArrayList<>();
+        list = (List<Document>) UtilsManager.deleteDocuments(original, toBeDeleted, "id");
+        System.out.println(list);
+
+        list = (List<Document>) UtilsManager.deleteDocuments(original, toBeDeleted, "id_dd");
+        System.out.println(list);
     }
 
     public static void test9() {
@@ -71,10 +103,10 @@ public class Test {
         newDocuments.add(document);
 
         List<Document> list = new ArrayList<>();
-        list = (List<Document>)UtilsManager.mergeDocuments(original, newDocuments, "id");
+        list = (List<Document>) UtilsManager.mergeDocuments(original, newDocuments, "id");
         System.out.println(list);
 
-        list = (List<Document>)UtilsManager.mergeDocuments(original, newDocuments, "id_dd");
+        list = (List<Document>) UtilsManager.mergeDocuments(original, newDocuments, "id_dd");
         System.out.println(list);
     }
 

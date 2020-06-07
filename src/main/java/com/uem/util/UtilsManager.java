@@ -55,6 +55,43 @@ public class UtilsManager {
 
     }
 
+    public static Document deleteKeysFromDocument(Document original, String[] keyToBeDeleted ){
+
+        for (String key : keyToBeDeleted){
+            if (original.containsKey(key)){
+                original.remove(key);
+            }
+        }
+
+        return original;
+
+    }
+
+    public static List<Document> deleteDocuments(List<Document> original, String[] toBeDeleted, String param ){
+
+        Map<String, Document> newDocuments = new HashMap<>();
+
+        for (Document originalDoc : original){
+            if (originalDoc.get(param) != null){
+                newDocuments.put(String.valueOf(originalDoc.get(param)), originalDoc);
+            }else {
+                newDocuments.put(String.valueOf(Math.random()), originalDoc);
+            }
+        }
+
+        for (String key : toBeDeleted){
+            if (newDocuments.get(key) != null){
+                newDocuments.remove(String.valueOf(key));
+            }
+        }
+        List<Document> updated = new ArrayList<>();
+        for (String key : newDocuments.keySet()){
+            updated.add(newDocuments.get(key));
+        }
+        return updated;
+
+    }
+
     public static void multipartFileToFile(MultipartFile file, Path dir) throws  Exception{
         Path filepath = Paths.get(dir.toString(), file.getOriginalFilename());
 
@@ -179,7 +216,7 @@ public class UtilsManager {
             Document Calendar = batch.getCalendar();
             object = Calendar != null && Calendar.size() > 0 ? object.put("Calendar", new JSONObject(Calendar.toJson())) : object;
 
-            Document Status = batch.getCalendar();
+            Document Status = batch.getStatus();
             object = Status != null && Status.size() > 0 ? object.put("Status", new JSONObject(Status.toJson())) : object;
 
             object = batch.getAdminID() != null ? object.put("AdminID", batch.getAdminID()) : object;

@@ -32,5 +32,6 @@ public interface DaoInterface {
 
     public CustomResponse createBatch(JSONObject body);
     public CustomResponse updateBatch(JSONObject body, Boolean append);
+    public CustomResponse deleteFromBatch(JSONObject body);
 
 }
