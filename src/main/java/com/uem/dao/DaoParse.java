@@ -657,14 +657,13 @@ public class DaoParse implements DaoInterface {
                 if (body.has("BatchRequests")) {
 
                     if (body.has("UEM_ID")) {
-
+                        String UEM_ID = body.getString("UEM_ID");
                         List<Batch> batches = AllDBOperations.getAllBatchesInUEM_ByCourseID_UnivID_StateRequested_BatchRequestsExists(
                                 body.getString("CourseID"),
                                 body.getString("UnivID"));
                         Batch batch = batches != null && batches.size() > 0 ? batches.get(0) : null;
                         if (batch != null) {
                             List<Document> batchRequests = batch.getBatchRequests();
-                            String UEM_ID = body.getString("UEM_ID");
                             for (Document document : batchRequests) {
                                 if (document.containsKey("UEM_ID")
                                         && UEM_ID.equalsIgnoreCase(document.getString("UEM_ID"))) {
@@ -688,15 +687,20 @@ public class DaoParse implements DaoInterface {
                             CustomResponse customResponse = new CustomResponse();
                             customResponse.setSuccess(true);
                             customResponse.setMessage(Constants.SUCCESS);
+                            customResponse.setInfo(new HashMap<>());
                             return customResponse;
                         } else {
 
                             JSONArray array = new JSONArray();
                             JSONObject object = new JSONObject();
-                            object.put("UEM_ID", body);
+                            object.put("UEM_ID", UEM_ID);
                             array.put(object);
 
                             body.put("BatchRequests", array);
+
+                            JSONObject status = new JSONObject();
+                            status.put("status", "requested");
+                            body.put("Status", status);
 
                             Map<String, Object> map = AllDBOperations.createBatch(body);
                             if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {

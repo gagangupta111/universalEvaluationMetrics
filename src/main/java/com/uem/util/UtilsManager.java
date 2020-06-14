@@ -156,8 +156,15 @@ public class UtilsManager {
             batch.setSpanOver(jsonObject.has("Starting") ? jsonObject.getString("Starting") : null);
             batch.setSpanOver(jsonObject.has("Completion") ? jsonObject.getString("Completion") : null);
 
+            List<Document> BatchRequests = new ArrayList<>();
+            JSONArray array = jsonObject.has("BatchRequests") ? jsonObject.getJSONArray("BatchRequests") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                BatchRequests.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            batch.setBatchRequests(BatchRequests);
+
             List<Document> LeadTutors = new ArrayList<>();
-            JSONArray array = jsonObject.has("LeadTutors") ? jsonObject.getJSONArray("LeadTutors") : new JSONArray();
+            array = jsonObject.has("LeadTutors") ? jsonObject.getJSONArray("LeadTutors") : new JSONArray();
             for (int i = 0; i < array.length(); i++) {
                 LeadTutors.add(Document.parse(String.valueOf(array.get(i))));
             }
@@ -231,8 +238,15 @@ public class UtilsManager {
             object = batch.getStarting() != null ? object.put("Starting", batch.getStarting()) : object;
             object = batch.getCompletion() != null ? object.put("Completion", batch.getCompletion()) : object;
 
-            List<Document> students = batch.getStudents() != null ? batch.getStudents() : new ArrayList<>();
+            List<Document> BatchRequests = batch.getBatchRequests() != null ? batch.getBatchRequests() : new ArrayList<>();
             JSONArray array = new JSONArray();
+            for (Document document : BatchRequests) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("BatchRequests", array) : object;
+
+            List<Document> students = batch.getStudents() != null ? batch.getStudents() : new ArrayList<>();
+            array = new JSONArray();
             for (Document document : students) {
                 array.put(new JSONObject(document.toJson()));
             }
