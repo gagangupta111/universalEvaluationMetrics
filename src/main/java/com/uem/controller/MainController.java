@@ -39,6 +39,25 @@ public class MainController {
 
     }
 
+    @RequestMapping(value = "/test/json", method = RequestMethod.GET)
+    public ResponseEntity<String> testJson() {
+
+        try {
+            JSONObject object = new JSONObject();
+            object.put("key","value");
+            logger.debug("REQUEST_RECIEVED-MainController");
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(object.toString());
+        }catch (Exception e){
+            JSONObject object = new JSONObject();
+            logger.debug("REQUEST_RECIEVED-MainController");
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body(mainService.test());
+        }
+    }
+
     @PostMapping("/signup/{type}")
     @ResponseBody
     public ResponseEntity<String> signUp(@RequestBody String body,  @PathVariable("type") String type) throws Exception {
