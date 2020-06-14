@@ -28,6 +28,15 @@ public class Batch {
     private List<Document> fellowTutors;
     private List<Document> students;
     private List<Document> actionLogs;
+    private List<Document> batchRequests;
+
+    public List<Document> getBatchRequests() {
+        return batchRequests;
+    }
+
+    public void setBatchRequests(List<Document> batchRequests) {
+        this.batchRequests = batchRequests;
+    }
 
     public Document getPhoto() {
         return Photo;

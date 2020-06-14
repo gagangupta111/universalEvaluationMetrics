@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,37 +29,81 @@ public class UtilsManager {
 
     static Logger logger = LogUtil.getInstance();
 
-    public static List<Document> mergeDocuments(List<Document> original, List<Document> newList, String param){
+    public static JSONArray documentListToJsonArray(List<Document> documents) {
+
+        JSONArray array = new JSONArray();
+
+        for (Document document : documents) {
+            JSONObject object = new JSONObject();
+            for (String key : document.keySet()) {
+                try {
+                    object.put(key, document.get(key));
+                } catch (JSONException e) {
+                    logger.debug(UtilsManager.exceptionAsString(e));
+                }
+            }
+            array.put(object);
+        }
+
+        return array;
+    }
+
+    public static List<Document> jsonArrayToDocumentList(JSONArray jsonArray) {
+
+        List<Document> list = new ArrayList<>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject object = new JSONObject(i);
+            Document document = new Document();
+
+            Iterator<String> keys = object.keys();
+
+            while(keys.hasNext()) {
+                String key = keys.next();
+                try {
+                    document.put(key, object.get(key));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            list.add(document);
+        }
+
+        return list;
+    }
+
+    public static List<Document> mergeDocuments(List<Document> original, List<Document> newList, String param) {
 
         Map<String, Document> newDocuemtns = new HashMap<>();
 
-        for (Document originalDoc : original){
-            if (originalDoc.get(param) != null){
+        for (Document originalDoc : original) {
+            if (originalDoc.get(param) != null) {
                 newDocuemtns.put(String.valueOf(originalDoc.get(param)), originalDoc);
-            }else {
+            } else {
                 newDocuemtns.put(String.valueOf(Math.random()), originalDoc);
             }
         }
 
-        for (Document newDoc : newList){
-            if (newDoc.get(param) != null){
+        for (Document newDoc : newList) {
+            if (newDoc.get(param) != null) {
                 newDocuemtns.put(String.valueOf(newDoc.get(param)), newDoc);
-            }else {
+            } else {
                 newDocuemtns.put(String.valueOf(Math.random()), newDoc);
             }
         }
         List<Document> updated = new ArrayList<>();
-        for (String key : newDocuemtns.keySet()){
+        for (String key : newDocuemtns.keySet()) {
             updated.add(newDocuemtns.get(key));
         }
         return updated;
 
     }
 
-    public static Document deleteKeysFromDocument(Document original, String[] keyToBeDeleted ){
+    public static Document deleteKeysFromDocument(Document original, String[] keyToBeDeleted) {
 
-        for (String key : keyToBeDeleted){
-            if (original.containsKey(key)){
+        for (String key : keyToBeDeleted) {
+            if (original.containsKey(key)) {
                 original.remove(key);
             }
         }
@@ -67,32 +112,32 @@ public class UtilsManager {
 
     }
 
-    public static List<Document> deleteDocuments(List<Document> original, String[] toBeDeleted, String param ){
+    public static List<Document> deleteDocuments(List<Document> original, String[] toBeDeleted, String param) {
 
         Map<String, Document> newDocuments = new HashMap<>();
 
-        for (Document originalDoc : original){
-            if (originalDoc.get(param) != null){
+        for (Document originalDoc : original) {
+            if (originalDoc.get(param) != null) {
                 newDocuments.put(String.valueOf(originalDoc.get(param)), originalDoc);
-            }else {
+            } else {
                 newDocuments.put(String.valueOf(Math.random()), originalDoc);
             }
         }
 
-        for (String key : toBeDeleted){
-            if (newDocuments.get(key) != null){
+        for (String key : toBeDeleted) {
+            if (newDocuments.get(key) != null) {
                 newDocuments.remove(String.valueOf(key));
             }
         }
         List<Document> updated = new ArrayList<>();
-        for (String key : newDocuments.keySet()){
+        for (String key : newDocuments.keySet()) {
             updated.add(newDocuments.get(key));
         }
         return updated;
 
     }
 
-    public static void multipartFileToFile(MultipartFile file, Path dir) throws  Exception{
+    public static void multipartFileToFile(MultipartFile file, Path dir) throws Exception {
         Path filepath = Paths.get(dir.toString(), file.getOriginalFilename());
 
         try (OutputStream os = Files.newOutputStream(filepath)) {
@@ -100,7 +145,7 @@ public class UtilsManager {
         }
     }
 
-    public static Batch jsonToBatch(JSONObject jsonObject){
+    public static Batch jsonToBatch(JSONObject jsonObject) {
 
         Batch batch = new Batch();
         try {
@@ -113,21 +158,21 @@ public class UtilsManager {
 
             List<Document> LeadTutors = new ArrayList<>();
             JSONArray array = jsonObject.has("LeadTutors") ? jsonObject.getJSONArray("LeadTutors") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 LeadTutors.add(Document.parse(String.valueOf(array.get(i))));
             }
             batch.setLeadTutors(LeadTutors);
 
             List<Document> FellowTutors = new ArrayList<>();
             array = jsonObject.has("FellowTutors") ? jsonObject.getJSONArray("FellowTutors") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 FellowTutors.add(Document.parse(String.valueOf(array.get(i))));
             }
             batch.setFellowTutors(FellowTutors);
 
             List<Document> Students = new ArrayList<>();
             array = jsonObject.has("Students") ? jsonObject.getJSONArray("Students") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 Students.add(Document.parse(String.valueOf(array.get(i))));
             }
             batch.setStudents(Students);
@@ -154,7 +199,7 @@ public class UtilsManager {
 
             List<Document> actionLogs = new ArrayList<>();
             array = jsonObject.has("ActionLogs") ? jsonObject.getJSONArray("ActionLogs") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 actionLogs.add(Document.parse(String.valueOf(array.get(i))));
             }
             batch.setActionLogs(actionLogs);
@@ -169,13 +214,13 @@ public class UtilsManager {
             batch.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             batch.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
             batch.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return batch;
     }
 
-    public static JSONObject batchToJson(Batch batch){
+    public static JSONObject batchToJson(Batch batch) {
 
         JSONObject object = new JSONObject();
         try {
@@ -188,21 +233,21 @@ public class UtilsManager {
 
             List<Document> students = batch.getStudents() != null ? batch.getStudents() : new ArrayList<>();
             JSONArray array = new JSONArray();
-            for (Document document : students){
+            for (Document document : students) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Students", array) : object;
 
             List<Document> FellowTutors = batch.getFellowTutors() != null ? batch.getFellowTutors() : new ArrayList<>();
             array = new JSONArray();
-            for (Document document : FellowTutors){
+            for (Document document : FellowTutors) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("FellowTutors", array) : object;
 
             List<Document> LeadTutors = batch.getLeadTutors() != null ? batch.getLeadTutors() : new ArrayList<>();
             array = new JSONArray();
-            for (Document document : LeadTutors){
+            for (Document document : LeadTutors) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("LeadTutors", array) : object;
@@ -223,7 +268,7 @@ public class UtilsManager {
 
             List<Document> actionLogs = batch.getActionLogs() != null ? batch.getActionLogs() : new ArrayList<>();
             array = new JSONArray();
-            for (Document document : actionLogs){
+            for (Document document : actionLogs) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("ActionLogs", array) : object;
@@ -235,13 +280,13 @@ public class UtilsManager {
             object = batch.get_created_at() != null ? object.put("_created_at", batch.get_created_at()) : object;
             object = batch.get_updated_at() != null ? object.put("_updated_at", batch.get_updated_at()) : object;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
     }
 
-    public static University jsonToUniversity(JSONObject jsonObject){
+    public static University jsonToUniversity(JSONObject jsonObject) {
 
         University university = new University();
         try {
@@ -251,28 +296,28 @@ public class UtilsManager {
 
             List<String> univAdmins = new ArrayList<>();
             JSONArray array = jsonObject.has("UnivAdmins") ? jsonObject.getJSONArray("UnivAdmins") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 univAdmins.add(String.valueOf(array.get(i)));
             }
             university.setUnivAdmins(univAdmins);
 
             List<Document> students = new ArrayList<>();
             array = jsonObject.has("Students") ? jsonObject.getJSONArray("Students") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 students.add(Document.parse(String.valueOf(array.get(i))));
             }
             university.setStudents(students);
 
             List<Document> teachers = new ArrayList<>();
             array = jsonObject.has("Teachers") ? jsonObject.getJSONArray("Teachers") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 teachers.add(Document.parse(String.valueOf(array.get(i))));
             }
             university.setTeachers(teachers);
 
             List<Document> courses = new ArrayList<>();
             array = jsonObject.has("Courses") ? jsonObject.getJSONArray("Courses") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 courses.add(Document.parse(String.valueOf(array.get(i))));
             }
             university.setCourses(courses);
@@ -291,7 +336,7 @@ public class UtilsManager {
 
             List<Document> actionLogs = new ArrayList<>();
             array = jsonObject.has("ActionLogs") ? jsonObject.getJSONArray("ActionLogs") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 actionLogs.add(Document.parse(String.valueOf(array.get(i))));
             }
             university.setActionLogs(actionLogs);
@@ -306,13 +351,13 @@ public class UtilsManager {
             university.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             university.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
             university.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return university;
     }
 
-    public static JSONObject universityToJson(University university){
+    public static JSONObject universityToJson(University university) {
 
         JSONObject object = new JSONObject();
         try {
@@ -322,28 +367,28 @@ public class UtilsManager {
 
             List<String> univAdmins = university.getUnivAdmins();
             JSONArray array = new JSONArray();
-            for (String univAdmin : univAdmins){
+            for (String univAdmin : univAdmins) {
                 array.put(univAdmin);
             }
             object = array.length() > 0 ? object.put("UnivAdmins", array) : object;
 
             List<Document> students = university.getStudents();
             array = new JSONArray();
-            for (Document document : students){
+            for (Document document : students) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Students", array) : object;
 
             List<Document> teachers = university.getTeachers();
             array = new JSONArray();
-            for (Document document : teachers){
+            for (Document document : teachers) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Teachers", array) : object;
 
             List<Document> courses = university.getCourses();
             array = new JSONArray();
-            for (Document document : courses){
+            for (Document document : courses) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Courses", array) : object;
@@ -358,7 +403,7 @@ public class UtilsManager {
 
             List<Document> actionLogs = university.getActionLogs();
             array = new JSONArray();
-            for (Document document : actionLogs){
+            for (Document document : actionLogs) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("ActionLogs", array) : object;
@@ -373,13 +418,13 @@ public class UtilsManager {
             object = university.get_created_at() != null ? object.put("_created_at", university.get_created_at()) : object;
             object = university.get_updated_at() != null ? object.put("_updated_at", university.get_updated_at()) : object;
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
     }
 
-    public static JSONObject adminToJson(UnivAdmin univAdmin){
+    public static JSONObject adminToJson(UnivAdmin univAdmin) {
 
         JSONObject object = new JSONObject();
         try {
@@ -395,7 +440,7 @@ public class UtilsManager {
 
             List<Document> documents = univAdmin.getDocuments();
             JSONArray array = new JSONArray();
-            for (Document document : documents){
+            for (Document document : documents) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Documents", array) : object;
@@ -404,13 +449,13 @@ public class UtilsManager {
             object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
     }
 
-    public static UnivAdmin jsonToAdmin(JSONObject jsonObject){
+    public static UnivAdmin jsonToAdmin(JSONObject jsonObject) {
 
         UnivAdmin univAdmin = new UnivAdmin();
 
@@ -422,7 +467,7 @@ public class UtilsManager {
 
             List<Document> courses = new ArrayList<>();
             JSONArray array = jsonObject.has("Documents") ? jsonObject.getJSONArray("Documents") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 courses.add(Document.parse(String.valueOf(array.get(i))));
             }
             univAdmin.setDocuments(courses);
@@ -435,13 +480,13 @@ public class UtilsManager {
             univAdmin.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             univAdmin.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
             univAdmin.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return univAdmin;
     }
 
-    public static JSONObject studentToJson(Student student){
+    public static JSONObject studentToJson(Student student) {
 
         JSONObject object = new JSONObject();
         try {
@@ -457,14 +502,14 @@ public class UtilsManager {
 
             List<Document> batches = student.getBatches();
             JSONArray array = new JSONArray();
-            for (Document document : batches){
+            for (Document document : batches) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Batches", array) : object;
 
             List<Document> documents = student.getDocuments();
             array = new JSONArray();
-            for (Document document : documents){
+            for (Document document : documents) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Documents", array) : object;
@@ -473,13 +518,13 @@ public class UtilsManager {
             object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
     }
 
-    public static Student jsonToStudent(JSONObject jsonObject){
+    public static Student jsonToStudent(JSONObject jsonObject) {
 
         Student univAdmin = new Student();
 
@@ -491,14 +536,14 @@ public class UtilsManager {
 
             List<Document> batches = new ArrayList<>();
             JSONArray array = jsonObject.has("Batches") ? jsonObject.getJSONArray("Batches") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 batches.add(Document.parse(String.valueOf(array.get(i))));
             }
             univAdmin.setBatches(batches);
 
             List<Document> courses = new ArrayList<>();
             array = jsonObject.has("Documents") ? jsonObject.getJSONArray("Documents") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 courses.add(Document.parse(String.valueOf(array.get(i))));
             }
             univAdmin.setDocuments(courses);
@@ -511,13 +556,13 @@ public class UtilsManager {
             univAdmin.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             univAdmin.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
             univAdmin.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return univAdmin;
     }
 
-    public static JSONObject teacherToJson(Teacher student){
+    public static JSONObject teacherToJson(Teacher student) {
 
         JSONObject object = new JSONObject();
         try {
@@ -533,7 +578,7 @@ public class UtilsManager {
 
             List<Document> documents = student.getDocuments();
             JSONArray array = new JSONArray();
-            for (Document document : documents){
+            for (Document document : documents) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Documents", array) : object;
@@ -542,13 +587,13 @@ public class UtilsManager {
             object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
     }
 
-    public static Teacher jsonToTeacher(JSONObject jsonObject){
+    public static Teacher jsonToTeacher(JSONObject jsonObject) {
 
         Teacher univAdmin = new Teacher();
 
@@ -560,7 +605,7 @@ public class UtilsManager {
 
             List<Document> courses = new ArrayList<>();
             JSONArray array = jsonObject.has("Documents") ? jsonObject.getJSONArray("Documents") : new JSONArray();
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 courses.add(Document.parse(String.valueOf(array.get(i))));
             }
             univAdmin.setDocuments(courses);
@@ -573,20 +618,20 @@ public class UtilsManager {
             univAdmin.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             univAdmin.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
             univAdmin.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return univAdmin;
     }
 
-    public static String getUTCStandardDateFormat(){
+    public static String getUTCStandardDateFormat() {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         return dateFormat.format(date);
     }
 
-    public static String generateUniqueID(){
+    public static String generateUniqueID() {
         String uniqueID = UUID.randomUUID().toString();
         return uniqueID;
     }
@@ -636,7 +681,7 @@ public class UtilsManager {
         return map;
     }
 
-    public static String arrayToString(String[] array){
+    public static String arrayToString(String[] array) {
 
         if (array.length > 0) {
             StringBuilder nameBuilder = new StringBuilder();
@@ -671,16 +716,16 @@ public class UtilsManager {
         return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
 
-    public static String singleQuotesStringsByComma(String original){
+    public static String singleQuotesStringsByComma(String original) {
 
         String converted = "";
         if (original == null)
             return null;
-        else if (original.length() == 0){
+        else if (original.length() == 0) {
             return "";
-        }else if (!original.contains(",")){
+        } else if (!original.contains(",")) {
             return "'" + original + "'";
-        }else {
+        } else {
             String[] ids = original.split(",");
             for (String id : ids) {
                 converted =

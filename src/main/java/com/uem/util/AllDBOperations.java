@@ -11,7 +11,7 @@ import java.util.*;
 
     /*
 
-    Check this link to understand more about finding teh substrings and regex matches in Mongo DB
+    Check this link to understand more about finding the substrings and regex matches in Mongo DB
     https://docs.mongodb.com/manual/reference/operator/query/regex/#examples
 
     */
@@ -1200,7 +1200,7 @@ public class AllDBOperations {
             for (Document document : documents) {
                 Batch batch = new Batch();
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
-                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("CourseID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
                 batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
                 batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
@@ -1210,6 +1210,54 @@ public class AllDBOperations {
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
                 batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setBatchRequests(document.containsKey("BatchRequests") ? document.getList("BatchRequests", Document.class) : null);
+
+                batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
+                batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                batch.setCalendar(document.containsKey("Calendar") ? document.get("Calendar", Document.class) : null);
+                batch.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+
+                batch.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                batch.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                batch.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                batch.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                batch.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                batches.add(batch);
+            }
+        }
+        return batches;
+    }
+
+    public static List<Batch> getAllBatchesInUEM_ByCourseID_UnivID_StateRequested_BatchRequestsExists(String CourseID, String UnivID) {
+
+        List<Batch> batches = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "CourseID:{$regex:/" + CourseID + "/}," +
+                        "UnivID:{$regex:/" + UnivID + "/}," +
+                        "BatchRequests:{$exists:true}" +
+                        "'Status.status':'requested'" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllBatch(filter);
+        if (documents == null || documents.size() == 0) {
+            return batches;
+        } else {
+            for (Document document : documents) {
+                Batch batch = new Batch();
+                batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("CourseID") : null);
+                batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
+                batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
+                batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                batch.setCompletion(document.containsKey("Completion") ? document.getString("Completion") : null);
+
+                batch.setLeadTutors(document.containsKey("LeadTutors") ? document.getList("LeadTutors", Document.class) : null);
+                batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
+                batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
+                batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setBatchRequests(document.containsKey("BatchRequests") ? document.getList("BatchRequests", Document.class) : null);
 
                 batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
@@ -1243,7 +1291,7 @@ public class AllDBOperations {
             for (Document document : documents) {
                 Batch batch = new Batch();
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
-                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("CourseID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
                 batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
                 batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
@@ -1253,6 +1301,7 @@ public class AllDBOperations {
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
                 batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setBatchRequests(document.containsKey("BatchRequests") ? document.getList("BatchRequests", Document.class) : null);
 
                 batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
@@ -1286,7 +1335,7 @@ public class AllDBOperations {
             for (Document document : documents) {
                 Batch batch = new Batch();
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
-                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("CourseID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
                 batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
                 batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
@@ -1296,6 +1345,7 @@ public class AllDBOperations {
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
                 batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setBatchRequests(document.containsKey("BatchRequests") ? document.getList("BatchRequests", Document.class) : null);
 
                 batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
@@ -1329,7 +1379,7 @@ public class AllDBOperations {
             for (Document document : documents) {
                 Batch batch = new Batch();
                 batch.setCourseID(document.containsKey("CourseID") ? document.getString("CourseID") : null);
-                batch.setBatchID(document.containsKey("BatchID") ? document.getString("BatchID") : null);
+                batch.setBatchID(document.containsKey("BatchID") ? document.getString("CourseID") : null);
                 batch.setDuration(document.containsKey("Duration") ? document.getString("Duration") : null);
                 batch.setSpanOver(document.containsKey("SpanOver") ? document.getString("SpanOver") : null);
                 batch.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
@@ -1339,6 +1389,7 @@ public class AllDBOperations {
                 batch.setFellowTutors(document.containsKey("FellowTutors") ? document.getList("FellowTutors", Document.class) : null);
                 batch.setStudents(document.containsKey("Students") ? document.getList("Students", Document.class) : null);
                 batch.setActionLogs(document.containsKey("ActionLogs") ? document.getList("ActionLogs", Document.class) : null);
+                batch.setBatchRequests(document.containsKey("BatchRequests") ? document.getList("BatchRequests", Document.class) : null);
 
                 batch.setInfo(document.containsKey("info") ? document.get("info", Document.class) : null);
                 batch.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);

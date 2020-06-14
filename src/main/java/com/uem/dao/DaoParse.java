@@ -6,6 +6,8 @@ import com.uem.util.Constants;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
 import org.apache.log4j.Logger;
+import org.bson.Document;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -24,7 +26,7 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public CustomResponse signUp(String email, String type){
+    public CustomResponse signUp(String email, String type) {
 
         try {
             List<User> users = AllDBOperations.getAllUsers_Email(email);
@@ -32,23 +34,23 @@ public class DaoParse implements DaoInterface {
 
                 Map<String, Object> data = AllDBOperations.createUser(email);
 
-                if (Boolean.valueOf(String.valueOf(data.get("success")))){
+                if (Boolean.valueOf(String.valueOf(data.get("success")))) {
 
-                    JSONObject body = new JSONObject( String.valueOf(data.get("body")));
+                    JSONObject body = new JSONObject(String.valueOf(data.get("body")));
                     Map<String, Object> adminResponse = new HashMap<>();
 
-                    if (Constants.ADMIN.equals(type.toUpperCase())){
+                    if (Constants.ADMIN.equals(type.toUpperCase())) {
                         adminResponse = AllDBOperations.createAdmin(body.getString("UserID"));
-                    }else if (Constants.TEACHER.equals(type.toUpperCase())){
+                    } else if (Constants.TEACHER.equals(type.toUpperCase())) {
                         adminResponse = AllDBOperations.createTeacher(body.getString("UserID"));
-                    }else if (Constants.STUDENT.equals(type.toUpperCase())){
+                    } else if (Constants.STUDENT.equals(type.toUpperCase())) {
                         adminResponse = AllDBOperations.createStudent(body.getString("UserID"));
-                    }else if (Constants.COURSE_ADMIN.equals(type.toUpperCase())){
+                    } else if (Constants.COURSE_ADMIN.equals(type.toUpperCase())) {
                         adminResponse = AllDBOperations.createCourseAdmin(body.getString("UserID"));
                     }
 
-                    if (Boolean.valueOf(String.valueOf(adminResponse.get("success")))){
-                        JSONObject adminBody = new JSONObject( String.valueOf(adminResponse.get("body")));
+                    if (Boolean.valueOf(String.valueOf(adminResponse.get("success")))) {
+                        JSONObject adminBody = new JSONObject(String.valueOf(adminResponse.get("body")));
                         body.put("UEM_ID", adminBody.getString("UEM_ID"));
                         data.put("body", body);
 
@@ -57,13 +59,13 @@ public class DaoParse implements DaoInterface {
                         customResponse.setMessage(Constants.SUCCESS);
                         customResponse.setInfo(data);
                         return customResponse;
-                    }else {
+                    } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
                         customResponse.setMessage(Constants.SIGN_UP_FAILURE);
                         return customResponse;
                     }
-                }else {
+                } else {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
                     customResponse.setMessage(Constants.SIGN_UP_FAILURE);
@@ -74,41 +76,41 @@ public class DaoParse implements DaoInterface {
                 Map<String, Object> data = new HashMap<>();
 
                 Map<String, Object> adminResponse = new HashMap<>();
-                if (Constants.ADMIN.equals(type.toUpperCase())){
+                if (Constants.ADMIN.equals(type.toUpperCase())) {
                     List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(users.get(0).getUserID());
-                    if (univAdmins == null || univAdmins.size() == 0){
+                    if (univAdmins == null || univAdmins.size() == 0) {
                         adminResponse = AllDBOperations.createAdmin(users.get(0).getUserID());
-                    }else {
+                    } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
                         customResponse.setMessage(Constants.ALREADY_EXIST);
                         return customResponse;
                     }
-                }else if (Constants.TEACHER.equals(type.toUpperCase())){
+                } else if (Constants.TEACHER.equals(type.toUpperCase())) {
                     List<Teacher> univAdmins = AllDBOperations.getAllTeachers_UserID(users.get(0).getUserID());
-                    if (univAdmins == null || univAdmins.size() == 0){
+                    if (univAdmins == null || univAdmins.size() == 0) {
                         adminResponse = AllDBOperations.createTeacher(users.get(0).getUserID());
-                    }else {
+                    } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
                         customResponse.setMessage(Constants.ALREADY_EXIST);
                         return customResponse;
                     }
-                }else if (Constants.STUDENT.equals(type.toUpperCase())){
+                } else if (Constants.STUDENT.equals(type.toUpperCase())) {
                     List<Student> univAdmins = AllDBOperations.getAllStudents_UserID(users.get(0).getUserID());
-                    if (univAdmins == null || univAdmins.size() == 0){
+                    if (univAdmins == null || univAdmins.size() == 0) {
                         adminResponse = AllDBOperations.createStudent(users.get(0).getUserID());
-                    }else {
+                    } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
                         customResponse.setMessage(Constants.ALREADY_EXIST);
                         return customResponse;
                     }
-                }else if (Constants.COURSE_ADMIN.equals(type.toUpperCase())){
+                } else if (Constants.COURSE_ADMIN.equals(type.toUpperCase())) {
                     List<CourseAdmin> univAdmins = AllDBOperations.getAllCourseAdmins_UserID(users.get(0).getUserID());
-                    if (univAdmins == null || univAdmins.size() == 0){
+                    if (univAdmins == null || univAdmins.size() == 0) {
                         adminResponse = AllDBOperations.createCourseAdmin(users.get(0).getUserID());
-                    }else {
+                    } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
                         customResponse.setMessage(Constants.ALREADY_EXIST);
@@ -116,11 +118,11 @@ public class DaoParse implements DaoInterface {
                     }
                 }
 
-                if (Boolean.valueOf(String.valueOf(adminResponse.get("success")))){
+                if (Boolean.valueOf(String.valueOf(adminResponse.get("success")))) {
                     data.put("success", true);
                     JSONObject body = new JSONObject();
 
-                    JSONObject adminBody = new JSONObject( String.valueOf(adminResponse.get("body")));
+                    JSONObject adminBody = new JSONObject(String.valueOf(adminResponse.get("body")));
                     body.put("UEM_ID", adminBody.getString("UEM_ID"));
                     body.put("UserID", users.get(0).getUserID());
                     data.put("body", body);
@@ -130,14 +132,14 @@ public class DaoParse implements DaoInterface {
                     customResponse.setMessage(Constants.SUCCESS);
                     customResponse.setInfo(data);
                     return customResponse;
-                }else {
+                } else {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
                     customResponse.setMessage(Constants.SIGN_UP_FAILURE);
                     return customResponse;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
             customResponse.setMessage(Constants.SIGN_UP_FAILURE);
@@ -272,9 +274,9 @@ public class DaoParse implements DaoInterface {
     public CustomResponse getAllBatches(JSONObject body) {
 
         try {
-            if (body.has("BatchID") || body.has("AdminID") || body.has("CourseID") ) {
+            if (body.has("BatchID") || body.has("AdminID") || body.has("CourseID")) {
 
-                if (body.has("BatchID")){
+                if (body.has("BatchID")) {
                     List<Batch> users = new ArrayList<>();
                     users = AllDBOperations.getAllBatchesInUEM_ByBatchID(body.getString("BatchID"));
 
@@ -287,7 +289,7 @@ public class DaoParse implements DaoInterface {
                     customResponse.setInfo(map);
                     return customResponse;
 
-                }else if (body.has("AdminID")){
+                } else if (body.has("AdminID")) {
                     List<Batch> users = new ArrayList<>();
                     users = AllDBOperations.getAllBatchesInUEM_ByAdminID(body.getString("AdminID"));
 
@@ -299,7 +301,7 @@ public class DaoParse implements DaoInterface {
                     customResponse.setMessage(Constants.SUCCESS);
                     customResponse.setInfo(map);
                     return customResponse;
-                }else {
+                } else {
                     List<Batch> users = new ArrayList<>();
                     users = AllDBOperations.getAllBatchesInUEM_ByCourseID(body.getString("CourseID"));
 
@@ -335,9 +337,9 @@ public class DaoParse implements DaoInterface {
     public CustomResponse getAllCourses(JSONObject body) {
 
         try {
-            if (body.has("Name") || body.has("CourseID") || body.has("CourseAdmin") ) {
+            if (body.has("Name") || body.has("CourseID") || body.has("CourseAdmin")) {
 
-                if (body.has("Name")){
+                if (body.has("Name")) {
                     List<Course> users = new ArrayList<>();
                     users = AllDBOperations.getAllCoursesInUEM(body.getString("Name"));
 
@@ -350,7 +352,7 @@ public class DaoParse implements DaoInterface {
                     customResponse.setInfo(map);
                     return customResponse;
 
-                }else if (body.has("CourseID")){
+                } else if (body.has("CourseID")) {
                     List<Course> users = new ArrayList<>();
                     users = AllDBOperations.getAllCoursesInUEMBID(body.getString("CourseID"));
 
@@ -362,7 +364,7 @@ public class DaoParse implements DaoInterface {
                     customResponse.setMessage(Constants.SUCCESS);
                     customResponse.setInfo(map);
                     return customResponse;
-                }else {
+                } else {
                     List<Course> users = new ArrayList<>();
                     users = AllDBOperations.getAllCoursesInUEM_CourseAdmin(body.getString("CourseAdmin"));
 
@@ -395,7 +397,7 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public List<University> getUniversity(String UnivID){
+    public List<University> getUniversity(String UnivID) {
         List<University> users = new ArrayList<>();
         users = AllDBOperations.getAllUniversities_UnivID(UnivID);
         return users;
@@ -486,12 +488,12 @@ public class DaoParse implements DaoInterface {
         try {
 
             List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("UnivID"));
-            if (universities == null || universities.size() == 0){
+            if (universities == null || universities.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.UNIVERSITY_DOES_NOT_EXIST);
                 return customResponse;
-            }else {
+            } else {
                 Map<String, Object> map = AllDBOperations.updateUniversity(universities.get(0), body, append);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
@@ -507,7 +509,7 @@ public class DaoParse implements DaoInterface {
                     return customResponse;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
@@ -526,12 +528,12 @@ public class DaoParse implements DaoInterface {
         try {
 
             List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UemID(body.getString("adminID"));
-            if (univAdmins == null || univAdmins.size() == 0){
+            if (univAdmins == null || univAdmins.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.ADMIN_DOES_NOT_EXIST);
                 return customResponse;
-            }else {
+            } else {
                 Map<String, Object> map = AllDBOperations.updateAdmin(univAdmins.get(0), body, append);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
@@ -547,7 +549,7 @@ public class DaoParse implements DaoInterface {
                     return customResponse;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
@@ -566,12 +568,12 @@ public class DaoParse implements DaoInterface {
         try {
 
             List<Student> students = AllDBOperations.getAllStudents_UemID(body.getString("studentID"));
-            if (students == null || students.size() == 0){
+            if (students == null || students.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.STUDENT_DOES_NOT_EXIST);
                 return customResponse;
-            }else {
+            } else {
                 Map<String, Object> map = AllDBOperations.updateStudent(students.get(0), body, append);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
@@ -587,7 +589,7 @@ public class DaoParse implements DaoInterface {
                     return customResponse;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
@@ -606,12 +608,12 @@ public class DaoParse implements DaoInterface {
         try {
 
             List<Teacher> teachers = AllDBOperations.getAllTeachers_UemID(body.getString("teacherID"));
-            if (teachers == null || teachers.size() == 0){
+            if (teachers == null || teachers.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.TEACHER_DOES_NOT_EXIST);
                 return customResponse;
-            }else {
+            } else {
                 Map<String, Object> map = AllDBOperations.updateTeacher(teachers.get(0), body, append);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
@@ -627,7 +629,7 @@ public class DaoParse implements DaoInterface {
                     return customResponse;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
@@ -650,24 +652,98 @@ public class DaoParse implements DaoInterface {
                     && body.has("Completion")
                     && body.has("Calendar")
                     && body.has("Billing")
-                    && body.has("AdminID")
+                    && body.has("UnivID")
                     && body.has("CourseID")) {
+                if (body.has("BatchRequests")) {
 
-                Map<String, Object> map = AllDBOperations.createBatch(body);
-                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
-                    CustomResponse customResponse = new CustomResponse();
-                    customResponse.setSuccess(false);
-                    customResponse.setMessage(Constants.INTERNAL_ERROR);
-                    customResponse.setInfo(map);
-                    return customResponse;
+                    if (body.has("UEM_ID")) {
+
+                        List<Batch> batches = AllDBOperations.getAllBatchesInUEM_ByCourseID_UnivID_StateRequested_BatchRequestsExists(
+                                body.getString("CourseID"),
+                                body.getString("UnivID"));
+                        Batch batch = batches != null && batches.size() > 0 ? batches.get(0) : null;
+                        if (batch != null) {
+                            List<Document> batchRequests = batch.getBatchRequests();
+                            String UEM_ID = body.getString("UEM_ID");
+                            for (Document document : batchRequests) {
+                                if (document.containsKey("UEM_ID")
+                                        && UEM_ID.equalsIgnoreCase(document.getString("UEM_ID"))) {
+                                    CustomResponse customResponse = new CustomResponse();
+                                    customResponse.setSuccess(false);
+                                    customResponse.setMessage(Constants.BATCH_REQUEST_ALREADY_RAISED);
+                                    return customResponse;
+                                }
+                            }
+
+                            Document document = new Document();
+                            document.put("UEM_ID", UEM_ID);
+                            batchRequests.add(document);
+
+                            JSONArray jsonArray = UtilsManager.documentListToJsonArray(batchRequests);
+                            JSONObject object = new JSONObject();
+                            object.put("BatchRequests", jsonArray);
+
+                            AllDBOperations.updateBatch(batch, object, false);
+
+                            CustomResponse customResponse = new CustomResponse();
+                            customResponse.setSuccess(true);
+                            customResponse.setMessage(Constants.SUCCESS);
+                            return customResponse;
+                        } else {
+
+                            JSONArray array = new JSONArray();
+                            JSONObject object = new JSONObject();
+                            object.put("UEM_ID", body);
+                            array.put(object);
+
+                            body.put("BatchRequests", array);
+
+                            Map<String, Object> map = AllDBOperations.createBatch(body);
+                            if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                                CustomResponse customResponse = new CustomResponse();
+                                customResponse.setSuccess(false);
+                                customResponse.setMessage(Constants.INTERNAL_ERROR);
+                                customResponse.setInfo(map);
+                                return customResponse;
+                            } else {
+                                CustomResponse customResponse = new CustomResponse();
+                                customResponse.setSuccess(true);
+                                customResponse.setMessage(Constants.SUCCESS);
+                                customResponse.setInfo(map);
+                                return customResponse;
+                            }
+                        }
+                    } else {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.BATCH_CREATION_FAILURE);
+                        return customResponse;
+                    }
                 } else {
-                    CustomResponse customResponse = new CustomResponse();
-                    customResponse.setSuccess(true);
-                    customResponse.setMessage(Constants.SUCCESS);
-                    customResponse.setInfo(map);
-                    return customResponse;
+
+                    if (!body.has("AdminID")){
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.BATCH_CREATION_FAILURE);
+                        return customResponse;
+                    }
+
+                    Map<String, Object> map = AllDBOperations.createBatch(body);
+                    if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.INTERNAL_ERROR);
+                        customResponse.setInfo(map);
+                        return customResponse;
+                    } else {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(true);
+                        customResponse.setMessage(Constants.SUCCESS);
+                        customResponse.setInfo(map);
+                        return customResponse;
+                    }
                 }
-            } else {
+            }else {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.BATCH_CREATION_FAILURE);
@@ -692,12 +768,12 @@ public class DaoParse implements DaoInterface {
         try {
 
             List<Batch> batches = AllDBOperations.getAllBatchesInUEM_ByBatchID(body.getString("batchID"));
-            if (batches == null || batches.size() == 0){
+            if (batches == null || batches.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.BATCH_DOES_NOT_EXIST);
                 return customResponse;
-            }else {
+            } else {
                 Map<String, Object> map = AllDBOperations.updateBatch(batches.get(0), body, append);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
@@ -713,7 +789,7 @@ public class DaoParse implements DaoInterface {
                     return customResponse;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
@@ -732,12 +808,12 @@ public class DaoParse implements DaoInterface {
         try {
 
             List<Batch> batches = AllDBOperations.getAllBatchesInUEM_ByBatchID(body.getString("batchID"));
-            if (batches == null || batches.size() == 0){
+            if (batches == null || batches.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.BATCH_DOES_NOT_EXIST);
                 return customResponse;
-            }else {
+            } else {
                 Map<String, Object> map = AllDBOperations.deleteFromBatch(batches.get(0), body);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
@@ -753,7 +829,7 @@ public class DaoParse implements DaoInterface {
                     return customResponse;
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
