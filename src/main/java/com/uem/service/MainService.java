@@ -73,7 +73,7 @@ public class MainService {
         return dao.updateUserInfo(body);
     }
 
-    public List<User> getUserInfo(String UserID) {
+    public CustomResponse getUserInfo(String UserID) {
         return dao.getUserInfo(UserID);
     }
 
@@ -101,19 +101,19 @@ public class MainService {
         return dao.getAllCourses(body);
     }
 
-    public List<UnivAdmin> geAdminInfo(String AdminID) {
+    public CustomResponse geAdminInfo(String AdminID) {
         return dao.geAdminInfo(AdminID);
     }
 
-    public List<CourseAdmin> geCourseAdminInfo(String AdminID) {
+    public CustomResponse geCourseAdminInfo(String AdminID) {
         return dao.geCourseAdminInfo(AdminID);
     }
 
-    public List<Student> geStudentInfo(String studentID) {
+    public CustomResponse geStudentInfo(String studentID) {
         return dao.geStudentInfo(studentID);
     }
 
-    public List<Teacher> geTeacherInfo(String teacherID) {
+    public CustomResponse geTeacherInfo(String teacherID) {
         return dao.geTeacherInfo(teacherID);
     }
 

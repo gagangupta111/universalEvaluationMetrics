@@ -438,6 +438,72 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject courseAdminToJson(CourseAdmin courseAdmin) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+
+            object = courseAdmin.getUEM_ID() != null ? object.put("UEM_ID", courseAdmin.getUEM_ID()) : object;
+            object = courseAdmin.getUserID() != null ? object.put("UserID", courseAdmin.getUserID()) : object;
+            object = courseAdmin.getInfo() != null ? object.put("info", courseAdmin.getInfo()) : object;
+
+            object = courseAdmin.getObjectID() != null ? object.put("_id", courseAdmin.getObjectID()) : object;
+            object = courseAdmin.get_created_at() != null ? object.put("_created_at", courseAdmin.get_created_at()) : object;
+            object = courseAdmin.get_updated_at() != null ? object.put("_updated_at", courseAdmin.get_updated_at()) : object;
+
+            List<Document> courses = courseAdmin.getCourses();
+            JSONArray array = new JSONArray();
+            for (Document document : courses) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Courses", array) : object;
+
+            List<Document> documents = courseAdmin.getDocuments();
+            array = new JSONArray();
+            for (Document document : documents) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Documents", array) : object;
+
+            Document photo = courseAdmin.getPhoto();
+            object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
+
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
+    public static JSONObject userToJson(User user) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = user.getUserID() != null ? object.put("UserID", user.getUserID()) : object;
+            object = user.getInfo() != null ? object.put("info", user.getInfo()) : object;
+            object = user.getPassword() != null ? object.put("Password", user.getPassword()) : object;
+            object = user.getAddress() != null ? object.put("Address", user.getAddress()) : object;
+            object = user.getDOB() != null ? object.put("DOB", user.getDOB()) : object;
+            object = user.getEmail() != null ? object.put("Email", user.getEmail()) : object;
+            object = user.getMobile() != null ? object.put("Mobile", user.getMobile()) : object;
+            object = user.getName() != null ? object.put("Name", user.getName()) : object;
+
+            object = user.getObjectID() != null ? object.put("_id", user.getObjectID()) : object;
+            object = user.get_created_at() != null ? object.put("_created_at", user.get_created_at()) : object;
+            object = user.get_updated_at() != null ? object.put("_updated_at", user.get_updated_at()) : object;
+
+            Document photo = user.getPhoto();
+            object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
+
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
     public static JSONObject adminToJson(UnivAdmin univAdmin) {
 
         JSONObject object = new JSONObject();

@@ -114,15 +114,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> geAdminInfo(@PathVariable("adminID") String adminID) {
 
-        List<UnivAdmin> users = mainService.geAdminInfo(adminID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.geAdminInfo(adminID);
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 
@@ -130,15 +130,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> geCourseAdminInfo(@PathVariable("adminID") String adminID) {
 
-        List<CourseAdmin> users = mainService.geCourseAdminInfo(adminID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.geCourseAdminInfo(adminID);
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 
@@ -146,15 +146,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> geStudentInfo(@PathVariable("studentID") String studentID) {
 
-        List<Student> users = mainService.geStudentInfo(studentID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.geStudentInfo(studentID);
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 
@@ -162,15 +162,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> geTeacherInfo(@PathVariable("teacherID") String teacherID) {
 
-        List<Teacher> users = mainService.geTeacherInfo(teacherID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.geTeacherInfo(teacherID);
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 
@@ -178,15 +178,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> getUserInfo(@PathVariable("userID") String userID) {
 
-        List<User> users = mainService.getUserInfo(userID);
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.getUserInfo(userID);
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 

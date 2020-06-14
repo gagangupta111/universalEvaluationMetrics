@@ -221,38 +221,105 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public List<User> getUserInfo(String UserID) {
+    public CustomResponse getUserInfo(String UserID) {
         List<User> users = new ArrayList<>();
         users = AllDBOperations.getAllUsers_UserID(UserID);
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (User univAdmin : users){
+            array.put(UtilsManager.userToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Users",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
     }
 
     @Override
-    public List<UnivAdmin> geAdminInfo(String AdminID) {
+    public CustomResponse geAdminInfo(String AdminID) {
+
         List<UnivAdmin> users = new ArrayList<>();
         users = AllDBOperations.getAllAdmin_UemID(AdminID);
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (UnivAdmin univAdmin : users){
+            array.put(UtilsManager.adminToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Admins",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
     }
 
     @Override
-    public List<CourseAdmin> geCourseAdminInfo(String AdminID) {
+    public CustomResponse geCourseAdminInfo(String AdminID) {
         List<CourseAdmin> users = new ArrayList<>();
         users = AllDBOperations.getAllCourseAdmins_UemID(AdminID);
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (CourseAdmin univAdmin : users){
+            array.put(UtilsManager.courseAdminToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("CourseAdmins",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
     }
 
     @Override
-    public List<Student> geStudentInfo(String StudentID) {
+    public CustomResponse geStudentInfo(String StudentID) {
         List<Student> users = new ArrayList<>();
         users = AllDBOperations.getAllStudents_UemID(StudentID);
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (Student univAdmin : users){
+            array.put(UtilsManager.studentToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Students",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+
     }
 
     @Override
-    public List<Teacher> geTeacherInfo(String StudentID) {
+    public CustomResponse geTeacherInfo(String StudentID) {
         List<Teacher> users = new ArrayList<>();
         users = AllDBOperations.getAllTeachers_UemID(StudentID);
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (Teacher univAdmin : users){
+            array.put(UtilsManager.teacherToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Students",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
     }
 
     // getAllCourses
