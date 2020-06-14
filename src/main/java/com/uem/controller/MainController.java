@@ -194,15 +194,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> getAllCourses() {
 
-        List<Course> users = mainService.getAllCourses();
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.getAllCourses();
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 
@@ -282,15 +282,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> getUniversity(@PathVariable("univID") String univID) throws Exception {
 
-        List<University> universities = mainService.getUniversity(univID);
-        if (universities == null || universities.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.getUniversity(univID);
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(universities.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 
@@ -865,15 +865,15 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> getAllBatches() {
 
-        List<Batch> users = mainService.getAllBatches();
-        if (users == null || users.size() == 0) {
-            return ResponseEntity.badRequest()
-                    .header("message", "")
-                    .body(Constants.FAILURE);
-        } else {
+        CustomResponse customResponse = mainService.getAllBatches();
+        if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
-                    .header("message", "")
-                    .body(users.toString());
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 

@@ -33,7 +33,7 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
-    public List<University> getUniversity(String univID) {
+    public CustomResponse getUniversity(String univID) {
         return dao.getUniversity(univID);
     }
 
@@ -81,20 +81,16 @@ public class MainService {
         return dao.createCourse(body);
     }
 
-    public List<Course> getAllCourses() {
+    public CustomResponse getAllCourses() {
         return dao.getAllCourses();
     }
 
-    public List<Batch> getAllBatches() {
+    public CustomResponse getAllBatches() {
         return dao.getAllBatches();
     }
 
     public CustomResponse getAllBatches(JSONObject body) {
         return dao.getAllBatches(body);
-    }
-
-    public List<Batch> getAllBatches(String batchID) {
-        return dao.getAllBatches();
     }
 
     public CustomResponse getAllCourses(JSONObject body) {

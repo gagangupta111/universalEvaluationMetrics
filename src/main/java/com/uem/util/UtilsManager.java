@@ -642,6 +642,61 @@ public class UtilsManager {
         return univAdmin;
     }
 
+    public static JSONObject courseToJson(Course student) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = student.getCourseAdmin() != null ? object.put("CourseAdmin", student.getCourseAdmin()) : object;
+            object = student.getCourseID() != null ? object.put("CourseID", student.getCourseID()) : object;
+            object = student.getExpiring() != null ? object.put("Expiring", student.getExpiring()) : object;
+            object = student.getLevel() != null ? object.put("Level", student.getLevel()) : object;
+            object = student.getLevelInt() != null ? object.put("LevelInt", student.getLevelInt()) : object;
+            object = student.getInfo() != null ? object.put("info", student.getInfo()) : object;
+            object = student.getName() != null ? object.put("Name", student.getName()) : object;
+            object = student.getStarting() != null ? object.put("Starting", student.getStarting()) : object;
+
+            object = student.getObjectID() != null ? object.put("_id", student.getObjectID()) : object;
+            object = student.get_created_at() != null ? object.put("_created_at", student.get_created_at()) : object;
+            object = student.get_updated_at() != null ? object.put("_updated_at", student.get_updated_at()) : object;
+
+            List<Document> universities = student.getUniversities();
+            JSONArray array = new JSONArray();
+            for (Document document : universities) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Universities", array) : object;
+
+            List<Document> actionLogs = student.getActionLogs();
+            array = new JSONArray();
+            for (Document document : actionLogs) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("ActionLogs", array) : object;
+
+            List<Document> batches = student.getBatches();
+            array = new JSONArray();
+            for (Document document : batches) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Batches", array) : object;
+
+            Document status = student.getStatus();
+            object = status != null && status.size() > 0 ? object.put("Status", new JSONObject(status.toJson())) : object;
+
+            Document billing = student.getBilling();
+            object = billing != null && billing.size() > 0 ? object.put("Billing", new JSONObject(billing.toJson())) : object;
+
+            Document photo = student.getPhoto();
+            object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
+
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
     public static JSONObject teacherToJson(Teacher student) {
 
         JSONObject object = new JSONObject();

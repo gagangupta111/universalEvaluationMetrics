@@ -17,13 +17,13 @@ public interface DaoInterface {
     public CustomResponse geStudentInfo(String AdminID);
     public CustomResponse geTeacherInfo(String AdminID);
 
-    public List<Batch> getAllBatches();
+    public CustomResponse getAllBatches();
     public CustomResponse getAllBatches(JSONObject body);
-    public List<Course> getAllCourses();
+    public CustomResponse getAllCourses();
     public CustomResponse getAllCourses(JSONObject body);
 
     public CustomResponse createCourse(JSONObject body);
-    public List<University> getUniversity(String UnivID);
+    public CustomResponse getUniversity(String UnivID);
     public CustomResponse createUniversity(JSONObject body);
     public CustomResponse updateUniversity(JSONObject body, Boolean append);
     public CustomResponse updateAdmin(JSONObject body, Boolean append);

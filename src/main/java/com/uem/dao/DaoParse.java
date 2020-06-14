@@ -324,17 +324,43 @@ public class DaoParse implements DaoInterface {
 
     // getAllCourses
     @Override
-    public List<Course> getAllCourses() {
+    public CustomResponse getAllCourses() {
         List<Course> users = new ArrayList<>();
         users = AllDBOperations.getAllCoursesInUEM();
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (Course univAdmin : users){
+            array.put(UtilsManager.courseToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Students",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
     }
 
     @Override
-    public List<Batch> getAllBatches() {
+    public CustomResponse getAllBatches() {
         List<Batch> users = new ArrayList<>();
         users = AllDBOperations.getAllBatchesInUEM();
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (Batch univAdmin : users){
+            array.put(UtilsManager.batchToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Students",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
     }
 
     @Override
@@ -464,10 +490,23 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public List<University> getUniversity(String UnivID) {
+    public CustomResponse getUniversity(String UnivID) {
         List<University> users = new ArrayList<>();
         users = AllDBOperations.getAllUniversities_UnivID(UnivID);
-        return users;
+
+        JSONArray array = new JSONArray();
+        for (University univAdmin : users){
+            array.put(UtilsManager.universityToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Students",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
 
     }
 
