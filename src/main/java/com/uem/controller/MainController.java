@@ -39,10 +39,13 @@ public class MainController {
 
     }
 
-    @RequestMapping(value = "/test/json", method = RequestMethod.GET)
-    public ResponseEntity<String> testJson() {
+    @RequestMapping(value = "/test/json/{id}", method = RequestMethod.GET)
+    public ResponseEntity<String> testJson(@PathVariable("id") String id) {
 
         try {
+
+            System.out.println("ID Value:" + id);
+
             JSONObject object = new JSONObject();
             object.put("key","value");
             logger.debug("REQUEST_RECIEVED-MainController");
