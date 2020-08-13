@@ -3,6 +3,7 @@ package com.uem.service;
 import com.uem.dao.DaoInterface;
 import com.uem.model.*;
 import com.uem.util.LogUtil;
+import com.uem.util.ParseUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,16 @@ public class MainService {
     public String test() {
         logger.debug("REQUEST_RECIEVED-MainService");
         return dao.test();
+    }
+
+    public String deleteAll() {
+        ParseUtil.deleteAllObjectsAllTables();
+        return "Ok";
+    }
+
+    public String createDummy() {
+        ParseUtil.createDummyObjectsAllTables();
+        return "Ok";
     }
 
     public CustomResponse signUp(String email, String type) {

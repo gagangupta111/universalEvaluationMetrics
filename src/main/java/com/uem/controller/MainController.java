@@ -39,6 +39,34 @@ public class MainController {
 
     }
 
+    @RequestMapping(value = "/deleteAll/{secretNumber}", method = RequestMethod.GET)
+    public ResponseEntity<String> deleteAll(@PathVariable("secretNumber") String secretNumber) {
+
+        if (secretNumber.equalsIgnoreCase("123456")){
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(mainService.deleteAll());
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body("Not Matching secretNumber");
+        }
+    }
+
+    @RequestMapping(value = "/createDummy/{secretNumber}", method = RequestMethod.GET)
+    public ResponseEntity<String> createDummy(@PathVariable("secretNumber") String secretNumber) {
+
+        if (secretNumber.equalsIgnoreCase("123456")){
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(mainService.createDummy());
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body("Not Matching secretNumber");
+        }
+    }
+
     @RequestMapping(value = "/test/json/{id}", method = RequestMethod.GET)
     public ResponseEntity<String> testJson(@PathVariable("id") String id) {
 

@@ -339,6 +339,7 @@ public class ParseUtil {
 
     }
 
+    // Test functions below
     public static String updateStatusInParse(TestClass testClass) {
 
         try {
