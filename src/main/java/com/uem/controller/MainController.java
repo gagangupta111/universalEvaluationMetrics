@@ -1120,4 +1120,21 @@ public class MainController {
         }
     }
 
+    @GetMapping("/all/posts")
+    @ResponseBody
+    public ResponseEntity<String> getAllPosts() throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        CustomResponse customResponse = mainService.getAllPosts(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
 }
