@@ -1120,42 +1120,49 @@ public class AllDBOperations {
         return courses;
     }
 
-    public static List<Course> getAllPostsInUEM() {
+    public static List<Post> getAllPostsInUEM(JSONObject body) {
 
-        List<Course> courses = new ArrayList<>();
+        List<Post> posts = new ArrayList<>();
         BsonDocument filter = BsonDocument
                 .parse("{" +
                         "}");
+
+        String UserID = "";
+        try {
+            UserID = body.has("UserID") ? String.valueOf(body.get("UserID")) : "";
+        }catch (Exception e){
+            UserID = "";
+        }
+
+        if (UserID != null && !UserID.equalsIgnoreCase("")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "UserID:{$regex:/" + UserID + "/}" +
+                            "}");
+        }
+
         List<Document> documents = MongoDBUtil.getAllPosts(filter);
         if (documents == null || documents.size() == 0) {
-            return courses;
+            return posts;
         } else {
             for (Document document : documents) {
-                Course course = new Course();
-                course.setCourseID(document.containsKey("UserID") ? document.getString("UserID") : null);
-                course.setName(document.containsKey("ConnectionUserID") ? document.getString("ConnectionUserID") : null);
+                Post post = new Post();
 
-                course.setLevel(document.containsKey("accepted") ? document.getString("accepted") : null);
-                course.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
-                course.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
-                course.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
-                course.setExpiring(document.containsKey("Expiring") ? document.getString("Expiring") : null);
-                course.setInfo(document.containsKey("info") ? document.getString("info") : null);
-                course.setCourseAdmin(document.containsKey("CourseAdmin") ? document.getString("CourseAdmin") : null);
+                post.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                post.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                post.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
 
-                course.setBatches(document.containsKey("Batches") ? document.getList("Batches", Document.class) : null);
-                course.setUniversities(document.containsKey("Universities") ? document.getList("Universities", Document.class) : null);
 
-                course.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
-                course.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
-                course.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+                post.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                post.setText(document.containsKey("text") ? document.getString("text") : null);
 
-                course.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+                post.setLikes(document.containsKey("likes") ? document.getString("likes") : null);
+                post.setShares(document.containsKey("shares") ? document.getString("shares") : null);
 
-                courses.add(course);
+                posts.add(post);
             }
         }
-        return courses;
+        return posts;
     }
 
     public static List<Course> getAllCoursesInUEM() {

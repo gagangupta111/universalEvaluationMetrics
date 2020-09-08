@@ -5,6 +5,7 @@ import com.uem.model.*;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
+import javafx.geometry.Pos;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.json.JSONArray;
@@ -325,16 +326,17 @@ public class DaoParse implements DaoInterface {
     // getAllCourses
     @Override
     public CustomResponse getAllPosts(JSONObject body) {
-        List<Course> users = new ArrayList<>();
-        users = AllDBOperations.getAllCoursesInUEM();
+
+        List<Post> posts = new ArrayList<>();
+        posts = AllDBOperations.getAllPostsInUEM(body);
 
         JSONArray array = new JSONArray();
-        for (Course univAdmin : users){
-            array.put(UtilsManager.courseToJson(univAdmin));
+        for (Post post : posts){
+            array.put(UtilsManager.postToJson(post));
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("Students",  array);
+        map.put("Posts",  array);
 
         CustomResponse customResponse = new CustomResponse();
         customResponse.setSuccess(true);

@@ -642,6 +642,27 @@ public class UtilsManager {
         return univAdmin;
     }
 
+    public static JSONObject postToJson(Post post) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = post.getObjectID() != null ? object.put("_id", post.getObjectID()) : object;
+            object = post.get_created_at() != null ? object.put("_created_at", post.get_created_at()) : object;
+            object = post.get_updated_at() != null ? object.put("_updated_at", post.get_updated_at()) : object;
+
+            object = post.getLikes() != null ? object.put("likes", post.getLikes()) : object;
+            object = post.getShares() != null ? object.put("shares", post.getShares()) : object;
+            object = post.getText() != null ? object.put("text", post.getText()) : object;
+
+            object = post.getUserID() != null ? object.put("UserID", post.getUserID()) : object;
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
     public static JSONObject courseToJson(Course student) {
 
         JSONObject object = new JSONObject();

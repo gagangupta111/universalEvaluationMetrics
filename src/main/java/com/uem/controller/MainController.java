@@ -1101,12 +1101,14 @@ public class MainController {
     }
 
     // version 2
-    @PostMapping("/all/posts")
+    @GetMapping("/all/posts/{UserID}")
     @ResponseBody
-    public ResponseEntity<String> getAllPosts(@RequestBody String body) throws Exception {
+    public ResponseEntity<String> getAllPosts(@PathVariable("UserID") String UserID) throws Exception {
 
-        JSONObject jsonObject = new JSONObject(body.trim());
-        CustomResponse customResponse = mainService.createCourse(jsonObject);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("UserID", UserID);
+
+        CustomResponse customResponse = mainService.getAllPosts(jsonObject);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())

@@ -2,11 +2,11 @@ package com.uem.model;
 
 import java.util.Date;
 
-public class Connections {
+public class Messages {
 
-    private String UserID;
-    private String ConnectionUserID;
-    private String accepted;
+    private String From;
+    private String To;
+    private String text;
 
     private String objectID;
     private Date _created_at;
@@ -31,27 +31,28 @@ public class Connections {
         this._updated_at = _updated_at;
     }
 
-    public String getUserID() {
-        return UserID;
+
+    public String getFrom() {
+        return From;
     }
 
-    public void setUserID(String userID) {
-        UserID = userID;
+    public void setFrom(String from) {
+        From = from;
     }
 
-    public String getConnectionUserID() {
-        return ConnectionUserID;
+    public String getTo() {
+        return To;
     }
 
-    public void setConnectionUserID(String connectionUserID) {
-        ConnectionUserID = connectionUserID;
+    public void setTo(String to) {
+        To = to;
     }
 
-    public String getAccepted() {
-        return accepted;
+    public String getText() {
+        return text;
     }
 
-    public void setAccepted(String accepted) {
-        this.accepted = accepted;
+    public void setText(String text) {
+        this.text = text;
     }
 }
