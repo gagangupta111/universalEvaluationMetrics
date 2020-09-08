@@ -1,5 +1,6 @@
 package com.uem.dao;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.uem.model.*;
 import org.json.JSONObject;
 
@@ -30,6 +31,9 @@ public interface DaoInterface {
     public CustomResponse updateAdmin(JSONObject body, Boolean append);
     public CustomResponse updateStudent(JSONObject body, Boolean append);
     public CustomResponse updateTeacher(JSONObject body, Boolean append);
+
+    public CustomResponse createPost(JSONObject body);
+    public CustomResponse updatePost(JSONObject body, Boolean append);
 
     public CustomResponse createBatch(JSONObject body);
     public CustomResponse updateBatch(JSONObject body, Boolean append);

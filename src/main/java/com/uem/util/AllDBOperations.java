@@ -1,6 +1,7 @@
 package com.uem.util;
 
 import com.uem.model.*;
+import javafx.geometry.Pos;
 import org.apache.log4j.Logger;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -84,6 +85,35 @@ public class AllDBOperations {
             return data;
         }
 
+    }
+
+    public static Map<String, Object> createPost(JSONObject post) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+            String PostID = UtilsManager.generateUniqueID();
+
+            post.put("PostID", PostID);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(post, "Posts");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", post);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", post);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", post);
+            return data;
+        }
     }
 
     public static Map<String, Object> createTeacher(String UserID) {
@@ -646,6 +676,58 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updatePost(Post post, JSONObject body, Boolean append) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            if (body.has("text")){
+                post.setText(body.getString("text"));
+            }
+
+            if (body.has("likes") && post.getLikes() != null && !post.getLikes().equalsIgnoreCase("")){
+                post.setLikes("" + (Integer.valueOf(post.getLikes()) + 1));
+            }else if (body.has("likes")){
+                post.setLikes("1");
+            }
+
+            if (body.has("shares") && post.getShares() != null && !post.getShares().equalsIgnoreCase("")){
+                post.setShares("" + (Integer.valueOf(post.getShares()) + 1));
+            }else if (body.has("shares")){
+                post.setShares("1");
+            }
+
+            body = new JSONObject();
+            body.put("likes", post.getLikes());
+            body.put("shares", post.getShares());
+            body.put("text", post.getText());
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(post.getObjectID(), body);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Posts");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateAdmin(UnivAdmin univAdmin, JSONObject body, Boolean append) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1134,10 +1216,24 @@ public class AllDBOperations {
             UserID = "";
         }
 
+        String PostID = "";
+        try {
+            PostID = body.has("PostID") ? String.valueOf(body.get("PostID")) : "";
+        }catch (Exception e){
+            UserID = "";
+        }
+
         if (UserID != null && !UserID.equalsIgnoreCase("")){
             filter = BsonDocument
                     .parse("{ " +
                             "UserID:{$regex:/" + UserID + "/}" +
+                            "}");
+        }
+
+        if (PostID != null && !PostID.equalsIgnoreCase("")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "PostID:{$regex:/" + PostID + "/}" +
                             "}");
         }
 

@@ -52,6 +52,14 @@ public class MainService {
         return dao.createUniversity(body);
     }
 
+    public CustomResponse createPost(JSONObject body) {
+        return dao.createPost(body);
+    }
+
+    public CustomResponse updatePost(JSONObject body) {
+        return dao.updatePost(body, true);
+    }
+
     public CustomResponse createBatch(JSONObject body) {
         return dao.createBatch(body);
     }

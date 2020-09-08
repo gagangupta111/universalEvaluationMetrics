@@ -1137,4 +1137,38 @@ public class MainController {
         }
     }
 
+    @PostMapping("/all/posts")
+    @ResponseBody
+    public ResponseEntity<String> createPost(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createPost(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PutMapping("/all/posts")
+    @ResponseBody
+    public ResponseEntity<String> updatePost(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.updatePost(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
 }

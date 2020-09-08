@@ -16,6 +16,7 @@ public interface Constants {
     public static final String  AMAZON_S3_ERROR = "AMAZON_S3_ERROR";
 
     public static final String  UNIVERSITY_DOES_NOT_EXIST = "UNIVERSITY_DOES_NOT_EXIST";
+    public static final String  POST_DOES_NOT_EXIST = "POST_DOES_NOT_EXIST";
     public static final String  ADMIN_DOES_NOT_EXIST = "ADMIN_DOES_NOT_EXIST";
     public static final String  STUDENT_DOES_NOT_EXIST = "STUDENT_DOES_NOT_EXIST";
     public static final String  TEACHER_DOES_NOT_EXIST = "TEACHER_DOES_NOT_EXIST";
@@ -31,6 +32,8 @@ public interface Constants {
     public static final String  BATCH_CREATION_FAILURE = " Duration, SpanOver, Starting, Completion, Calendar, Billing, UnivID and CourseAdmin" +
             " is required to create Course OR Must be Requested Status with UEM_ID!";
     public static final String  BATCH_REQUEST_ALREADY_RAISED = "You have already raised one request in Past for this course";
+
+    public static final String  POST_CREATION_FAILURE = " UserID and text is required to create Post!";
 
     public static final String  ADMIN_LOGIN_FAILURE = "Not An Admin";
     public static final String  STUDENT_LOGIN_FAILURE = "Not A Student";

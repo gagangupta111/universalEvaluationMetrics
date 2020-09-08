@@ -8,6 +8,7 @@ public class Post {
     private String UserID;
     private String likes;
     private String shares;
+    private String PostID;
 
     private String objectID;
     private Date _created_at;
@@ -30,6 +31,14 @@ public class Post {
     }
     public void set_updated_at(Date _updated_at) {
         this._updated_at = _updated_at;
+    }
+
+    public String getPostID() {
+        return PostID;
+    }
+
+    public void setPostID(String postID) {
+        PostID = postID;
     }
 
     public String getText() {

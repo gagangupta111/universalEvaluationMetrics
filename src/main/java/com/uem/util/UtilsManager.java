@@ -663,6 +663,26 @@ public class UtilsManager {
         return object;
     }
 
+    public static Post jsonToPost(JSONObject jsonObject) {
+
+        Post post = new Post();
+
+        try {
+            post.setPostID(jsonObject.has("PostID") ? jsonObject.getString("PostID") : null);
+            post.setUserID(jsonObject.has("UserID") ? jsonObject.getString("UserID") : null);
+            post.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
+            post.setLikes(jsonObject.has("likes") ? jsonObject.getString("likes") : null);
+            post.setShares(jsonObject.has("shares") ? jsonObject.getString("shares") : null);
+
+            post.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            post.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            post.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return post;
+    }
+
     public static JSONObject courseToJson(Course student) {
 
         JSONObject object = new JSONObject();
