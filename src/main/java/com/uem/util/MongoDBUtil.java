@@ -31,6 +31,8 @@ public class MongoDBUtil {
     public static MongoCollection<Document> UniversalUser = null;
     public static MongoCollection<Document> University = null;
 
+    public static MongoCollection<Document> Posts = null;
+
     public static MongoDatabase getDataBase() {
 
         if (null == mongo_client) {
@@ -57,6 +59,15 @@ public class MongoDBUtil {
             return Batch;
         } else {
             return Batch;
+        }
+    }
+
+    public static MongoCollection<Document> getPosts() {
+        if (null == Course) {
+            Course = getDataBase().getCollection("Posts");
+            return Course;
+        } else {
+            return Course;
         }
     }
 
@@ -154,6 +165,19 @@ public class MongoDBUtil {
         } catch (Exception e) {
             logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllBatch \n" + UtilsManager.exceptionAsString(e));
             RollbarManager.sendExceptionOnRollBar("getAllBatch", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Document> getAllPosts(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getPosts();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getPosts \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllCourse", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }

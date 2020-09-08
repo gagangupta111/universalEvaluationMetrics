@@ -12,7 +12,7 @@ import java.util.Map;
 public class RollbarManager {
 
 	static Logger logger = LogUtil.getInstance();
-	public final static String ROLLBAR_ACCESS_TOKEN = null;
+	public final static String ROLLBAR_ACCESS_TOKEN = "549b43f4894b47f8a45d8359acb39855";
 	public final static Boolean LOCAL_LOGGONG = true;
 
 	public static void sendExceptionOnRollBar(String message, Exception e) {

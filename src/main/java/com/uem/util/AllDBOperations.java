@@ -1120,6 +1120,44 @@ public class AllDBOperations {
         return courses;
     }
 
+    public static List<Course> getAllPostsInUEM() {
+
+        List<Course> courses = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllPosts(filter);
+        if (documents == null || documents.size() == 0) {
+            return courses;
+        } else {
+            for (Document document : documents) {
+                Course course = new Course();
+                course.setCourseID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                course.setName(document.containsKey("ConnectionUserID") ? document.getString("ConnectionUserID") : null);
+
+                course.setLevel(document.containsKey("accepted") ? document.getString("accepted") : null);
+                course.setBilling(document.containsKey("Billing") ? document.get("Billing", Document.class) : null);
+                course.setStatus(document.containsKey("Status") ? document.get("Status", Document.class) : null);
+                course.setStarting(document.containsKey("Starting") ? document.getString("Starting") : null);
+                course.setExpiring(document.containsKey("Expiring") ? document.getString("Expiring") : null);
+                course.setInfo(document.containsKey("info") ? document.getString("info") : null);
+                course.setCourseAdmin(document.containsKey("CourseAdmin") ? document.getString("CourseAdmin") : null);
+
+                course.setBatches(document.containsKey("Batches") ? document.getList("Batches", Document.class) : null);
+                course.setUniversities(document.containsKey("Universities") ? document.getList("Universities", Document.class) : null);
+
+                course.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                course.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                course.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                course.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
+
+                courses.add(course);
+            }
+        }
+        return courses;
+    }
+
     public static List<Course> getAllCoursesInUEM() {
 
         List<Course> courses = new ArrayList<>();

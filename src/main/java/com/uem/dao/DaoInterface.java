@@ -21,6 +21,7 @@ public interface DaoInterface {
     public CustomResponse getAllBatches(JSONObject body);
     public CustomResponse getAllCourses();
     public CustomResponse getAllCourses(JSONObject body);
+    public CustomResponse getAllPosts(JSONObject body);
 
     public CustomResponse createCourse(JSONObject body);
     public CustomResponse getUniversity(String UnivID);

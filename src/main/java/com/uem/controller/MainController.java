@@ -29,6 +29,7 @@ public class MainController {
     @Autowired
     private MainService mainService;
 
+    // version 1
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ResponseEntity<String> test() {
 
@@ -1096,6 +1097,24 @@ public class MainController {
             return ResponseEntity.badRequest()
                     .header("message", Constants.INTERNAL_ERROR)
                     .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    // version 2
+    @PostMapping("/all/posts")
+    @ResponseBody
+    public ResponseEntity<String> getAllPosts(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createCourse(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
         }
     }
 

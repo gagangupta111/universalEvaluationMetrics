@@ -92,6 +92,10 @@ public class MainService {
         return dao.createCourse(body);
     }
 
+    public CustomResponse getAllPosts(JSONObject body) {
+        return dao.getAllPosts(body);
+    }
+
     public CustomResponse getAllCourses() {
         return dao.getAllCourses();
     }

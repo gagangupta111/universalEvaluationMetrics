@@ -324,6 +324,26 @@ public class DaoParse implements DaoInterface {
 
     // getAllCourses
     @Override
+    public CustomResponse getAllPosts(JSONObject body) {
+        List<Course> users = new ArrayList<>();
+        users = AllDBOperations.getAllCoursesInUEM();
+
+        JSONArray array = new JSONArray();
+        for (Course univAdmin : users){
+            array.put(UtilsManager.courseToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Students",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+    }
+
+    @Override
     public CustomResponse getAllCourses() {
         List<Course> users = new ArrayList<>();
         users = AllDBOperations.getAllCoursesInUEM();
