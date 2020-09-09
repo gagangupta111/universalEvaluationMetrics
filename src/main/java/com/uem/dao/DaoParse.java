@@ -745,6 +745,18 @@ public class DaoParse implements DaoInterface {
         try {
             if (body.has("From") && body.has("To") && body.has("status")) {
 
+                JSONObject searchBody = new JSONObject();
+                searchBody.put("From", body.getString("From"));
+                searchBody.put("To", body.getString("To"));
+
+                List<Connection> connections = AllDBOperations.getAllConnectionsInUEM(searchBody);
+                if (connections.size() > 0){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.ALREADY_EXIST);
+                    return customResponse;
+                }
+
                 Map<String, Object> map = AllDBOperations.createConnection(body);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
