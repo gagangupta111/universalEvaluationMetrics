@@ -2,7 +2,7 @@ package com.uem.model;
 
 import java.util.Date;
 
-public class Messages {
+public class Message {
 
     private String From;
     private String To;
@@ -31,6 +31,17 @@ public class Messages {
         this._updated_at = _updated_at;
     }
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "From='" + From + '\'' +
+                ", To='" + To + '\'' +
+                ", text='" + text + '\'' +
+                ", objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                '}';
+    }
 
     public String getFrom() {
         return From;

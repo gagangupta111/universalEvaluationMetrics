@@ -30,6 +30,7 @@ public class MongoDBUtil {
     public static MongoCollection<Document> UnivAdmin = null;
     public static MongoCollection<Document> UniversalUser = null;
     public static MongoCollection<Document> University = null;
+    public static MongoCollection<Document> Messages = null;
 
     public static MongoCollection<Document> Posts = null;
 
@@ -50,6 +51,15 @@ public class MongoDBUtil {
             return TEST;
         } else {
             return TEST;
+        }
+    }
+
+    public static MongoCollection<Document> getMessages() {
+        if (null == Messages) {
+            Messages = getDataBase().getCollection("Messages");
+            return Messages;
+        } else {
+            return Messages;
         }
     }
 
@@ -155,6 +165,20 @@ public class MongoDBUtil {
             return new ArrayList<>();
         }
     }
+
+    public static List<Document> getAllMessages(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getMessages();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllMessages \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllMessages", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
 
     public static List<Document> getAllBatch(BsonDocument filter ) {
 

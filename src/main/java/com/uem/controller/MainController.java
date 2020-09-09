@@ -1171,4 +1171,46 @@ public class MainController {
         }
     }
 
+    @PostMapping("/messages")
+    @ResponseBody
+    public ResponseEntity<String> createMessage(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createMessage(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/messages/{User1}/{User2}")
+    @ResponseBody
+    public ResponseEntity<String> getAllMessages(
+            @PathVariable("User1") String User1,
+            @PathVariable("User2") String User2) throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        if (User1 != null && User2 != null
+                && !User1.equalsIgnoreCase("")
+                && !User2.equalsIgnoreCase("")){
+            jsonObject.put("User1", User1);
+            jsonObject.put("User2", User2);
+        }
+        CustomResponse customResponse = mainService.getAllMessages(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
 }

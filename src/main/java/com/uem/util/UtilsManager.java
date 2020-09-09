@@ -663,6 +663,43 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject messageToJson(Message message) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = message.getObjectID() != null ? object.put("_id", message.getObjectID()) : object;
+            object = message.get_created_at() != null ? object.put("_created_at", message.get_created_at()) : object;
+            object = message.get_updated_at() != null ? object.put("_updated_at", message.get_updated_at()) : object;
+
+            object = message.getFrom() != null ? object.put("From", message.getFrom()) : object;
+            object = message.getText() != null ? object.put("text", message.getText()) : object;
+            object = message.getTo() != null ? object.put("To", message.getTo()) : object;
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
+    public static Message jsonToMessage(JSONObject jsonObject) {
+
+        Message message = new Message();
+
+        try {
+            message.setFrom(jsonObject.has("From") ? jsonObject.getString("From") : null);
+            message.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
+            message.setTo(jsonObject.has("To") ? jsonObject.getString("To") : null);
+
+            message.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            message.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            message.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return message;
+    }
+
     public static Post jsonToPost(JSONObject jsonObject) {
 
         Post post = new Post();

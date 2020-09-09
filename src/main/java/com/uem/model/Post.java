@@ -33,6 +33,20 @@ public class Post {
         this._updated_at = _updated_at;
     }
 
+    @Override
+    public String toString() {
+        return "Post{" +
+                "text='" + text + '\'' +
+                ", UserID='" + UserID + '\'' +
+                ", likes='" + likes + '\'' +
+                ", shares='" + shares + '\'' +
+                ", PostID='" + PostID + '\'' +
+                ", objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                '}';
+    }
+
     public String getPostID() {
         return PostID;
     }

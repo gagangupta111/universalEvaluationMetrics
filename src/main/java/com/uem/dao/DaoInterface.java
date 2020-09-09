@@ -35,6 +35,9 @@ public interface DaoInterface {
     public CustomResponse createPost(JSONObject body);
     public CustomResponse updatePost(JSONObject body, Boolean append);
 
+    public CustomResponse createMessage(JSONObject body);
+    public CustomResponse getAllMessages(JSONObject body);
+
     public CustomResponse createBatch(JSONObject body);
     public CustomResponse updateBatch(JSONObject body, Boolean append);
     public CustomResponse deleteFromBatch(JSONObject body);

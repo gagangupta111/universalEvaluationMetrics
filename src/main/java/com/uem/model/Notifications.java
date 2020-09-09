@@ -31,6 +31,17 @@ public class Notifications {
         this._updated_at = _updated_at;
     }
 
+    @Override
+    public String toString() {
+        return "Notifications{" +
+                "UserID='" + UserID + '\'' +
+                ", text='" + text + '\'' +
+                ", read='" + read + '\'' +
+                ", objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                '}';
+    }
 
     public String getUserID() {
         return UserID;

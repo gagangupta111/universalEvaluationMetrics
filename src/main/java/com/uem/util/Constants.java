@@ -34,6 +34,8 @@ public interface Constants {
     public static final String  BATCH_REQUEST_ALREADY_RAISED = "You have already raised one request in Past for this course";
 
     public static final String  POST_CREATION_FAILURE = " UserID and text is required to create Post!";
+    public static final String  MESSAGE_CREATION_FAILURE = " From, To and text is required to create Message!";
+    public static final String  MESSAGE_SEARCH_FAILURE = " User1 and User2 are required to find Messages!";
 
     public static final String  ADMIN_LOGIN_FAILURE = "Not An Admin";
     public static final String  STUDENT_LOGIN_FAILURE = "Not A Student";

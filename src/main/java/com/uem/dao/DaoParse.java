@@ -612,6 +612,84 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getAllMessages(JSONObject body) {
+
+        try {
+            if (body.has("User1") && body.has("User2")) {
+
+                List<Message> messages = AllDBOperations.getAllMessagesInUEM(
+                        String.valueOf(body.get("User1")),
+                        String.valueOf(body.get("User2")));
+                Map<String, Object> map = new HashMap<>();
+                JSONArray jsonArray = new JSONArray();
+                for (Message message : messages){
+                    jsonArray.put(UtilsManager.messageToJson(message));
+                }
+                map.put("Messages", jsonArray);
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(true);
+                customResponse.setMessage(Constants.SUCCESS);
+                customResponse.setInfo(map);
+                return customResponse;
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.MESSAGE_SEARCH_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse createMessage(JSONObject body) {
+
+        try {
+            if (body.has("From") && body.has("To") && body.has("text")) {
+
+                Map<String, Object> map = AllDBOperations.createMessage(body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.MESSAGE_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse createCourse(JSONObject body) {
 
         try {

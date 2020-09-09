@@ -1,7 +1,6 @@
 package com.uem.util;
 
 import com.uem.model.*;
-import javafx.geometry.Pos;
 import org.apache.log4j.Logger;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -85,6 +84,32 @@ public class AllDBOperations {
             return data;
         }
 
+    }
+
+    public static Map<String, Object> createMessage(JSONObject message) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(message, "Messages");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", message);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", message);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", message);
+            return data;
+        }
     }
 
     public static Map<String, Object> createPost(JSONObject post) {
@@ -1326,6 +1351,66 @@ public class AllDBOperations {
             }
         }
         return students;
+    }
+
+    public static List<Message> getAllMessagesInUEM() {
+
+        List<Message> messages = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+        if (documents == null || documents.size() == 0) {
+            return messages;
+        } else {
+            for (Document document : documents) {
+                Message message= new Message();
+                message.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                message.setTo(document.containsKey("To") ? document.getString("To") : null);
+                message.setText(document.containsKey("text") ? document.getString("text") : null);
+
+                message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                message.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                messages.add(message);
+            }
+        }
+        return messages;
+    }
+
+    public static List<Message> getAllMessagesInUEM(String user1, String user2) {
+
+        List<Message> messages = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "From:{$regex:/" + user1 + "/}," +
+                        "To:{$regex:/" + user2 + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+        filter = BsonDocument
+                .parse("{ " +
+                        "From:{$regex:/" + user2 + "/}," +
+                        "To:{$regex:/" + user1 + "/}" +
+                        "}");
+        documents.addAll(MongoDBUtil.getAllMessages(filter));
+        if (documents == null || documents.size() == 0) {
+            return messages;
+        } else {
+            for (Document document : documents) {
+                Message message= new Message();
+                message.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                message.setTo(document.containsKey("To") ? document.getString("To") : null);
+                message.setText(document.containsKey("text") ? document.getString("text") : null);
+
+                message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                message.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                messages.add(message);
+            }
+        }
+        return messages;
     }
 
     public static List<Batch> getAllBatchesInUEM() {

@@ -12,6 +12,18 @@ public class Connections {
     private Date _created_at;
     private Date _updated_at;
 
+    @Override
+    public String toString() {
+        return "Connections{" +
+                "UserID='" + UserID + '\'' +
+                ", ConnectionUserID='" + ConnectionUserID + '\'' +
+                ", accepted='" + accepted + '\'' +
+                ", objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                '}';
+    }
+
     public String getObjectID() {
         return objectID;
     }
