@@ -675,6 +675,7 @@ public class UtilsManager {
             object = notification.getRead() != null ? object.put("read", notification.getRead()) : object;
             object = notification.getText() != null ? object.put("text", notification.getText()) : object;
             object = notification.getUserID() != null ? object.put("UserID", notification.getUserID()) : object;
+            object = notification.getNotificationID() != null ? object.put("NotificationID", notification.getNotificationID()) : object;
 
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
@@ -690,6 +691,7 @@ public class UtilsManager {
             notification.setRead(jsonObject.has("read") ? jsonObject.getString("read") : null);
             notification.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
             notification.setUserID(jsonObject.has("UserID") ? jsonObject.getString("UserID") : null);
+            notification.setNotificationID(jsonObject.has("NotificationID") ? jsonObject.getString("NotificationID") : null);
 
             notification.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             notification.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);

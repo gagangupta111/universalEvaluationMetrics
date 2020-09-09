@@ -97,6 +97,14 @@ public class AllDBOperations {
                 e.printStackTrace();
             }
         }
+
+        String NotificationID = UtilsManager.generateUniqueID();
+        try {
+            message.put("NotificationID", NotificationID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         data.put("success", false);
         try {
 
@@ -735,6 +743,49 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateNotifications(Notification notification, JSONObject body, Boolean append) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            if (body.has("text")){
+                notification.setText(body.getString("text"));
+            }
+
+            if (body.has("read")){
+                notification.setRead(body.getString("read"));
+            }
+
+            body = new JSONObject();
+            body.put("text", notification.getText());
+            body.put("read", notification.getRead());
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(notification.getObjectID(), body);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Notifications");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updatePost(Post post, JSONObject body, Boolean append) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1286,6 +1337,13 @@ public class AllDBOperations {
             text = "";
         }
 
+        String NotificationID = "";
+        try {
+            NotificationID = body.has("NotificationID") ? String.valueOf(body.get("NotificationID")) : "";
+        }catch (Exception e){
+            NotificationID = "";
+        }
+
         List<String> filterString = new ArrayList<>();
 
         if (UserID.length() > 0){
@@ -1303,6 +1361,12 @@ public class AllDBOperations {
         if (text.length() > 0){
 
             filterString.add("text:{$regex:/" + text + "/}");
+
+        }
+
+        if (NotificationID.length() > 0){
+
+            filterString.add("NotificationID:{$regex:/" + NotificationID + "/}");
 
         }
 
@@ -1330,6 +1394,7 @@ public class AllDBOperations {
                 notification.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
                 notification.setText(document.containsKey("text") ? document.getString("text") : null);
                 notification.setRead(document.containsKey("read") ? document.getString("read") : null);
+                notification.setNotificationID(document.containsKey("NotificationID") ? document.getString("NotificationID") : null);
 
                 notifications.add(notification);
             }

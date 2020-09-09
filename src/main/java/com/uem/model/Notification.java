@@ -5,12 +5,21 @@ import java.util.Date;
 public class Notification {
 
     private String UserID;
+    private String NotificationID;
     private String text;
     private String read;
 
     private String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public String getNotificationID() {
+        return NotificationID;
+    }
+
+    public void setNotificationID(String notificationID) {
+        NotificationID = notificationID;
+    }
 
     public String getObjectID() {
         return objectID;
@@ -35,6 +44,7 @@ public class Notification {
     public String toString() {
         return "Notification{" +
                 "UserID='" + UserID + '\'' +
+                ", NotificationID='" + NotificationID + '\'' +
                 ", text='" + text + '\'' +
                 ", read='" + read + '\'' +
                 ", objectID='" + objectID + '\'' +

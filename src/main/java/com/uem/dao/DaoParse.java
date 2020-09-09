@@ -842,15 +842,24 @@ public class DaoParse implements DaoInterface {
 
         try {
 
-            List<Post> posts = AllDBOperations.getAllPostsInUEM(body);
-            if (posts == null || posts.size() == 0) {
+            if (!body.has("NotificationID")){
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
-                customResponse.setMessage(Constants.POST_DOES_NOT_EXIST);
+                customResponse.setMessage(Constants.NOTIFICATION_SEARCH_FAILURE);
+                return customResponse;
+            }
+
+            JSONObject searchBody = new JSONObject();
+            searchBody.put("NotificationID", body.getString("NotificationID"));
+            List<Notification> notifications = AllDBOperations.getAllNotificationsInUEM(searchBody);
+            if (notifications == null || notifications.size() == 0) {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.NOTIFICATION_DOES_NOT_EXIST);
                 return customResponse;
             } else {
 
-                Map<String, Object> map = AllDBOperations.updatePost(posts.get(0), body, append);
+                Map<String, Object> map = AllDBOperations.updateNotifications(notifications.get(0), body, append);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);

@@ -64,6 +64,9 @@ public class MainService {
         return dao.createNotification(body);
     }
 
+    public CustomResponse updateNotification(JSONObject body) {
+        return dao.updateNotification(body, true);
+    }
     public CustomResponse updatePost(JSONObject body) {
         return dao.updatePost(body, true);
     }

@@ -17,6 +17,7 @@ public interface Constants {
 
     public static final String  UNIVERSITY_DOES_NOT_EXIST = "UNIVERSITY_DOES_NOT_EXIST";
     public static final String  POST_DOES_NOT_EXIST = "POST_DOES_NOT_EXIST";
+    public static final String  NOTIFICATION_DOES_NOT_EXIST = "NOTIFICATION_DOES_NOT_EXIST";
     public static final String  ADMIN_DOES_NOT_EXIST = "ADMIN_DOES_NOT_EXIST";
     public static final String  STUDENT_DOES_NOT_EXIST = "STUDENT_DOES_NOT_EXIST";
     public static final String  TEACHER_DOES_NOT_EXIST = "TEACHER_DOES_NOT_EXIST";
@@ -38,6 +39,7 @@ public interface Constants {
     public static final String  NOTIFICATION_CREATION_FAILURE = "UserID and text is required to create Notification!";
 
     public static final String  MESSAGE_SEARCH_FAILURE = " User1 and User2 are required to find Messages!";
+    public static final String  NOTIFICATION_SEARCH_FAILURE = " Notification is required to find Notifications!";
 
     public static final String  ADMIN_LOGIN_FAILURE = "Not An Admin";
     public static final String  STUDENT_LOGIN_FAILURE = "Not A Student";
