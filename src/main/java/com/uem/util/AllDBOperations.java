@@ -87,6 +87,40 @@ public class AllDBOperations {
 
     }
 
+    public static Map<String, Object> createConnection(JSONObject message) {
+
+        Map<String, Object> data = new HashMap<>();
+
+        String ConnectionID = UtilsManager.generateUniqueID();
+        try {
+            message.put("ConnectionID", ConnectionID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        data.put("success", false);
+        try {
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(message, "Connections");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", message);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", message);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", message);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createNotification(JSONObject message) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1400,6 +1434,96 @@ public class AllDBOperations {
             }
         }
         return notifications;
+    }
+
+    public static List<Connection> getAllConnectionsInUEM(JSONObject body) {
+
+        List<Connection> connections = new ArrayList<>();
+
+        String From = "";
+        try {
+            From = body.has("From") ? String.valueOf(body.get("From")) : "";
+        }catch (Exception e){
+            From = "";
+        }
+
+        String To = "";
+        try {
+            To = body.has("To") ? String.valueOf(body.get("To")) : "";
+        }catch (Exception e){
+            To = "";
+        }
+
+        String state = "";
+        try {
+            state = body.has("state") ? String.valueOf(body.get("state")) : "";
+        }catch (Exception e){
+            state = "";
+        }
+
+        String ConnectionID = "";
+        try {
+            ConnectionID = body.has("ConnectionID") ? String.valueOf(body.get("ConnectionID")) : "";
+        }catch (Exception e){
+            ConnectionID = "";
+        }
+
+        List<String> filterString = new ArrayList<>();
+
+        if (From.length() > 0){
+
+            filterString.add("From:{$regex:/" + From + "/}");
+
+        }
+
+        if (To.length() > 0){
+
+            filterString.add("To:{$regex:/" + To + "/}");
+
+        }
+
+        if (state.length() > 0){
+
+            filterString.add("state:{$regex:/" + state + "/}");
+
+        }
+
+        if (ConnectionID.length() > 0){
+
+            filterString.add("ConnectionID:{$regex:/" + ConnectionID + "/}");
+
+        }
+
+        String filterStringFinal = "";
+        if (filterString.size() > 0){
+            filterStringFinal = "{ " + String.join(",", filterString) + " }";
+        }else {
+            filterStringFinal = "{ " + " }";
+        }
+
+        BsonDocument filter = BsonDocument.parse(filterStringFinal);
+
+        List<Document> documents = MongoDBUtil.getAllConnections(filter);
+        if (documents == null || documents.size() == 0) {
+            return connections;
+        } else {
+            for (Document document : documents) {
+                Connection connection = new Connection();
+
+                connection.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                connection.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                connection.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+
+                connection.setConnectionID(document.containsKey("ConnectionID") ? document.getString("ConnectionID") : null);
+                connection.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                connection.setTo(document.containsKey("To") ? document.getString("To") : null);
+                connection.setStatus(document.containsKey("status") ? document.getString("status") : null);
+
+                connections.add(connection);
+            }
+        }
+        return connections;
     }
 
     public static List<Post> getAllPostsInUEM(JSONObject body) {

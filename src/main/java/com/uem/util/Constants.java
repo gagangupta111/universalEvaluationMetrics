@@ -37,9 +37,11 @@ public interface Constants {
     public static final String  POST_CREATION_FAILURE = "UserID and text is required to create Post!";
     public static final String  MESSAGE_CREATION_FAILURE = "From, To and text is required to create Message!";
     public static final String  NOTIFICATION_CREATION_FAILURE = "UserID and text is required to create Notification!";
+    public static final String  CONNECTION_CREATION_FAILURE = "From, To and status is required to create Connection!";
 
     public static final String  MESSAGE_SEARCH_FAILURE = " User1 and User2 are required to find Messages!";
-    public static final String  NOTIFICATION_SEARCH_FAILURE = " Notification is required to find Notifications!";
+    public static final String  NOTIFICATION_SEARCH_FAILURE = " Notification ID is required to find Notifications!";
+    public static final String  CONNECTION_SEARCH_FAILURE = " Connection ID is required to find Connections!";
 
     public static final String  ADMIN_LOGIN_FAILURE = "Not An Admin";
     public static final String  STUDENT_LOGIN_FAILURE = "Not A Student";

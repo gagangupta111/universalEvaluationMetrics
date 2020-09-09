@@ -663,6 +663,26 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject connectionToJson(Connection connection) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = connection.getObjectID() != null ? object.put("_id", connection.getObjectID()) : object;
+            object = connection.get_created_at() != null ? object.put("_created_at", connection.get_created_at()) : object;
+            object = connection.get_updated_at() != null ? object.put("_updated_at", connection.get_updated_at()) : object;
+
+            object = connection.getConnectionID() != null ? object.put("ConnectionID", connection.getConnectionID()) : object;
+            object = connection.getFrom() != null ? object.put("From", connection.getFrom()) : object;
+            object = connection.getTo() != null ? object.put("To", connection.getTo()) : object;
+            object = connection.getStatus() != null ? object.put("status", connection.getStatus()) : object;
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
     public static JSONObject notificationToJson(Notification notification) {
 
         JSONObject object = new JSONObject();
@@ -681,6 +701,26 @@ public class UtilsManager {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
+    }
+
+    public static Connection jsonToConnection(JSONObject jsonObject) {
+
+        Connection connection = new Connection();
+
+        try {
+            connection.setStatus(jsonObject.has("status") ? jsonObject.getString("status") : null);
+            connection.setTo(jsonObject.has("To") ? jsonObject.getString("To") : null);
+            connection.setFrom(jsonObject.has("From") ? jsonObject.getString("From") : null);
+            connection.setConnectionID(jsonObject.has("ConnectionID") ? jsonObject.getString("ConnectionID") : null);
+
+            connection.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            connection.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            connection.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return connection;
     }
 
     public static Notification jsonToNotification(JSONObject jsonObject) {

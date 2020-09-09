@@ -123,6 +123,10 @@ public class MainService {
         return dao.getAllNotifications(body);
     }
 
+    public CustomResponse getAllConnections(JSONObject body) {
+        return dao.getAllConnection(body);
+    }
+
     public CustomResponse getAllCourses() {
         return dao.getAllCourses();
     }
