@@ -663,6 +663,43 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject notificationToJson(Notification notification) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = notification.getObjectID() != null ? object.put("_id", notification.getObjectID()) : object;
+            object = notification.get_created_at() != null ? object.put("_created_at", notification.get_created_at()) : object;
+            object = notification.get_updated_at() != null ? object.put("_updated_at", notification.get_updated_at()) : object;
+
+            object = notification.getRead() != null ? object.put("read", notification.getRead()) : object;
+            object = notification.getText() != null ? object.put("text", notification.getText()) : object;
+            object = notification.getUserID() != null ? object.put("UserID", notification.getUserID()) : object;
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
+    public static Notification jsonToNotification(JSONObject jsonObject) {
+
+        Notification notification = new Notification();
+
+        try {
+            notification.setRead(jsonObject.has("read") ? jsonObject.getString("read") : null);
+            notification.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
+            notification.setUserID(jsonObject.has("UserID") ? jsonObject.getString("UserID") : null);
+
+            notification.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            notification.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            notification.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return notification;
+    }
+
     public static JSONObject messageToJson(Message message) {
 
         JSONObject object = new JSONObject();

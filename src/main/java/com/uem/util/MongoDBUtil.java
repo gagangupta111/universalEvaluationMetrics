@@ -20,6 +20,7 @@ public class MongoDBUtil {
     public static MongoClient mongo_client = null;
     public static MongoDatabase mongo_database = null;
 
+    public static MongoCollection<Document> notifications = null;
     public static MongoCollection<Document> TEST = null;
     public static MongoCollection<Document> Batch = null;
     public static MongoCollection<Document> Course = null;
@@ -31,7 +32,6 @@ public class MongoDBUtil {
     public static MongoCollection<Document> UniversalUser = null;
     public static MongoCollection<Document> University = null;
     public static MongoCollection<Document> Messages = null;
-
     public static MongoCollection<Document> Posts = null;
 
     public static MongoDatabase getDataBase() {
@@ -43,6 +43,15 @@ public class MongoDBUtil {
             mongo_database = mongo_client.getDatabase("395cf4d3118743a4aa44c598d899689d");
         }
         return mongo_database;
+    }
+
+    public static MongoCollection<Document> getNotifications() {
+        if (null == notifications) {
+            notifications = getDataBase().getCollection("Notifications");
+            return notifications;
+        } else {
+            return notifications;
+        }
     }
 
     public static MongoCollection<Document> getTest() {
@@ -162,6 +171,19 @@ public class MongoDBUtil {
         } catch (Exception e) {
             logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllTestObjects \n" + UtilsManager.exceptionAsString(e));
             RollbarManager.sendExceptionOnRollBar("getAllTestObjects", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Document> getAllNotifications(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getNotifications();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllNotifications \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllNotifications", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }

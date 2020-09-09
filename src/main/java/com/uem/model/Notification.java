@@ -2,7 +2,7 @@ package com.uem.model;
 
 import java.util.Date;
 
-public class Notifications {
+public class Notification {
 
     private String UserID;
     private String text;
@@ -33,7 +33,7 @@ public class Notifications {
 
     @Override
     public String toString() {
-        return "Notifications{" +
+        return "Notification{" +
                 "UserID='" + UserID + '\'' +
                 ", text='" + text + '\'' +
                 ", read='" + read + '\'' +

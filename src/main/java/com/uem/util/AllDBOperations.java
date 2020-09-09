@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -86,13 +87,46 @@ public class AllDBOperations {
 
     }
 
+    public static Map<String, Object> createNotification(JSONObject message) {
+
+        Map<String, Object> data = new HashMap<>();
+        if (!message.has("read")){
+            try {
+                message.put("read", "false");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        data.put("success", false);
+        try {
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(message, "Notifications");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", message);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", message);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", message);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createMessage(JSONObject message) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
         try {
 
-            Map<String, Object> result = ParseUtil.batchCreateInParseTable(message, "Messages");
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(message, "Message");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
                 data.put("success", true);
@@ -1225,6 +1259,82 @@ public class AllDBOperations {
             }
         }
         return courses;
+    }
+
+    public static List<Notification> getAllNotificationsInUEM(JSONObject body) {
+
+        List<Notification> notifications = new ArrayList<>();
+
+        String UserID = "";
+        try {
+            UserID = body.has("UserID") ? String.valueOf(body.get("UserID")) : "";
+        }catch (Exception e){
+            UserID = "";
+        }
+
+        String read = "";
+        try {
+            read = body.has("read") ? String.valueOf(body.get("read")) : "";
+        }catch (Exception e){
+            read = "";
+        }
+
+        String text = "";
+        try {
+            text = body.has("text") ? String.valueOf(body.get("text")) : "";
+        }catch (Exception e){
+            text = "";
+        }
+
+        List<String> filterString = new ArrayList<>();
+
+        if (UserID.length() > 0){
+
+            filterString.add("UserID:{$regex:/" + UserID + "/}");
+
+        }
+
+        if (read.length() > 0){
+
+            filterString.add("read:{$regex:/" + read + "/}");
+
+        }
+
+        if (text.length() > 0){
+
+            filterString.add("text:{$regex:/" + text + "/}");
+
+        }
+
+        String filterStringFinal = "";
+        if (filterString.size() > 0){
+            filterStringFinal = "{ " + String.join(",", filterString) + " }";
+        }else {
+            filterStringFinal = "{ " + " }";
+        }
+
+        BsonDocument filter = BsonDocument.parse(filterStringFinal);
+
+        List<Document> documents = MongoDBUtil.getAllNotifications(filter);
+        if (documents == null || documents.size() == 0) {
+            return notifications;
+        } else {
+            for (Document document : documents) {
+                Notification notification = new Notification();
+
+                notification.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                notification.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                notification.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+
+                notification.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                notification.setText(document.containsKey("text") ? document.getString("text") : null);
+                notification.setRead(document.containsKey("read") ? document.getString("read") : null);
+
+                notifications.add(notification);
+            }
+        }
+        return notifications;
     }
 
     public static List<Post> getAllPostsInUEM(JSONObject body) {
