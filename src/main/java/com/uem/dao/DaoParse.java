@@ -642,6 +642,36 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse searchAllConnection(JSONObject body) {
+
+        try {
+            List<Connection> connections = AllDBOperations.searchAllConnectionsInUEM(body);
+            Map<String, Object> map = new HashMap<>();
+            JSONArray jsonArray = new JSONArray();
+            for (Connection connection : connections){
+                jsonArray.put(UtilsManager.connectionToJson(connection));
+            }
+
+            map.put("Connections", jsonArray);
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse getAllNotifications(JSONObject body) {
 
         try {
@@ -913,21 +943,20 @@ public class DaoParse implements DaoInterface {
             if (!body.has("ConnectionID")){
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
-                customResponse.setMessage(Constants.NOTIFICATION_SEARCH_FAILURE);
+                customResponse.setMessage(Constants.CONNECTION_SEARCH_FAILURE);
                 return customResponse;
             }
 
             JSONObject searchBody = new JSONObject();
-            searchBody.put("NotificationID", body.getString("NotificationID"));
-            List<Notification> notifications = AllDBOperations.getAllNotificationsInUEM(searchBody);
-            if (notifications == null || notifications.size() == 0) {
+            searchBody.put("ConnectionID", body.getString("ConnectionID"));
+            List<Connection> connections = AllDBOperations.getAllConnectionsInUEM(searchBody);
+            if (connections == null || connections.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
-                customResponse.setMessage(Constants.NOTIFICATION_DOES_NOT_EXIST);
+                customResponse.setMessage(Constants.CONNECTION_DOES_NOT_EXIST);
                 return customResponse;
             } else {
-
-                Map<String, Object> map = AllDBOperations.updateNotifications(notifications.get(0), body, append);
+                Map<String, Object> map = AllDBOperations.updateConnections(connections.get(0), body, append);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);

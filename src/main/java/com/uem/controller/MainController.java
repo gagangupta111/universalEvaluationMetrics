@@ -1281,4 +1281,55 @@ public class MainController {
         }
     }
 
+    @PostMapping("/connections")
+    @ResponseBody
+    public ResponseEntity<String> createConnections(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createConnection(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PutMapping("/connections")
+    @ResponseBody
+    public ResponseEntity<String> updateConnections(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.updateConnection(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/all/search/connections")
+    @ResponseBody
+    public ResponseEntity<String> searchAllConnections(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.searchAllConnections(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
 }

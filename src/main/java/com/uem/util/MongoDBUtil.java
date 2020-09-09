@@ -188,12 +188,12 @@ public class MongoDBUtil {
     public static List<Document> getAllConnections(BsonDocument filter ) {
 
         try {
-            MongoCollection<Document> collection = MongoDBUtil.getNotifications();
+            MongoCollection<Document> collection = MongoDBUtil.getConnections();
             List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
             return allDocuments;
         } catch (Exception e) {
-            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllNotifications \n" + UtilsManager.exceptionAsString(e));
-            RollbarManager.sendExceptionOnRollBar("getAllNotifications", UtilsManager.exceptionAsString(e));
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllConnections \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllConnections", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }

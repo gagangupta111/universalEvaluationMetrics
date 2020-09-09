@@ -18,6 +18,7 @@ public interface Constants {
     public static final String  UNIVERSITY_DOES_NOT_EXIST = "UNIVERSITY_DOES_NOT_EXIST";
     public static final String  POST_DOES_NOT_EXIST = "POST_DOES_NOT_EXIST";
     public static final String  NOTIFICATION_DOES_NOT_EXIST = "NOTIFICATION_DOES_NOT_EXIST";
+    public static final String  CONNECTION_DOES_NOT_EXIST = "CONNECTION_DOES_NOT_EXIST";
     public static final String  ADMIN_DOES_NOT_EXIST = "ADMIN_DOES_NOT_EXIST";
     public static final String  STUDENT_DOES_NOT_EXIST = "STUDENT_DOES_NOT_EXIST";
     public static final String  TEACHER_DOES_NOT_EXIST = "TEACHER_DOES_NOT_EXIST";

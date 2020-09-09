@@ -777,6 +777,44 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateConnections(Connection connection, JSONObject body, Boolean append) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            if (body.has("status")){
+                connection.setStatus(body.getString("status"));
+            }
+
+            JSONObject bodyUpdate = new JSONObject();
+            bodyUpdate.put("status", connection.getStatus());
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(connection.getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Connections");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateNotifications(Notification notification, JSONObject body, Boolean append) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1436,6 +1474,96 @@ public class AllDBOperations {
         return notifications;
     }
 
+    public static List<Connection> searchAllConnectionsInUEM(JSONObject body) {
+
+        List<Connection> connections = new ArrayList<>();
+
+        String User = "";
+        try {
+            User = body.has("User") ? String.valueOf(body.get("User")) : "";
+        }catch (Exception e){
+            User = "";
+        }
+
+        String status = "";
+        try {
+            status = body.has("status") ? String.valueOf(body.get("status")) : "";
+        }catch (Exception e){
+            status = "";
+        }
+
+        List<String> filterString = new ArrayList<>();
+
+        if (User.length() > 0){
+
+            filterString.add("From:{$regex:/" + User + "/}");
+
+        }
+
+        if (status.length() > 0){
+
+            filterString.add("status:{$regex:/" + status + "/}");
+
+        }
+
+        String filterStringFinal = "";
+        if (filterString.size() > 0){
+            filterStringFinal = "{ " + String.join(",", filterString) + " }";
+        }else {
+            filterStringFinal = "{ " + " }";
+        }
+
+        BsonDocument filter = BsonDocument.parse(filterStringFinal);
+
+        List<Document> documents = MongoDBUtil.getAllConnections(filter);
+
+        filterString = new ArrayList<>();
+
+        if (User.length() > 0){
+
+            filterString.add("To:{$regex:/" + User + "/}");
+
+        }
+
+        if (status.length() > 0){
+
+            filterString.add("status:{$regex:/" + status + "/}");
+
+        }
+
+        filterStringFinal = "";
+        if (filterString.size() > 0){
+            filterStringFinal = "{ " + String.join(",", filterString) + " }";
+        }else {
+            filterStringFinal = "{ " + " }";
+        }
+
+        filter = BsonDocument.parse(filterStringFinal);
+
+        documents.addAll(MongoDBUtil.getAllConnections(filter));
+
+        if (documents == null || documents.size() == 0) {
+            return connections;
+        } else {
+            for (Document document : documents) {
+                Connection connection = new Connection();
+
+                connection.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                connection.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                connection.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+
+                connection.setConnectionID(document.containsKey("ConnectionID") ? document.getString("ConnectionID") : null);
+                connection.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                connection.setTo(document.containsKey("To") ? document.getString("To") : null);
+                connection.setStatus(document.containsKey("status") ? document.getString("status") : null);
+
+                connections.add(connection);
+            }
+        }
+        return connections;
+    }
+
     public static List<Connection> getAllConnectionsInUEM(JSONObject body) {
 
         List<Connection> connections = new ArrayList<>();
@@ -1454,11 +1582,11 @@ public class AllDBOperations {
             To = "";
         }
 
-        String state = "";
+        String status = "";
         try {
-            state = body.has("state") ? String.valueOf(body.get("state")) : "";
+            status = body.has("status") ? String.valueOf(body.get("status")) : "";
         }catch (Exception e){
-            state = "";
+            status = "";
         }
 
         String ConnectionID = "";
@@ -1482,9 +1610,9 @@ public class AllDBOperations {
 
         }
 
-        if (state.length() > 0){
+        if (status.length() > 0){
 
-            filterString.add("state:{$regex:/" + state + "/}");
+            filterString.add("status:{$regex:/" + status + "/}");
 
         }
 

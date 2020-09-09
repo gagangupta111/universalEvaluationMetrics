@@ -64,9 +64,18 @@ public class MainService {
         return dao.createNotification(body);
     }
 
+    public CustomResponse createConnection(JSONObject body) {
+        return dao.createConnection(body);
+    }
+
     public CustomResponse updateNotification(JSONObject body) {
         return dao.updateNotification(body, true);
     }
+
+    public CustomResponse updateConnection(JSONObject body) {
+        return dao.updateConnection(body, true);
+    }
+
     public CustomResponse updatePost(JSONObject body) {
         return dao.updatePost(body, true);
     }
@@ -125,6 +134,10 @@ public class MainService {
 
     public CustomResponse getAllConnections(JSONObject body) {
         return dao.getAllConnection(body);
+    }
+
+    public CustomResponse searchAllConnections(JSONObject body) {
+        return dao.searchAllConnection(body);
     }
 
     public CustomResponse getAllCourses() {
