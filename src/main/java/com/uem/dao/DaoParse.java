@@ -194,6 +194,8 @@ public class DaoParse implements DaoInterface {
     @Override
     public CustomResponse signIn2(String email, String password) {
 
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", true);
         List<User> users = AllDBOperations.getAllUsers_Email(email);
 
         if (users == null || users.size() == 0 || !password.equals(users.get(0).getPassword())) {
@@ -206,6 +208,7 @@ public class DaoParse implements DaoInterface {
         if (password.equals(users.get(0).getPassword())){
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(true);
+            customResponse.setInfo(data);
             customResponse.setMessage(Constants.SUCCESS);
             return customResponse;
         }else {

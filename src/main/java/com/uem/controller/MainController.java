@@ -1346,7 +1346,7 @@ public class MainController {
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
+                    .body(customResponse.getInfoAsJson().toString());
         } else {
             return ResponseEntity.badRequest()
                     .header("message", customResponse.getMessage())
