@@ -290,6 +290,26 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getUserInfo_Email(String email) {
+        List<User> users = new ArrayList<>();
+        users = AllDBOperations.getAllUsers_Email(email);
+
+        JSONArray array = new JSONArray();
+        for (User univAdmin : users){
+            array.put(UtilsManager.userToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Users",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+    }
+
+    @Override
     public CustomResponse getUserInfo(String UserID) {
         List<User> users = new ArrayList<>();
         users = AllDBOperations.getAllUsers_UserID(UserID);

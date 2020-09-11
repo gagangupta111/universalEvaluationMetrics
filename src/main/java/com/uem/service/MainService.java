@@ -124,6 +124,10 @@ public class MainService {
         return dao.getUserInfo(UserID);
     }
 
+    public CustomResponse getUserInfo_Email(String UserID) {
+        return dao.getUserInfo_Email(UserID);
+    }
+
     public CustomResponse createCourse(JSONObject body) {
         return dao.createCourse(body);
     }

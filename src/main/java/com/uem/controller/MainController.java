@@ -1102,7 +1102,8 @@ public class MainController {
         }
     }
 
-    // version 2
+    // version 2 - LinkedIn App
+    // all below api calls consider email as primary ID.
     @GetMapping("/all/posts/{UserID}")
     @ResponseBody
     public ResponseEntity<String> getAllPosts(@PathVariable("UserID") String UserID) throws Exception {
@@ -1327,6 +1328,22 @@ public class MainController {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
                     .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/all/users/{email}")
+    @ResponseBody
+    public ResponseEntity<String> getUserInfo_Email(@PathVariable("email") String email) {
+
+        CustomResponse customResponse = mainService.getUserInfo_Email(email);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
         } else {
             return ResponseEntity.badRequest()
                     .header("message", customResponse.getMessage())
