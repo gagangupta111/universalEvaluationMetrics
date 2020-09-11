@@ -10,7 +10,10 @@ public interface DaoInterface {
 
     public String test();
     public CustomResponse signUp(String email, String type);
+    public CustomResponse signUp_2(String email, String type);
     public CustomResponse signIn(String email, String password, String loginType);
+    public CustomResponse signIn2(String email, String password);
+
     public Boolean updateUserInfo(JSONObject body);
     public CustomResponse getUserInfo(String UserID);
     public CustomResponse geAdminInfo(String AdminID);

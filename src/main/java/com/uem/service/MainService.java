@@ -36,8 +36,16 @@ public class MainService {
         return "Ok";
     }
 
+    public CustomResponse signUp_2(String email, String password) {
+        return dao.signUp_2(email, password);
+    }
+
     public CustomResponse signUp(String email, String type) {
         return dao.signUp(email, type);
+    }
+
+    public CustomResponse signIN2(String email, String password) {
+        return dao.signIn2(email, password);
     }
 
     public CustomResponse signIN(String email, String password, String loginType) {

@@ -97,6 +97,7 @@ public class MainController {
         JSONObject jsonObject = new JSONObject(body.trim());
         logger.debug("REQUEST_RECIEVED-signUp");
         String email = jsonObject.getString("email");
+        String password = jsonObject.getString("password");
 
         Set<String> set = new HashSet<>();
         set.add(Constants.ADMIN);
@@ -121,6 +122,7 @@ public class MainController {
                     .body(customResponse.getMessage());
         }
     }
+
 
     @PostMapping("/signin/{loginType}")
     @ResponseBody
@@ -1325,6 +1327,47 @@ public class MainController {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
                     .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/signin2")
+    @ResponseBody
+    public ResponseEntity<String> signIn2(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        logger.debug("REQUEST_RECIEVED-signUp");
+        String email = jsonObject.getString("email");
+        String password = jsonObject.getString("password");
+        CustomResponse customResponse = mainService.signIN2(email, password);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/signup2")
+    @ResponseBody
+    public ResponseEntity<String> signUp_2(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        logger.debug("REQUEST_RECIEVED-signUp");
+        String email = jsonObject.getString("email");
+        String password = jsonObject.getString("password");
+
+        CustomResponse customResponse = mainService.signUp_2(email, password);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
         } else {
             return ResponseEntity.badRequest()
                     .header("message", customResponse.getMessage())

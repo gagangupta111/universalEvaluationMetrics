@@ -27,6 +27,46 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse signUp_2(String email, String password) {
+
+        try {
+            List<User> users = AllDBOperations.getAllUsers_Email(email);
+            if (users == null || users.size() == 0) {
+
+                Map<String, Object> data = AllDBOperations.createUser_2(email, password);
+
+                if (Boolean.valueOf(String.valueOf(data.get("success")))) {
+
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(data);
+                    return customResponse;
+
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.SIGN_UP_FAILURE);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.ALREADY_EXIST);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.SIGN_UP_FAILURE);
+            Map<String, Object> info = new HashMap<>();
+            info.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(info);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse signUp(String email, String type) {
 
         try {
@@ -147,6 +187,31 @@ public class DaoParse implements DaoInterface {
             Map<String, Object> info = new HashMap<>();
             info.put("exception", UtilsManager.exceptionAsString(e));
             customResponse.setInfo(info);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse signIn2(String email, String password) {
+
+        List<User> users = AllDBOperations.getAllUsers_Email(email);
+
+        if (users == null || users.size() == 0 || !password.equals(users.get(0).getPassword())) {
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.LOGIN_FAILURE);
+            return customResponse;
+        }
+
+        if (password.equals(users.get(0).getPassword())){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            return customResponse;
+        }else {
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.LOGIN_FAILURE);
             return customResponse;
         }
     }

@@ -21,6 +21,41 @@ public class AllDBOperations {
 
     static Logger logger = LogUtil.getInstance();
 
+    public static Map<String, Object> createUser_2(String email, String password) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            String UserID = UtilsManager.generateUniqueID();
+            String Email = email;
+            String Password = password;
+
+            JSONObject body = new JSONObject();
+            body.put("UserID", UserID);
+            body.put("Email", Email);
+            body.put("Password", Password);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "UniversalUser");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> createUser(String email) {
 
         Map<String, Object> data = new HashMap<>();
