@@ -856,6 +856,43 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getAllMessengers(JSONObject body) {
+
+        try {
+            if (body.has("To")) {
+
+                Set<User> users = AllDBOperations.getAllMessengersInUEM(String.valueOf(body.get("To")));
+                Map<String, Object> map = new HashMap<>();
+                JSONArray jsonArray = new JSONArray();
+                for (User user : users){
+                    jsonArray.put(UtilsManager.userToJson(user));
+                }
+                map.put("Users", jsonArray);
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(true);
+                customResponse.setMessage(Constants.SUCCESS);
+                customResponse.setInfo(map);
+                return customResponse;
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.MESSAGE_SEARCH_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse getAllMessages(JSONObject body) {
 
         try {

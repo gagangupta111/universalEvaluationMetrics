@@ -1266,6 +1266,38 @@ public class MainController {
         }
     }
 
+    @GetMapping("/all/messenger/{To}")
+    @ResponseBody
+    public ResponseEntity<String> getAllMessagers_To(
+            @PathVariable("To") String To) {
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            if (To != null && !To.equalsIgnoreCase("")){
+                jsonObject.put("To", To);
+            }else {
+                return ResponseEntity.badRequest()
+                        .header("message", "To is required!")
+                        .body("To is required!");
+            }
+
+            CustomResponse customResponse = mainService.getAllMessengers(jsonObject);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }catch (Exception e){
+            return ResponseEntity.badRequest()
+                    .header("message", "Exception")
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
     @GetMapping("/messages/{To}/{read}")
     @ResponseBody
     public ResponseEntity<String> getAllMessages_Read(

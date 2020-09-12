@@ -4,6 +4,7 @@ import org.bson.Document;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class User {
 
@@ -22,6 +23,20 @@ public class User {
     private Date _updated_at;
     public String getObjectID() {
         return objectID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(Email, user.Email);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(Email);
     }
 
     public void setObjectID(String objectID) {

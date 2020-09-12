@@ -148,6 +148,10 @@ public class MainService {
         return dao.getAllPosts(body);
     }
 
+    public CustomResponse getAllMessengers(JSONObject body) {
+        return dao.getAllMessengers(body);
+    }
+
     public CustomResponse getAllMessages(JSONObject body) {
         return dao.getAllMessages(body);
     }

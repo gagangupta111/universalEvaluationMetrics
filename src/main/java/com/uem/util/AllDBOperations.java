@@ -1934,6 +1934,33 @@ public class AllDBOperations {
         return messages;
     }
 
+    public static Set<User> getAllMessengersInUEM(String UserID) {
+
+        Set<User> users = new LinkedHashSet<>();
+        Set<String> messengers = new HashSet<>();
+
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "To:{$regex:/" + UserID + "/}," +
+                        "}");
+
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+
+        if (documents == null || documents.size() == 0) {
+            return users;
+        } else {
+            for (Document document : documents) {
+                messengers.add(document.getString("From"));
+            }
+
+            for (String email : messengers){
+                users.addAll(getAllUsers_Email(email));
+            }
+
+        }
+        return users;
+    }
+
     public static List<Message> getAllMessagesInUEM(String MessageID) {
 
         List<Message> messages = new ArrayList<>();
