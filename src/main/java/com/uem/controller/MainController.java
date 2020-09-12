@@ -1191,7 +1191,7 @@ public class MainController {
         }
     }
 
-    @GetMapping("/messages/{User1}/{User2}")
+    @GetMapping("/all/messages/{User1}/{User2}")
     @ResponseBody
     public ResponseEntity<String> getAllMessages(
             @PathVariable("User1") String User1,
@@ -1204,6 +1204,32 @@ public class MainController {
             jsonObject.put("User1", User1);
             jsonObject.put("User2", User2);
         }
+        CustomResponse customResponse = mainService.getAllMessages(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/messages/{To}/{read}")
+    @ResponseBody
+    public ResponseEntity<String> getAllMessages_Read(
+            @PathVariable("To") String To,
+            @PathVariable("read") String read) throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        if (To != null && read != null
+                && !To.equalsIgnoreCase("")
+                && !read.equalsIgnoreCase("")){
+            jsonObject.put("To", To);
+            jsonObject.put("read", read);
+        }
+
         CustomResponse customResponse = mainService.getAllMessages(jsonObject);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()

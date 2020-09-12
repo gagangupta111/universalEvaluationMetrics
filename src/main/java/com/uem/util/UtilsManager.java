@@ -754,6 +754,7 @@ public class UtilsManager {
             object = message.getFrom() != null ? object.put("From", message.getFrom()) : object;
             object = message.getText() != null ? object.put("text", message.getText()) : object;
             object = message.getTo() != null ? object.put("To", message.getTo()) : object;
+            object = message.getRead() != null ? object.put("read", message.getRead()) : object;
 
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
@@ -769,6 +770,7 @@ public class UtilsManager {
             message.setFrom(jsonObject.has("From") ? jsonObject.getString("From") : null);
             message.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
             message.setTo(jsonObject.has("To") ? jsonObject.getString("To") : null);
+            message.setRead(jsonObject.has("read") ? jsonObject.getString("read") : null);
 
             message.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             message.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);

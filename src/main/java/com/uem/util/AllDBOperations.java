@@ -1841,6 +1841,49 @@ public class AllDBOperations {
         return messages;
     }
 
+    public static List<Message> getAllMessagesInUEM(String To, boolean read) {
+
+        List<Message> messages = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "}");
+
+        if (read){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "To:{$regex:/" + To + "/}," +
+                            "read:{$regex:/" + "Yes" + "/}," +
+                            "}");
+        }else {
+            filter = BsonDocument
+                    .parse("{ " +
+                            "To:{$regex:/" + To + "/}," +
+                            "read:{$regex:/" + "No" + "/}," +
+                            "}");
+        }
+
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+
+        if (documents == null || documents.size() == 0) {
+            return messages;
+        } else {
+            for (Document document : documents) {
+                Message message= new Message();
+                message.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                message.setTo(document.containsKey("To") ? document.getString("To") : null);
+                message.setText(document.containsKey("text") ? document.getString("text") : null);
+                message.setRead(document.containsKey("read") ? document.getString("read") : null);
+
+                message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                message.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                messages.add(message);
+            }
+        }
+        return messages;
+    }
+
     public static List<Message> getAllMessagesInUEM(String user1, String user2) {
 
         List<Message> messages = new ArrayList<>();
@@ -1864,6 +1907,7 @@ public class AllDBOperations {
                 message.setFrom(document.containsKey("From") ? document.getString("From") : null);
                 message.setTo(document.containsKey("To") ? document.getString("To") : null);
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
+                message.setRead(document.containsKey("read") ? document.getString("read") : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);

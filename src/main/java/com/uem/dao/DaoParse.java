@@ -808,6 +808,29 @@ public class DaoParse implements DaoInterface {
                 customResponse.setMessage(Constants.SUCCESS);
                 customResponse.setInfo(map);
                 return customResponse;
+            } else if (body.has("To")) {
+
+                boolean read = true;
+                if ("yes".equals(body.getString("read"))){
+                    read = true;
+                }else {
+                    read = false;
+                }
+
+                List<Message> messages = AllDBOperations.getAllMessagesInUEM(
+                        String.valueOf(body.get("To")),
+                        read);
+                Map<String, Object> map = new HashMap<>();
+                JSONArray jsonArray = new JSONArray();
+                for (Message message : messages){
+                    jsonArray.put(UtilsManager.messageToJson(message));
+                }
+                map.put("Messages", jsonArray);
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(true);
+                customResponse.setMessage(Constants.SUCCESS);
+                customResponse.setInfo(map);
+                return customResponse;
             } else {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);

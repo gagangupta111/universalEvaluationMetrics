@@ -7,10 +7,19 @@ public class Message {
     private String From;
     private String To;
     private String text;
+    private String read;
 
     private String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public String getRead() {
+        return read;
+    }
+
+    public void setRead(String read) {
+        this.read = read;
+    }
 
     public String getObjectID() {
         return objectID;
@@ -37,6 +46,7 @@ public class Message {
                 "From='" + From + '\'' +
                 ", To='" + To + '\'' +
                 ", text='" + text + '\'' +
+                ", read='" + read + '\'' +
                 ", objectID='" + objectID + '\'' +
                 ", _created_at=" + _created_at +
                 ", _updated_at=" + _updated_at +
