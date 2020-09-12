@@ -937,29 +937,26 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
+            JSONObject bodyUpdate = new JSONObject();
+
             if (body.has("text")){
-                post.setText(body.getString("text"));
+                bodyUpdate.put("text", body.getString("text"));
             }
 
-            if (body.has("likes") && post.getLikes() != null && !post.getLikes().equalsIgnoreCase("")){
-                post.setLikes("" + (Integer.valueOf(post.getLikes()) + 1));
-            }else if (body.has("likes")){
-                post.setLikes("1");
+            if (body.has("likes") && post.getLikes() != null && !post.getLikes().equalsIgnoreCase("") && body.getString("likes").equalsIgnoreCase("+1")){
+                bodyUpdate.put("likes", "" + (Integer.valueOf(post.getLikes()) + 1));
+            }else if (body.has("likes") && body.getString("likes").equalsIgnoreCase("+1")){
+                bodyUpdate.put("likes", "" + 1);
             }
 
-            if (body.has("shares") && post.getShares() != null && !post.getShares().equalsIgnoreCase("")){
-                post.setShares("" + (Integer.valueOf(post.getShares()) + 1));
-            }else if (body.has("shares")){
-                post.setShares("1");
+            if (body.has("shares") && post.getShares() != null && !post.getShares().equalsIgnoreCase("") && body.getString("shares").equalsIgnoreCase("+1")){
+                bodyUpdate.put("shares", "" + (Integer.valueOf(post.getShares()) + 1));
+            }else if (body.has("shares") && body.getString("shares").equalsIgnoreCase("+1")){
+                bodyUpdate.put("shares", "" + 1);
             }
-
-            body = new JSONObject();
-            body.put("likes", post.getLikes());
-            body.put("shares", post.getShares());
-            body.put("text", post.getText());
 
             Map<String, JSONObject> map = new HashMap<>();
-            map.put(post.getObjectID(), body);
+            map.put(post.getObjectID(), bodyUpdate);
 
             Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Posts");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
