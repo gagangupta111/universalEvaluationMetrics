@@ -656,6 +656,7 @@ public class UtilsManager {
             object = post.getText() != null ? object.put("text", post.getText()) : object;
 
             object = post.getUserID() != null ? object.put("UserID", post.getUserID()) : object;
+            object = post.getPostID() != null ? object.put("PostID", post.getPostID()) : object;
 
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
