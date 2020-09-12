@@ -1191,6 +1191,23 @@ public class MainController {
         }
     }
 
+    @PutMapping("/messages")
+    @ResponseBody
+    public ResponseEntity<String> updateMessage(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.updateMessage(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @GetMapping("/all/messages/{User1}/{User2}")
     @ResponseBody
     public ResponseEntity<String> getAllMessages(

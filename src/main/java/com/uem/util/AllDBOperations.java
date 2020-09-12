@@ -203,7 +203,7 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
-            Map<String, Object> result = ParseUtil.batchCreateInParseTable(message, "Message");
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(message, "Messages");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
                 data.put("success", true);
@@ -872,6 +872,44 @@ public class AllDBOperations {
             map.put(notification.getObjectID(), body);
 
             Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Notifications");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
+    public static Map<String, Object> updateMessage(Message message, JSONObject body, Boolean append) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            if (body.has("read")){
+                message.setRead(body.getString("read"));
+            }
+
+            JSONObject bodyUpdate = new JSONObject();
+            bodyUpdate.put("read", message.getRead());
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(message.getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Messages");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
 
             if (status >= 200 && status < 300) {
@@ -1830,6 +1868,36 @@ public class AllDBOperations {
                 message.setFrom(document.containsKey("From") ? document.getString("From") : null);
                 message.setTo(document.containsKey("To") ? document.getString("To") : null);
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
+
+                message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                message.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                messages.add(message);
+            }
+        }
+        return messages;
+    }
+
+    public static List<Message> getAllMessagesInUEM(String MessageID) {
+
+        List<Message> messages = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "MessageID:{$regex:/" + MessageID + "/}," +
+                        "}");
+
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+
+        if (documents == null || documents.size() == 0) {
+            return messages;
+        } else {
+            for (Document document : documents) {
+                Message message= new Message();
+                message.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                message.setTo(document.containsKey("To") ? document.getString("To") : null);
+                message.setText(document.containsKey("text") ? document.getString("text") : null);
+                message.setRead(document.containsKey("read") ? document.getString("read") : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);

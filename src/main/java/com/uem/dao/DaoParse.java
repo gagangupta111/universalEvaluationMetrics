@@ -944,7 +944,10 @@ public class DaoParse implements DaoInterface {
     public CustomResponse createMessage(JSONObject body) {
 
         try {
-            if (body.has("From") && body.has("To") && body.has("text")) {
+            if (body.has("From") && body.has("To") && body.has("text") && body.has("read")) {
+
+                String MessageID = UtilsManager.generateUniqueID();
+                body.put("MessageID", MessageID);
 
                 Map<String, Object> map = AllDBOperations.createMessage(body);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
@@ -1003,6 +1006,54 @@ public class DaoParse implements DaoInterface {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.COURSE_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse updateMessage(JSONObject body, Boolean append) {
+
+        try {
+            if (body.has("MessageID")){
+
+                List<Message> messages = AllDBOperations.getAllMessagesInUEM(body.getString("MessageID"));
+                if (messages== null || messages.size() == 0) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.POST_DOES_NOT_EXIST);
+                    return customResponse;
+                } else {
+
+                    Map<String, Object> map = AllDBOperations.updateMessage(messages.get(0), body, append);
+                    if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.INTERNAL_ERROR);
+                        customResponse.setInfo(map);
+                        return customResponse;
+                    } else {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(true);
+                        customResponse.setMessage(Constants.SUCCESS);
+                        customResponse.setInfo(map);
+                        return customResponse;
+                    }
+                }
+            }else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.INTERNAL_ERROR);
                 return customResponse;
             }
         } catch (Exception e) {

@@ -88,6 +88,10 @@ public class MainService {
         return dao.updatePost(body, true);
     }
 
+    public CustomResponse updateMessage(JSONObject body) {
+        return dao.updateMessage(body, true);
+    }
+
     public CustomResponse createBatch(JSONObject body) {
         return dao.createBatch(body);
     }

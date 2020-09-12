@@ -42,6 +42,7 @@ public interface DaoInterface {
     public CustomResponse updatePost(JSONObject body, Boolean append);
 
     public CustomResponse createMessage(JSONObject body);
+    public CustomResponse updateMessage(JSONObject body, Boolean append);
     public CustomResponse getAllMessages(JSONObject body);
 
     public CustomResponse createNotification(JSONObject body);
