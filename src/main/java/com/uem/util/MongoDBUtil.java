@@ -34,6 +34,7 @@ public class MongoDBUtil {
     public static MongoCollection<Document> Posts = null;
     public static MongoCollection<Document> notifications = null;
     public static MongoCollection<Document> connections = null;
+    public static MongoCollection<Document> events = null;
 
     public static MongoDatabase getDataBase() {
 
@@ -70,6 +71,15 @@ public class MongoDBUtil {
             return TEST;
         } else {
             return TEST;
+        }
+    }
+
+    public static MongoCollection<Document> getEvents() {
+        if (null == events) {
+            events = getDataBase().getCollection("Events");
+            return events;
+        } else {
+            return events;
         }
     }
 
@@ -207,6 +217,19 @@ public class MongoDBUtil {
         } catch (Exception e) {
             logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllNotifications \n" + UtilsManager.exceptionAsString(e));
             RollbarManager.sendExceptionOnRollBar("getAllNotifications", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Document> getAllEvents(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getEvents();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllEvents \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllEvents", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }

@@ -223,6 +223,35 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> createEvent(JSONObject event) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+            String EventID = UtilsManager.generateUniqueID();
+
+            event.put("EventID", EventID);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(event, "Events");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", event);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", event);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", event);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createPost(JSONObject post) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1849,6 +1878,32 @@ public class AllDBOperations {
             }
         }
         return students;
+    }
+
+    public static List<Event> getAllEventsInUEM() {
+
+        List<Event> events = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllEvents(filter);
+        if (documents == null || documents.size() == 0) {
+            return events;
+        } else {
+            for (Document document : documents) {
+                Event event = new Event();
+                event.setEventID(document.containsKey("EventID") ? document.getString("EventID") : null);
+                event.setTime(document.containsKey("time") ? document.getString("time") : null);
+                event.setText(document.containsKey("text") ? document.getString("text") : null);
+
+                event.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                event.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                event.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                events.add(event);
+            }
+        }
+        return events;
     }
 
     public static List<Message> getAllMessagesInUEM() {

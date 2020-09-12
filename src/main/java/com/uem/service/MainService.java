@@ -64,6 +64,10 @@ public class MainService {
         return dao.createPost(body);
     }
 
+    public CustomResponse createEvent(JSONObject body) {
+        return dao.createEvent(body);
+    }
+
     public CustomResponse createMessage(JSONObject body) {
         return dao.createMessage(body);
     }
@@ -134,6 +138,10 @@ public class MainService {
 
     public CustomResponse createCourse(JSONObject body) {
         return dao.createCourse(body);
+    }
+
+    public CustomResponse getAllEvents() {
+        return dao.getAllEvents();
     }
 
     public CustomResponse getAllPosts(JSONObject body) {

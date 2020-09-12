@@ -1123,6 +1123,39 @@ public class MainController {
         }
     }
 
+    @GetMapping("/all/events")
+    @ResponseBody
+    public ResponseEntity<String> getAllEvents() throws Exception {
+
+        CustomResponse customResponse = mainService.getAllEvents();
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/events")
+    @ResponseBody
+    public ResponseEntity<String> createEvent(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createEvent(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @GetMapping("/all/posts")
     @ResponseBody
     public ResponseEntity<String> getAllPosts() throws Exception {

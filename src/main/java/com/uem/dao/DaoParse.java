@@ -659,6 +659,44 @@ public class DaoParse implements DaoInterface {
         }
     }
 
+    @Override
+    public CustomResponse createEvent(JSONObject body) {
+
+        try {
+            if (body.has("text") && body.has("time")) {
+
+                Map<String, Object> map = AllDBOperations.createEvent(body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.POST_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
 
     @Override
     public CustomResponse createPost(JSONObject body) {
@@ -770,6 +808,35 @@ public class DaoParse implements DaoInterface {
                 jsonArray.put(UtilsManager.notificationToJson(notification));
             }
             map.put("Notifications", jsonArray);
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse getAllEvents() {
+
+        try {
+            List<Event> events = AllDBOperations.getAllEventsInUEM();
+            Map<String, Object> map = new HashMap<>();
+            JSONArray jsonArray = new JSONArray();
+            for (Event event : events){
+                jsonArray.put(UtilsManager.eventToJson(event));
+            }
+            map.put("Events", jsonArray);
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(true);
             customResponse.setMessage(Constants.SUCCESS);

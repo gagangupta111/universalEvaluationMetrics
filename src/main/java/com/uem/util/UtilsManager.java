@@ -743,6 +743,43 @@ public class UtilsManager {
         return notification;
     }
 
+    public static JSONObject eventToJson(Event event) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = event.getObjectID() != null ? object.put("_id", event.getObjectID()) : object;
+            object = event.get_created_at() != null ? object.put("_created_at", event.get_created_at()) : object;
+            object = event.get_updated_at() != null ? object.put("_updated_at", event.get_updated_at()) : object;
+
+            object = event.getEventID() != null ? object.put("EventID", event.getEventID()) : object;
+            object = event.getText() != null ? object.put("text", event.getText()) : object;
+            object = event.getTime() != null ? object.put("time", event.getTime()) : object;
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
+    public static Event jsonToEvent(JSONObject jsonObject) {
+
+        Event event = new Event();
+
+        try {
+            event.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
+            event.setTime(jsonObject.has("time") ? jsonObject.getString("time") : null);
+            event.setEventID(jsonObject.has("EventID") ? jsonObject.getString("EventID") : null);
+
+            event.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            event.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            event.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return event;
+    }
+
     public static JSONObject messageToJson(Message message) {
 
         JSONObject object = new JSONObject();
