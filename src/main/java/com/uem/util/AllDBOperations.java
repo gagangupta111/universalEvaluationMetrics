@@ -260,6 +260,8 @@ public class AllDBOperations {
             String PostID = UtilsManager.generateUniqueID();
 
             post.put("PostID", PostID);
+            post.put("likes", "1");
+            post.put("shares", "1");
 
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(post, "Posts");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
