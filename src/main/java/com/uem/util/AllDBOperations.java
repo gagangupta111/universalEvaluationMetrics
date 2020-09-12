@@ -1779,6 +1779,7 @@ public class AllDBOperations {
 
                 post.setLikes(document.containsKey("likes") ? document.getString("likes") : null);
                 post.setShares(document.containsKey("shares") ? document.getString("shares") : null);
+                post.setPostID(document.containsKey("PostID") ? document.getString("PostID") : null);
 
                 posts.add(post);
             }
