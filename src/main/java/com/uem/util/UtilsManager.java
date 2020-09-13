@@ -664,6 +664,46 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject logsToJson(Logs logs) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = logs.getObjectID() != null ? object.put("_id", logs.getObjectID()) : object;
+            object = logs.get_created_at() != null ? object.put("_created_at", logs.get_created_at()) : object;
+            object = logs.get_updated_at() != null ? object.put("_updated_at", logs.get_updated_at()) : object;
+
+            object = logs.getLogID() != null ? object.put("LogID", logs.getLogID()) : object;
+            object = logs.getFrom() != null ? object.put("From", logs.getFrom()) : object;
+            object = logs.getLevel() != null ? object.put("level", logs.getLevel()) : object;
+            object = logs.getText() != null ? object.put("text", logs.getText()) : object;
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
+    public static Logs jsonToLogs(JSONObject jsonObject) {
+
+        Logs logs = new Logs();
+
+        try {
+            logs.setLevel(jsonObject.has("level") ? jsonObject.getString("level") : null);
+            logs.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
+            logs.setFrom(jsonObject.has("From") ? jsonObject.getString("From") : null);
+            logs.setLogID(jsonObject.has("LogID") ? jsonObject.getString("LogID") : null);
+
+            logs.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            logs.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            logs.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return logs;
+    }
+
     public static JSONObject connectionToJson(Connection connection) {
 
         JSONObject object = new JSONObject();

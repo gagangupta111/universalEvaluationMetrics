@@ -122,6 +122,36 @@ public class AllDBOperations {
 
     }
 
+    public static Map<String, Object> createLogs(Logs log) {
+
+        Map<String, Object> data = new HashMap<>();
+
+        String LogID = UtilsManager.generateUniqueID();
+        log.setLogID(LogID);
+
+        data.put("success", false);
+        try {
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(UtilsManager.logsToJson(log), "Logs");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", log);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", log);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", log);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createConnection(JSONObject message) {
 
         Map<String, Object> data = new HashMap<>();

@@ -3,10 +3,7 @@ package com.uem.controller;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.uem.model.*;
 import com.uem.service.MainService;
-import com.uem.util.AmazonS3Util;
-import com.uem.util.Constants;
-import com.uem.util.LogUtil;
-import com.uem.util.UtilsManager;
+import com.uem.util.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.bson.Document;
@@ -1378,6 +1375,13 @@ public class MainController {
     @PostMapping("/all/connections")
     @ResponseBody
     public ResponseEntity<String> getAllConnections(@RequestBody String body) throws Exception {
+
+        Logs logs = new Logs();
+        logs.setText("getAllConnections body : " + body != null ? body : "");
+        logs.setLevel("info");
+        logs.setFrom(this.getClass().getName());
+
+        AllDBOperations.createLogs(logs);
 
         JSONObject jsonObject = new JSONObject(body.trim());
         CustomResponse customResponse = mainService.getAllConnections(jsonObject);

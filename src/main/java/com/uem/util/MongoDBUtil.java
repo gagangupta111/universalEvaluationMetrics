@@ -35,6 +35,7 @@ public class MongoDBUtil {
     public static MongoCollection<Document> notifications = null;
     public static MongoCollection<Document> connections = null;
     public static MongoCollection<Document> events = null;
+    public static MongoCollection<Document> logs = null;
 
     public static MongoDatabase getDataBase() {
 
@@ -53,6 +54,15 @@ public class MongoDBUtil {
             return connections;
         } else {
             return connections;
+        }
+    }
+
+    public static MongoCollection<Document> getLogs() {
+        if (null == logs) {
+            logs = getDataBase().getCollection("Logs");
+            return logs;
+        } else {
+            return logs;
         }
     }
 
