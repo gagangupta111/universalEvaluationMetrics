@@ -861,7 +861,7 @@ public class DaoParse implements DaoInterface {
         try {
             if (body.has("To")) {
 
-                Set<User> users = AllDBOperations.getAllMessengersInUEM(String.valueOf(body.get("To")));
+                List<User> users = AllDBOperations.getAllMessengersInUEM(String.valueOf(body.get("To")));
                 Map<String, Object> map = new HashMap<>();
                 JSONArray jsonArray = new JSONArray();
                 for (User user : users){

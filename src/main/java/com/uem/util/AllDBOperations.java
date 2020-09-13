@@ -1519,13 +1519,13 @@ public class AllDBOperations {
 
         List<String> filterString = new ArrayList<>();
 
-        if (UserID.length() > 0){
+        if (UserID.length() > 0 && !UserID.equalsIgnoreCase("none")){
 
             filterString.add("UserID:{$regex:/" + UserID + "/}");
 
         }
 
-        if (read.length() > 0){
+        if (read.length() > 0 && (read.equalsIgnoreCase("true") || read.equalsIgnoreCase("false"))){
 
             filterString.add("read:{$regex:/" + read + "/}");
 
@@ -1537,7 +1537,7 @@ public class AllDBOperations {
 
         }
 
-        if (NotificationID.length() > 0){
+        if (NotificationID.length() > 0 && !NotificationID.equalsIgnoreCase("none")){
 
             filterString.add("NotificationID:{$regex:/" + NotificationID + "/}");
 
@@ -1563,7 +1563,6 @@ public class AllDBOperations {
                 notification.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 notification.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
 
-
                 notification.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
                 notification.setText(document.containsKey("text") ? document.getString("text") : null);
                 notification.setRead(document.containsKey("read") ? document.getString("read") : null);
@@ -1572,6 +1571,7 @@ public class AllDBOperations {
                 notifications.add(notification);
             }
         }
+        Collections.sort(notifications, new NotificationComparatorByUpdatedAt_desc());
         return notifications;
     }
 
@@ -1601,7 +1601,7 @@ public class AllDBOperations {
 
         }
 
-        if (status.length() > 0){
+        if (status.length() > 0 && !status.equalsIgnoreCase("none")){
 
             filterString.add("status:{$regex:/" + status + "/}");
 
@@ -1699,25 +1699,25 @@ public class AllDBOperations {
 
         List<String> filterString = new ArrayList<>();
 
-        if (From.length() > 0){
+        if (From.length() > 0 && !From.equalsIgnoreCase("none")){
 
             filterString.add("From:{$regex:/" + From + "/}");
 
         }
 
-        if (To.length() > 0){
+        if (To.length() > 0 && !To.equalsIgnoreCase("none")){
 
             filterString.add("To:{$regex:/" + To + "/}");
 
         }
 
-        if (status.length() > 0){
+        if (status.length() > 0 && !status.equalsIgnoreCase("none")){
 
             filterString.add("status:{$regex:/" + status + "/}");
 
         }
 
-        if (ConnectionID.length() > 0){
+        if (ConnectionID.length() > 0 && !ConnectionID.equalsIgnoreCase("none")){
 
             filterString.add("ConnectionID:{$regex:/" + ConnectionID + "/}");
 
@@ -1752,6 +1752,7 @@ public class AllDBOperations {
                 connections.add(connection);
             }
         }
+        Collections.sort(connections, new ConnectionComparatorByUpdatedAt_Desc());
         return connections;
     }
 
@@ -1812,6 +1813,7 @@ public class AllDBOperations {
                 posts.add(post);
             }
         }
+        Collections.sort(posts, new PostComparatorByUpdatedAt_desc());
         return posts;
     }
 
@@ -1931,10 +1933,11 @@ public class AllDBOperations {
                 messages.add(message);
             }
         }
+        Collections.sort(messages, new MessageComparatorByUpdatedAt());
         return messages;
     }
 
-    public static Set<User> getAllMessengersInUEM(String UserID) {
+    public static List<User> getAllMessengersInUEM(String UserID) {
 
         Set<User> users = new LinkedHashSet<>();
         Set<String> messengers = new HashSet<>();
@@ -1947,7 +1950,7 @@ public class AllDBOperations {
         List<Document> documents = MongoDBUtil.getAllMessages(filter);
 
         if (documents == null || documents.size() == 0) {
-            return users;
+            return new ArrayList<>();
         } else {
             for (Document document : documents) {
                 messengers.add(document.getString("From"));
@@ -1958,7 +1961,9 @@ public class AllDBOperations {
             }
 
         }
-        return users;
+        List<User> finalUsers = new ArrayList<>(users);
+        Collections.sort(finalUsers, new UsersComparatorByUpdatedAt());
+        return finalUsers;
     }
 
     public static List<Message> getAllMessagesInUEM(String MessageID) {
@@ -1988,6 +1993,7 @@ public class AllDBOperations {
                 messages.add(message);
             }
         }
+        Collections.sort(messages, new MessageComparatorByUpdatedAt());
         return messages;
     }
 
@@ -2031,6 +2037,7 @@ public class AllDBOperations {
                 messages.add(message);
             }
         }
+        Collections.sort(messages, new MessageComparatorByUpdatedAt());
         return messages;
     }
 
@@ -2066,6 +2073,7 @@ public class AllDBOperations {
                 messages.add(message);
             }
         }
+        Collections.sort(messages, new MessageComparatorByUpdatedAt());
         return messages;
     }
 
