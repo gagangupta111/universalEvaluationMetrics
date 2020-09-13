@@ -2,7 +2,6 @@ package com.uem.util;
 
 import com.uem.model.Connection;
 import com.uem.model.Notification;
-import org.mockito.internal.matchers.Not;
 
 import java.util.Comparator;
 
