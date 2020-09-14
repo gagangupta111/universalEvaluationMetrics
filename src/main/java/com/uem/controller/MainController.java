@@ -1552,7 +1552,7 @@ public class MainController {
 
             if (Photo != null) {
 
-                String key_name = "USER_PHOTO_" + Email;
+                String key_name = "USER_PHOTO_" + Email + Photo.getOriginalFilename();
                 File file = new File(key_name);
                 FileUtils.writeByteArrayToFile(file, Photo.getBytes());
 
@@ -1566,7 +1566,7 @@ public class MainController {
                 object.put("ContentMd5", putObjectResult.getContentMd5());
                 object.put("ETag", putObjectResult.getETag());
                 ObjectMetadata objectMetadata = putObjectResult.getMetadata();
-                object.put("Url", objectMetadata.getRawMetadataValue("url"));
+                object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
                 object.put("Name", key_name);
                 body.put("Photo", object);
                 file.delete();

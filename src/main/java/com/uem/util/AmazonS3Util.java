@@ -18,6 +18,7 @@ public class AmazonS3Util {
     private static final String ACCESS_KEY = "AKIAJ2K2ZRRPQFHWIBFA";
     private static final String SECRET_KEY = "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";
     private static final String BUCKET_NAME = "universalevaluationmetricslinkedin";
+    public static final String ACCESS_URL = "https://universalevaluationmetricslinkedin.s3.ap-south-1.amazonaws.com/";
 
     private static AmazonS3 amazonS3 = null;
     private static Logger logger = LogUtil.getInstance();
@@ -51,9 +52,6 @@ public class AmazonS3Util {
             try {
                 PutObjectResult putObjectResult =  getS3Client().putObject(new PutObjectRequest(BUCKET_NAME, keyName, file).withCannedAcl(CannedAccessControlList.PublicRead));
                 URL url = getS3Client().getUrl(BUCKET_NAME, keyName);
-                ObjectMetadata objectMetadata = new ObjectMetadata();
-                objectMetadata.setHeader("url", url.getPath());
-                putObjectResult.setMetadata(objectMetadata);
                 return putObjectResult;
             }catch (Exception e){
                 logger.debug(UtilsManager.exceptionAsString(e));
