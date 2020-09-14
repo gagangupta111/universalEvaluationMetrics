@@ -2497,6 +2497,13 @@ public class AllDBOperations {
                         "Email:{$regex:/" + email + "/}" +
                         "}");
         List<Document> documents = MongoDBUtil.getAllUniversalUsers(filter);
+
+        Logs logs = new Logs();
+        logs.setFrom("AllDBOperations");
+        logs.setText(documents.toString());
+        logs.setLevel("info");
+        AllDBOperations.createLogs(logs);
+
         if (documents == null || documents.size() == 0) {
             return users;
         } else {

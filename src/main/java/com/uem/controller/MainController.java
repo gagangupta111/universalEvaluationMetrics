@@ -1453,7 +1453,20 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> getUserInfo_Email(@PathVariable("email") String email) {
 
+        Logs logs = new Logs();
+        logs.setFrom(this.getClass().getName());
+        logs.setText(email);
+        logs.setLevel("info");
+        AllDBOperations.createLogs(logs);
+
         CustomResponse customResponse = mainService.getUserInfo_Email(email);
+
+        logs = new Logs();
+        logs.setFrom(this.getClass().getName());
+        logs.setText(customResponse.toString());
+        logs.setLevel("info");
+        AllDBOperations.createLogs(logs);
+
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
