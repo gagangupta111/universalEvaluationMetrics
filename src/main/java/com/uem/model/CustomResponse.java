@@ -44,4 +44,12 @@ public class CustomResponse {
         return jsonObject;
     }
 
+    @Override
+    public String toString() {
+        return "CustomResponse{" +
+                "success=" + success +
+                ", message='" + message + '\'' +
+                ", info=" + info +
+                '}';
+    }
 }
