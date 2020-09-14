@@ -1,5 +1,6 @@
 package com.uem.controller;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.uem.model.*;
 import com.uem.service.MainService;
@@ -284,7 +285,8 @@ public class MainController {
                 JSONObject object = new JSONObject();
                 object.put("ContentMd5", putObjectResult.getContentMd5());
                 object.put("ETag", putObjectResult.getETag());
-                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Url", objectMetadata.getRawMetadataValue("url"));
                 object.put("Name", key_name);
                 body.put("Photo", object);
                 file.delete();
@@ -1502,6 +1504,91 @@ public class MainController {
                     .header("message", customResponse.getMessage())
                     .body(customResponse.getMessage());
         }
+    }
+
+    @PutMapping("/update/user/{Email}")
+    @ResponseBody
+    public ResponseEntity<String> updateUserInfo(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+            @RequestParam(value = "Password", required = false) String Password,
+            @RequestParam(value = "Name", required = false) String Name,
+            @RequestParam(value = "Mobile", required = false) String Mobile,
+            @RequestParam(value = "Address", required = false) String Address,
+            @RequestParam(value = "DOB", required = false) String DOB,
+            @RequestParam(value = "info", required = false) String info,
+
+            @PathVariable("Email") String Email) throws Exception {
+
+        try {
+
+            if (Email == null || Email.length() == 0) {
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body("INVALID_EMAIL");
+            }
+
+            JSONObject body = new JSONObject();
+
+            body = Password != null ? body.put("Password", Password) : body;
+            body = Name != null ? body.put("Name", Name) : body;
+            body = Mobile != null ? body.put("Mobile", Mobile) : body;
+            body = Address != null ? body.put("Address", Address) : body;
+            body = DOB != null ? body.put("DOB", DOB) : body;
+            body = info != null ? body.put("info", info) : body;
+            body = Email != null ? body.put("Email", Email) : body;
+
+            if (body.length() == 0) {
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body("NOTHING_TO_UPDATE");
+            }
+
+            List<User> users = AllDBOperations.getAllUsers_Email(Email);
+            if (users == null || users.size() == 0){
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body("EMAIL_DOES_NOT_EXIST");
+            }
+
+            if (Photo != null) {
+
+                String key_name = "USER_PHOTO_" + Email;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Photo.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Url", objectMetadata.getRawMetadataValue("url"));
+                object.put("Name", key_name);
+                body.put("Photo", object);
+                file.delete();
+            }
+
+            Boolean aBoolean = mainService.updateUserInfo_Email(body);
+            if (aBoolean) {
+                return ResponseEntity.ok()
+                        .header("key", "value")
+                        .body(Constants.SUCCESS);
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body(Constants.FAILURE);
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+
     }
 
 }

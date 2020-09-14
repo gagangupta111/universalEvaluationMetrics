@@ -15,6 +15,7 @@ public interface DaoInterface {
     public CustomResponse signIn2(String email, String password);
 
     public Boolean updateUserInfo(JSONObject body);
+    public Boolean updateUserInfo_Email(JSONObject body);
 
     public CustomResponse getUserInfo(String UserID);
     public CustomResponse getUserInfo_Email(String email);

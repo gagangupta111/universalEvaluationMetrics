@@ -6,18 +6,18 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
 import com.google.api.client.util.IOUtils;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.net.URL;
 
 public class AmazonS3Util {
 
-    private static final String ACCESS_KEY = "AKIA3UYRN6M2RF6QBNGC";
-    private static final String SECRET_KEY = "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";
-    private static final String BUCKET_NAME = "universalevaluationmetrics";
+    private static final String ACCESS_KEY = "AKIAJ2K2ZRRPQFHWIBFA";
+    private static final String SECRET_KEY = "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";
+    private static final String BUCKET_NAME = "universalevaluationmetricslinkedin";
 
     private static AmazonS3 amazonS3 = null;
     private static Logger logger = LogUtil.getInstance();
@@ -49,7 +49,11 @@ public class AmazonS3Util {
 
         while (retry >= 0){
             try {
-                PutObjectResult putObjectResult = getS3Client().putObject(BUCKET_NAME, keyName, file);
+                PutObjectResult putObjectResult =  getS3Client().putObject(new PutObjectRequest(BUCKET_NAME, keyName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+                URL url = getS3Client().getUrl(BUCKET_NAME, keyName);
+                ObjectMetadata objectMetadata = new ObjectMetadata();
+                objectMetadata.setHeader("url", url.getPath());
+                putObjectResult.setMetadata(objectMetadata);
                 return putObjectResult;
             }catch (Exception e){
                 logger.debug(UtilsManager.exceptionAsString(e));

@@ -290,6 +290,23 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public Boolean updateUserInfo_Email(JSONObject body) {
+
+        try {
+
+            Map<String, Object> map = AllDBOperations.updateUser_Email(body);
+            if (Boolean.valueOf(String.valueOf(map.get("success")))) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return false;
+        }
+    }
+
+    @Override
     public CustomResponse getUserInfo_Email(String email) {
         List<User> users = new ArrayList<>();
         users = AllDBOperations.getAllUsers_Email(email);

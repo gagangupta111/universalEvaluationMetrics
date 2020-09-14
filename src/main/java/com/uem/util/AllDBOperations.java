@@ -290,8 +290,8 @@ public class AllDBOperations {
             String PostID = UtilsManager.generateUniqueID();
 
             post.put("PostID", PostID);
-            post.put("likes", "1");
-            post.put("shares", "1");
+            post.put("likes", "0");
+            post.put("shares", "0");
 
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(post, "Posts");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
@@ -768,6 +768,40 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateUser_Email(JSONObject body) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            List<User> users = getAllUsers_Email(body.getString("Email"));
+            if (users == null || users.size() == 0) {
+                data.put("message", Constants.NO_INFO_FOUND);
+                return data;
+            }
+            body.remove("Email");
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(users.get(0).getObjectID(), body);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "UniversalUser");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateUser(JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1000,7 +1034,7 @@ public class AllDBOperations {
 
             JSONObject bodyUpdate = new JSONObject();
 
-            if (body.has("text")){
+            if (body.has("text") && !body.getString("text").equalsIgnoreCase("none")){
                 bodyUpdate.put("text", body.getString("text"));
             }
 
@@ -1656,7 +1690,7 @@ public class AllDBOperations {
 
         }
 
-        if (status.length() > 0){
+        if (status.length() > 0 && !status.equalsIgnoreCase("none")){
 
             filterString.add("status:{$regex:/" + status + "/}");
 
@@ -1692,6 +1726,7 @@ public class AllDBOperations {
                 connections.add(connection);
             }
         }
+        Collections.sort(connections, new ConnectionComparatorByUpdatedAt_Desc());
         return connections;
     }
 
