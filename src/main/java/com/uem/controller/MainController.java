@@ -1602,13 +1602,7 @@ public class MainController {
     @PutMapping("/update/user/{Email}")
     @ResponseBody
     public ResponseEntity<String> updateUserInfo(
-            @RequestParam(value = "Password", required = false) String Password,
-            @RequestParam(value = "Name", required = false) String Name,
-            @RequestParam(value = "Mobile", required = false) String Mobile,
-            @RequestParam(value = "Address", required = false) String Address,
-            @RequestParam(value = "DOB", required = false) String DOB,
-            @RequestParam(value = "info", required = false) String info,
-
+            @RequestBody String bodyB,
             @PathVariable("Email") String Email) throws Exception {
 
         try {
@@ -1619,14 +1613,7 @@ public class MainController {
                         .body("INVALID_EMAIL");
             }
 
-            JSONObject body = new JSONObject();
-
-            body = Password != null ? body.put("Password", Password) : body;
-            body = Name != null ? body.put("Name", Name) : body;
-            body = Mobile != null ? body.put("Mobile", Mobile) : body;
-            body = Address != null ? body.put("Address", Address) : body;
-            body = DOB != null ? body.put("DOB", DOB) : body;
-            body = info != null ? body.put("info", info) : body;
+            JSONObject body = new JSONObject(bodyB);
             body = Email != null ? body.put("Email", Email) : body;
 
             if (body.length() == 0) {
