@@ -951,20 +951,24 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
-            if (body.has("text")){
-                notification.setText(body.getString("text"));
+            JSONObject bodyUpdate = new JSONObject();
+            if (body.has("text") && !body.getString("text").equalsIgnoreCase("none")){
+                bodyUpdate.put("text", body.getString("text"));
             }
 
-            if (body.has("read")){
-                notification.setRead(body.getString("read"));
+            if (body.has("read") && !body.getString("read").equalsIgnoreCase("none")){
+                bodyUpdate.put("read", body.getString("read"));
             }
 
-            body = new JSONObject();
-            body.put("text", notification.getText());
-            body.put("read", notification.getRead());
+            if (bodyUpdate.length() == 0){
+                data.put("success", false);
+                data.put("response", "NOTHING_TO_UPDATE");
+                data.put("body", body);
+                return data;
+            }
 
             Map<String, JSONObject> map = new HashMap<>();
-            map.put(notification.getObjectID(), body);
+            map.put(notification.getObjectID(), bodyUpdate);
 
             Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Notifications");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
