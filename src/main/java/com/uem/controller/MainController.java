@@ -1583,8 +1583,8 @@ public class MainController {
             Boolean aBoolean = mainService.updateUser_Only_Photo(body);
             if (aBoolean) {
                 return ResponseEntity.ok()
-                        .header("key", "value")
-                        .body(Constants.SUCCESS);
+                        .header("message", Constants.SUCCESS)
+                        .body(new JSONObject().toString());
             } else {
                 return ResponseEntity.badRequest()
                         .header("key", "value")
@@ -1632,8 +1632,8 @@ public class MainController {
             Boolean aBoolean = mainService.updateUserInfo_Email(body);
             if (aBoolean) {
                 return ResponseEntity.ok()
-                        .header("key", "value")
-                        .body(Constants.SUCCESS);
+                        .header("message", Constants.SUCCESS)
+                        .body(new JSONObject().toString());
             } else {
                 return ResponseEntity.badRequest()
                         .header("key", "value")
