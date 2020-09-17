@@ -2071,24 +2071,23 @@ public class AllDBOperations {
         return messages;
     }
 
-    public static List<Message> getAllMessagesInUEM(String To, boolean read) {
+    public static List<Message> getAllMessagesInUEM(String To, String read) {
 
         List<Message> messages = new ArrayList<>();
         BsonDocument filter = BsonDocument
                 .parse("{ " +
                         "}");
 
-        if (read){
+        if (!read.equalsIgnoreCase("none")){
             filter = BsonDocument
                     .parse("{ " +
                             "To:{$regex:/" + To + "/}," +
-                            "read:{$regex:/" + "Yes" + "/}," +
+                            "read:{$regex:/" + read + "/}," +
                             "}");
         }else {
             filter = BsonDocument
                     .parse("{ " +
-                            "To:{$regex:/" + To + "/}," +
-                            "read:{$regex:/" + "No" + "/}," +
+                            "To:{$regex:/" + To + "/}" +
                             "}");
         }
 
@@ -2103,6 +2102,7 @@ public class AllDBOperations {
                 message.setTo(document.containsKey("To") ? document.getString("To") : null);
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
                 message.setRead(document.containsKey("read") ? document.getString("read") : null);
+                message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2115,20 +2115,39 @@ public class AllDBOperations {
         return messages;
     }
 
-    public static List<Message> getAllMessagesInUEM(String user1, String user2) {
+    public static List<Message> getAllMessagesInUEM(String user1, String user2, String read) {
 
         List<Message> messages = new ArrayList<>();
+
         BsonDocument filter = BsonDocument
                 .parse("{ " +
                         "From:{$regex:/" + user1 + "/}," +
                         "To:{$regex:/" + user2 + "/}" +
                         "}");
+        if (!read.equalsIgnoreCase("none")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "From:{$regex:/" + user1 + "/}," +
+                            "To:{$regex:/" + user2 + "/}," +
+                            "read:{$regex:/" + read + "/}" +
+                            "}");
+        }
+
         List<Document> documents = MongoDBUtil.getAllMessages(filter);
         filter = BsonDocument
                 .parse("{ " +
                         "From:{$regex:/" + user2 + "/}," +
                         "To:{$regex:/" + user1 + "/}" +
                         "}");
+        if (!read.equalsIgnoreCase("none")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "From:{$regex:/" + user2 + "/}," +
+                            "To:{$regex:/" + user1 + "/}," +
+                            "read:{$regex:/" + read + "/}" +
+                            "}");
+        }
+
         documents.addAll(MongoDBUtil.getAllMessages(filter));
         if (documents == null || documents.size() == 0) {
             return messages;
@@ -2139,6 +2158,7 @@ public class AllDBOperations {
                 message.setTo(document.containsKey("To") ? document.getString("To") : null);
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
                 message.setRead(document.containsKey("read") ? document.getString("read") : null);
+                message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);

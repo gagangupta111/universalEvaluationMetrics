@@ -8,6 +8,7 @@ public class Message {
     private String To;
     private String text;
     private String read;
+    private String MessageID;
 
     private String objectID;
     private Date _created_at;
@@ -40,17 +41,12 @@ public class Message {
         this._updated_at = _updated_at;
     }
 
-    @Override
-    public String toString() {
-        return "Message{" +
-                "From='" + From + '\'' +
-                ", To='" + To + '\'' +
-                ", text='" + text + '\'' +
-                ", read='" + read + '\'' +
-                ", objectID='" + objectID + '\'' +
-                ", _created_at=" + _created_at +
-                ", _updated_at=" + _updated_at +
-                '}';
+    public String getMessageID() {
+        return MessageID;
+    }
+
+    public void setMessageID(String messageID) {
+        MessageID = messageID;
     }
 
     public String getFrom() {
@@ -75,5 +71,19 @@ public class Message {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "From='" + From + '\'' +
+                ", To='" + To + '\'' +
+                ", text='" + text + '\'' +
+                ", read='" + read + '\'' +
+                ", MessageID='" + MessageID + '\'' +
+                ", objectID='" + objectID + '\'' +
+                ", _created_at=" + _created_at +
+                ", _updated_at=" + _updated_at +
+                '}';
     }
 }

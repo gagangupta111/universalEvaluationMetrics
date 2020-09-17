@@ -1245,11 +1245,13 @@ public class MainController {
         }
     }
 
-    @GetMapping("/all/messages/{User1}/{User2}")
+    @GetMapping("/all/messages/{User1}/{User2}/{read}")
     @ResponseBody
     public ResponseEntity<String> getAllMessages(
             @PathVariable("User1") String User1,
-            @PathVariable("User2") String User2) throws Exception {
+            @PathVariable("User2") String User2,
+            @PathVariable("read") String read
+            ) throws Exception {
 
         JSONObject jsonObject = new JSONObject();
         if (User1 != null && User2 != null
@@ -1257,7 +1259,35 @@ public class MainController {
                 && !User2.equalsIgnoreCase("")){
             jsonObject.put("User1", User1);
             jsonObject.put("User2", User2);
+            jsonObject.put("read", read);
         }
+
+        CustomResponse customResponse = mainService.getAllMessages(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/messages/{To}/{read}")
+    @ResponseBody
+    public ResponseEntity<String> getAllMessages_Read(
+            @PathVariable("To") String To,
+            @PathVariable("read") String read) throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        if (To != null && read != null
+                && !To.equalsIgnoreCase("")
+                && !read.equalsIgnoreCase("")){
+            jsonObject.put("To", To);
+            jsonObject.put("read", read);
+        }
+
         CustomResponse customResponse = mainService.getAllMessages(jsonObject);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
@@ -1299,32 +1329,6 @@ public class MainController {
             return ResponseEntity.badRequest()
                     .header("message", "Exception")
                     .body(UtilsManager.exceptionAsString(e));
-        }
-    }
-
-    @GetMapping("/messages/{To}/{read}")
-    @ResponseBody
-    public ResponseEntity<String> getAllMessages_Read(
-            @PathVariable("To") String To,
-            @PathVariable("read") String read) throws Exception {
-
-        JSONObject jsonObject = new JSONObject();
-        if (To != null && read != null
-                && !To.equalsIgnoreCase("")
-                && !read.equalsIgnoreCase("")){
-            jsonObject.put("To", To);
-            jsonObject.put("read", read);
-        }
-
-        CustomResponse customResponse = mainService.getAllMessages(jsonObject);
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
         }
     }
 

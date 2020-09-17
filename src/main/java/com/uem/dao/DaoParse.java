@@ -917,7 +917,9 @@ public class DaoParse implements DaoInterface {
 
                 List<Message> messages = AllDBOperations.getAllMessagesInUEM(
                         String.valueOf(body.get("User1")),
-                        String.valueOf(body.get("User2")));
+                        String.valueOf(body.get("User2")),
+                        String.valueOf(body.get("read"))
+                        );
                 Map<String, Object> map = new HashMap<>();
                 JSONArray jsonArray = new JSONArray();
                 for (Message message : messages){
@@ -931,16 +933,10 @@ public class DaoParse implements DaoInterface {
                 return customResponse;
             } else if (body.has("To")) {
 
-                boolean read = true;
-                if ("true".equals(body.getString("read"))){
-                    read = true;
-                }else {
-                    read = false;
-                }
-
                 List<Message> messages = AllDBOperations.getAllMessagesInUEM(
                         String.valueOf(body.get("To")),
-                        read);
+                        String.valueOf(body.get("read"))
+                );
                 Map<String, Object> map = new HashMap<>();
                 JSONArray jsonArray = new JSONArray();
                 for (Message message : messages){
