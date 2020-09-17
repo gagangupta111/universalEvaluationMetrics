@@ -1272,7 +1272,7 @@ public class MainController {
 
     @GetMapping("/all/messenger/{To}")
     @ResponseBody
-    public ResponseEntity<String> getAllMessagers_To(
+    public ResponseEntity<String> getAllMessengers_To(
             @PathVariable("To") String To) {
 
         try {

@@ -998,12 +998,17 @@ public class AllDBOperations {
         data.put("success", false);
         try {
 
+            JSONObject bodyUpdate = new JSONObject();
             if (body.has("read")){
-                message.setRead(body.getString("read"));
+                bodyUpdate.put("read", body.getString("read"));
             }
 
-            JSONObject bodyUpdate = new JSONObject();
-            bodyUpdate.put("read", message.getRead());
+            if (bodyUpdate.length() == 0){
+                data.put("success", false);
+                data.put("response", "NOTHING_TO_UPDATE");
+                data.put("body", body);
+                return data;
+            }
 
             Map<String, JSONObject> map = new HashMap<>();
             map.put(message.getObjectID(), bodyUpdate);

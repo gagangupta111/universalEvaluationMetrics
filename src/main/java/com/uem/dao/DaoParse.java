@@ -932,7 +932,7 @@ public class DaoParse implements DaoInterface {
             } else if (body.has("To")) {
 
                 boolean read = true;
-                if ("yes".equals(body.getString("read"))){
+                if ("true".equals(body.getString("read"))){
                     read = true;
                 }else {
                     read = false;
