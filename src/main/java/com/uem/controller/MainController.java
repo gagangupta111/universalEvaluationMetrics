@@ -1103,66 +1103,19 @@ public class MainController {
 
     // version 2 - LinkedIn App
     // all below api calls consider email as primary ID.
-    @GetMapping("/all/posts/{UserID}")
+    @GetMapping("/all/posts/{paramType}/{value}")
     @ResponseBody
-    public ResponseEntity<String> getAllPosts(@PathVariable("UserID") String UserID) throws Exception {
+    public ResponseEntity<String> getAllPosts(@PathVariable("paramType") String paramType, @PathVariable("value") String value) throws Exception {
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("UserID", UserID);
+
+        if (paramType.equalsIgnoreCase("UserID")){
+            jsonObject.put("UserID", value);
+        }else {
+            jsonObject.put("PostID", value);
+        }
 
         CustomResponse customResponse = mainService.getAllPosts(jsonObject);
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
-    @GetMapping("/all/postsByPostID/{PostID}")
-    @ResponseBody
-    public ResponseEntity<String> getAllPostsByPostID(@PathVariable("PostID") String PostID) throws Exception {
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("PostID", PostID);
-
-        CustomResponse customResponse = mainService.getAllPosts(jsonObject);
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
-    @GetMapping("/all/events")
-    @ResponseBody
-    public ResponseEntity<String> getAllEvents() throws Exception {
-
-        CustomResponse customResponse = mainService.getAllEvents();
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
-    @PostMapping("/events")
-    @ResponseBody
-    public ResponseEntity<String> createEvent(@RequestBody String body) throws Exception {
-
-        JSONObject jsonObject = new JSONObject(body.trim());
-        CustomResponse customResponse = mainService.createEvent(jsonObject);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
@@ -1214,6 +1167,39 @@ public class MainController {
 
         JSONObject jsonObject = new JSONObject(body.trim());
         CustomResponse customResponse = mainService.updatePost(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/all/events")
+    @ResponseBody
+    public ResponseEntity<String> getAllEvents() throws Exception {
+
+        CustomResponse customResponse = mainService.getAllEvents();
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/events")
+    @ResponseBody
+    public ResponseEntity<String> createEvent(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createEvent(jsonObject);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
