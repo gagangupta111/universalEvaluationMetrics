@@ -2167,7 +2167,7 @@ public class AllDBOperations {
                 messages.add(message);
             }
         }
-        Collections.sort(messages, new MessageComparatorByUpdatedAt());
+        Collections.sort(messages, new MessageComparatorByCreatedAt());
         return messages;
     }
 
