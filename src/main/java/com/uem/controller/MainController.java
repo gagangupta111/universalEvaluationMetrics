@@ -1122,6 +1122,25 @@ public class MainController {
         }
     }
 
+    @GetMapping("/all/postsByPostID/{PostID}")
+    @ResponseBody
+    public ResponseEntity<String> getAllPostsByPostID(@PathVariable("PostID") String PostID) throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("PostID", PostID);
+
+        CustomResponse customResponse = mainService.getAllPosts(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @GetMapping("/all/events")
     @ResponseBody
     public ResponseEntity<String> getAllEvents() throws Exception {
