@@ -768,6 +768,51 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateUser_By_Email_Only_Photo(JSONObject body) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            List<User> users = getAllUsers_Email(body.getString("Email"));
+            if (users == null || users.size() == 0) {
+                data.put("message", Constants.NO_INFO_FOUND);
+                return data;
+            }
+
+            JSONObject bodyUpdate = new JSONObject();
+            if (body.has("Photo")){
+                bodyUpdate.put("Photo", body.get("Photo"));
+            }
+
+            if (bodyUpdate.length() == 0){
+                data.put("success", false);
+                data.put("response", "NOTHING_TO_UPDATE");
+                return data;
+            }
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(users.get(0).getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "UniversalUser");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateUser_Email(JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
@@ -779,9 +824,35 @@ public class AllDBOperations {
                 data.put("message", Constants.NO_INFO_FOUND);
                 return data;
             }
-            body.remove("Email");
+
+            JSONObject bodyUpdate = new JSONObject();
+            if (body.has("Password") && !body.getString("Password").equalsIgnoreCase("none")){
+                bodyUpdate.put("Password", body.getString("Password"));
+            }
+            if (body.has("Name") && !body.getString("Name").equalsIgnoreCase("none")){
+                bodyUpdate.put("Name", body.getString("Name"));
+            }
+            if (body.has("Mobile") && !body.getString("Mobile").equalsIgnoreCase("none")){
+                bodyUpdate.put("Mobile", body.getString("Mobile"));
+            }
+            if (body.has("Address") && !body.getString("Address").equalsIgnoreCase("none")){
+                bodyUpdate.put("Address", body.getString("Address"));
+            }
+            if (body.has("DOB") && !body.getString("DOB").equalsIgnoreCase("none")){
+                bodyUpdate.put("DOB", body.getString("DOB"));
+            }
+            if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
+                bodyUpdate.put("info", body.getString("info"));
+            }
+
+            if (bodyUpdate.length() == 0){
+                data.put("success", false);
+                data.put("response", "NOTHING_TO_UPDATE");
+                return data;
+            }
+
             Map<String, JSONObject> map = new HashMap<>();
-            map.put(users.get(0).getObjectID(), body);
+            map.put(users.get(0).getObjectID(), bodyUpdate);
 
             Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "UniversalUser");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));

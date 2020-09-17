@@ -128,6 +128,10 @@ public class MainService {
         return dao.updateUserInfo(body);
     }
 
+    public Boolean updateUser_Only_Photo(JSONObject body) {
+        return dao.updateUser_Only_Photo(body);
+    }
+
     public Boolean updateUserInfo_Email(JSONObject body) {
         return dao.updateUserInfo_Email(body);
     }

@@ -290,6 +290,23 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public Boolean updateUser_Only_Photo(JSONObject body) {
+
+        try {
+
+            Map<String, Object> map = AllDBOperations.updateUser_By_Email_Only_Photo(body);
+            if (Boolean.valueOf(String.valueOf(map.get("success")))) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return false;
+        }
+    }
+
+    @Override
     public Boolean updateUserInfo_Email(JSONObject body) {
 
         try {
@@ -972,6 +989,13 @@ public class DaoParse implements DaoInterface {
 
         try {
             if (body.has("From") && body.has("To") && body.has("status")) {
+
+                if (body.getString("From").equalsIgnoreCase(body.getString("To"))){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INVALID_CRITERIA);
+                    return customResponse;
+                }
 
                 JSONObject searchBody = new JSONObject();
                 searchBody.put("From", body.getString("From"));
