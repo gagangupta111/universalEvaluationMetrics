@@ -829,7 +829,7 @@ public class UtilsManager {
             object = message.get_created_at() != null ? object.put("_created_at", message.get_created_at()) : object;
             object = message.get_updated_at() != null ? object.put("_updated_at", message.get_updated_at()) : object;
 
-            List<String> readBy = message.getReadBy();
+            List<String> readBy = message.getReadBy() != null ? message.getReadBy() : new ArrayList<>();
             JSONArray array = new JSONArray();
             for (String document : readBy) {
                 array.put((document));
