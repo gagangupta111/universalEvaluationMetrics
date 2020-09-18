@@ -21,6 +21,7 @@ public interface DaoInterface {
     public CustomResponse getUserInfo(String UserID);
     public CustomResponse getAllUserInfo();
     public CustomResponse getUserInfo_Email(String email);
+    public CustomResponse getAllUsers_By_Key(String key);
 
     public CustomResponse geAdminInfo(String AdminID);
     public CustomResponse geCourseAdminInfo(String AdminID);

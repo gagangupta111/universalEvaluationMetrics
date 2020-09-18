@@ -2085,20 +2085,24 @@ public class AllDBOperations {
     public static List<User> getAllMessengersInUEM(String UserID) {
 
         Set<User> users = new LinkedHashSet<>();
-        Set<String> messengers = new HashSet<>();
+        Set<String> messengers = new LinkedHashSet<>();
+        List<Message> allMessages = new ArrayList<>();
 
-        BsonDocument filter = BsonDocument
-                .parse("{ " +
-                        "To:{$regex:/" + UserID + "/}," +
-                        "}");
+        allMessages = getAllMessagesInUEM_From(UserID, "none");
+        allMessages.addAll(getAllMessagesInUEM_To(UserID, "none"));
 
-        List<Document> documents = MongoDBUtil.getAllMessages(filter);
-
-        if (documents == null || documents.size() == 0) {
+        if (allMessages.size() == 0) {
             return new ArrayList<>();
         } else {
-            for (Document document : documents) {
-                messengers.add(document.getString("From"));
+
+            Collections.sort(allMessages, new MessageComparatorByUpdatedAt());
+            for (Message message : allMessages) {
+                if (!UserID.equalsIgnoreCase(message.getFrom())){
+                    messengers.add(message.getFrom());
+                }
+                if (!UserID.equalsIgnoreCase(message.getTo())){
+                    messengers.add(message.getTo());
+                }
             }
 
             for (String email : messengers){
@@ -2107,7 +2111,6 @@ public class AllDBOperations {
 
         }
         List<User> finalUsers = new ArrayList<>(users);
-        Collections.sort(finalUsers, new UsersComparatorByUpdatedAt());
         return finalUsers;
     }
 
@@ -2139,6 +2142,92 @@ public class AllDBOperations {
             }
         }
         Collections.sort(messages, new MessageComparatorByUpdatedAt());
+        return messages;
+    }
+
+    public static List<Message> getAllMessagesInUEM_From(String From, String read) {
+
+        List<Message> messages = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "}");
+
+        if (!read.equalsIgnoreCase("none")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "From:{$regex:/" + From + "/}," +
+                            "read:{$regex:/" + read + "/}," +
+                            "}");
+        }else {
+            filter = BsonDocument
+                    .parse("{ " +
+                            "From:{$regex:/" + From + "/}" +
+                            "}");
+        }
+
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+
+        if (documents == null || documents.size() == 0) {
+            return messages;
+        } else {
+            for (Document document : documents) {
+                Message message= new Message();
+                message.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                message.setTo(document.containsKey("To") ? document.getString("To") : null);
+                message.setText(document.containsKey("text") ? document.getString("text") : null);
+                message.setRead(document.containsKey("read") ? document.getString("read") : null);
+                message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
+
+                message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                message.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                messages.add(message);
+            }
+        }
+        return messages;
+    }
+
+    public static List<Message> getAllMessagesInUEM_To(String To, String read) {
+
+        List<Message> messages = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "}");
+
+        if (!read.equalsIgnoreCase("none")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "To:{$regex:/" + To + "/}," +
+                            "read:{$regex:/" + read + "/}," +
+                            "}");
+        }else {
+            filter = BsonDocument
+                    .parse("{ " +
+                            "To:{$regex:/" + To + "/}" +
+                            "}");
+        }
+
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+
+        if (documents == null || documents.size() == 0) {
+            return messages;
+        } else {
+            for (Document document : documents) {
+                Message message= new Message();
+                message.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                message.setTo(document.containsKey("To") ? document.getString("To") : null);
+                message.setText(document.containsKey("text") ? document.getString("text") : null);
+                message.setRead(document.containsKey("read") ? document.getString("read") : null);
+                message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
+
+                message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                message.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                messages.add(message);
+            }
+        }
         return messages;
     }
 
@@ -2627,6 +2716,73 @@ public class AllDBOperations {
             }
         }
         return users;
+    }
+
+    public static List<User> getAllUsers_By_Key(String key) {
+
+        Set<User> users = new HashSet<>();
+
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "Email:{$regex:/" + key + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversalUsers(filter);
+
+        filter = BsonDocument
+                .parse("{ " +
+                        "Name:{$regex:/" + key + "/}" +
+                        "}");
+        documents.addAll(MongoDBUtil.getAllUniversalUsers(filter));
+
+        filter = BsonDocument
+                .parse("{ " +
+                        "Mobile:{$regex:/" + key + "/}" +
+                        "}");
+        documents.addAll(MongoDBUtil.getAllUniversalUsers(filter));
+
+        filter = BsonDocument
+                .parse("{ " +
+                        "Address:{$regex:/" + key + "/}" +
+                        "}");
+        documents.addAll(MongoDBUtil.getAllUniversalUsers(filter));
+
+        filter = BsonDocument
+                .parse("{ " +
+                        "DOB:{$regex:/" + key + "/}" +
+                        "}");
+        documents.addAll(MongoDBUtil.getAllUniversalUsers(filter));
+
+        if (documents == null || documents.size() == 0) {
+            return new ArrayList<>(users);
+        } else {
+            for (Document document : documents) {
+                try {
+                    User user = new User();
+                    user.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                    user.setDOB(document.containsKey("DOB") ? document.getString("DOB") : null);
+                    user.setAddress(document.containsKey("Address") ? document.getString("Address") : null);
+
+                    user.setPhoto((
+                            document.containsKey("Photo")
+                                    ? document.get("Photo", Document.class)
+                                    : new Document()));
+                    user.setMobile(document.containsKey("Mobile") ? document.getString("Mobile") : null);
+
+                    user.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                    user.setPassword(document.containsKey("Password") ? document.getString("Password") : null);
+                    user.setEmail(document.containsKey("Email") ? document.getString("Email") : null);
+                    user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+
+                    user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                    user.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                    users.add(user);
+                } catch (Exception e) {
+                    logger.debug(UtilsManager.exceptionAsString(e));
+                }
+            }
+        }
+        return new ArrayList<>(users);
     }
 
     public static List<User> getAllUsers_Email(String email) {

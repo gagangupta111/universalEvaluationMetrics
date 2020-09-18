@@ -1474,6 +1474,23 @@ public class MainController {
         }
     }
 
+    @GetMapping("/all/search/users/{key}")
+    @ResponseBody
+    public ResponseEntity<String> getUserInfo_By_Anything(@PathVariable("key") String key) {
+
+        CustomResponse customResponse = mainService.getAllUsers_By_Key(key);
+
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @GetMapping("/all/users/{email}")
     @ResponseBody
     public ResponseEntity<String> getUserInfo_Email(@PathVariable("email") String email) {

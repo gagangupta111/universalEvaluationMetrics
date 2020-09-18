@@ -148,6 +148,10 @@ public class MainService {
         return dao.getUserInfo_Email(UserID);
     }
 
+    public CustomResponse getAllUsers_By_Key(String key) {
+        return dao.getAllUsers_By_Key(key);
+    }
+
     public CustomResponse createCourse(JSONObject body) {
         return dao.createCourse(body);
     }
