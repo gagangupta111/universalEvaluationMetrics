@@ -136,6 +136,10 @@ public class MainService {
         return dao.updateUserInfo_Email(body);
     }
 
+    public CustomResponse getAllUserInfo() {
+        return dao.getAllUserInfo();
+    }
+
     public CustomResponse getUserInfo(String UserID) {
         return dao.getUserInfo(UserID);
     }

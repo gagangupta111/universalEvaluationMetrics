@@ -206,6 +206,22 @@ public class MainController {
         }
     }
 
+    @GetMapping("/all/user")
+    @ResponseBody
+    public ResponseEntity<String> getAllUsersInfo() {
+
+        CustomResponse customResponse = mainService.getAllUserInfo();
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @GetMapping("/user/{userID}")
     @ResponseBody
     public ResponseEntity<String> getUserInfo(@PathVariable("userID") String userID) {

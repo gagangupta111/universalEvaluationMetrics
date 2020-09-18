@@ -2589,6 +2589,46 @@ public class AllDBOperations {
         return teachers;
     }
 
+    public static List<User> getAllUsers() {
+
+        List<User> users = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " + "}");
+        List<Document> documents = MongoDBUtil.getAllUniversalUsers(filter);
+
+        if (documents == null || documents.size() == 0) {
+            return users;
+        } else {
+            for (Document document : documents) {
+                try {
+                    User user = new User();
+                    user.setUserID(document.containsKey("UserID") ? document.getString("UserID") : null);
+                    user.setDOB(document.containsKey("DOB") ? document.getString("DOB") : null);
+                    user.setAddress(document.containsKey("Address") ? document.getString("Address") : null);
+
+                    user.setPhoto((
+                            document.containsKey("Photo")
+                                    ? document.get("Photo", Document.class)
+                                    : new Document()));
+                    user.setMobile(document.containsKey("Mobile") ? document.getString("Mobile") : null);
+
+                    user.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                    user.setPassword(document.containsKey("Password") ? document.getString("Password") : null);
+                    user.setEmail(document.containsKey("Email") ? document.getString("Email") : null);
+                    user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+
+                    user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                    user.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                    users.add(user);
+                } catch (Exception e) {
+                    logger.debug(UtilsManager.exceptionAsString(e));
+                }
+            }
+        }
+        return users;
+    }
+
     public static List<User> getAllUsers_Email(String email) {
 
         List<User> users = new ArrayList<>();
