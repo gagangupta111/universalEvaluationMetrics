@@ -970,7 +970,26 @@ public class DaoParse implements DaoInterface {
     public CustomResponse getAllMessages(JSONObject body) {
 
         try {
-            if (body.has("User1") && body.has("User2")) {
+            if (body.has("readByUser")) {
+
+                List<Message> messages = AllDBOperations.getAllMessagesInUEM(
+                        String.valueOf(body.get("User1")),
+                        String.valueOf(body.get("User2")),
+                        String.valueOf(body.get("read")),
+                        String.valueOf(body.get("readByUser"))
+                        );
+                Map<String, Object> map = new HashMap<>();
+                JSONArray jsonArray = new JSONArray();
+                for (Message message : messages){
+                    jsonArray.put(UtilsManager.messageToJson(message));
+                }
+                map.put("Messages", jsonArray);
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(true);
+                customResponse.setMessage(Constants.SUCCESS);
+                customResponse.setInfo(map);
+                return customResponse;
+            }else if (body.has("User1") && body.has("User2")) {
 
                 List<Message> messages = AllDBOperations.getAllMessagesInUEM(
                         String.valueOf(body.get("User1")),

@@ -2289,6 +2289,65 @@ public class AllDBOperations {
         return messages;
     }
 
+    // this function is almost similiar to below function without readBy in argument function, this function will retun all messages between user1 and user2
+    // keeping read as filter , but will return the read value as true if teh message is read by user
+    public static List<Message> getAllMessagesInUEM(String user1, String user2, String read, String readBy) {
+
+        List<Message> messages = new ArrayList<>();
+
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "From:{$regex:/" + user1 + "/}," +
+                        "To:{$regex:/" + user2 + "/}" +
+                        "}");
+        if (!read.equalsIgnoreCase("none")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "From:{$regex:/" + user1 + "/}," +
+                            "To:{$regex:/" + user2 + "/}," +
+                            "read:{$regex:/" + read + "/}" +
+                            "}");
+        }
+
+        List<Document> documents = MongoDBUtil.getAllMessages(filter);
+        filter = BsonDocument
+                .parse("{ " +
+                        "From:{$regex:/" + user2 + "/}," +
+                        "To:{$regex:/" + user1 + "/}" +
+                        "}");
+        if (!read.equalsIgnoreCase("none")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "From:{$regex:/" + user2 + "/}," +
+                            "To:{$regex:/" + user1 + "/}," +
+                            "read:{$regex:/" + read + "/}" +
+                            "}");
+        }
+
+        documents.addAll(MongoDBUtil.getAllMessages(filter));
+        if (documents == null || documents.size() == 0) {
+            return messages;
+        } else {
+            for (Document document : documents) {
+                Message message= new Message();
+                message.setFrom(document.containsKey("From") ? document.getString("From") : null);
+                message.setTo(document.containsKey("To") ? document.getString("To") : null);
+                message.setText(document.containsKey("text") ? document.getString("text") : null);
+                message.setRead(document.containsKey("readBy") && document.getList("readBy", String.class).toString().contains(readBy)? "true" : "false");
+                message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
+                message.setReadBy(document.containsKey("readBy") ? document.getList("readBy", String.class) : null);
+
+                message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
+                message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
+                message.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
+
+                messages.add(message);
+            }
+        }
+        Collections.sort(messages, new MessageComparatorByCreatedAt());
+        return messages;
+    }
+
     public static List<Message> getAllMessagesInUEM(String user1, String user2, String read) {
 
         List<Message> messages = new ArrayList<>();
