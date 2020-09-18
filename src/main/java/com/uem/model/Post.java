@@ -1,6 +1,9 @@
 package com.uem.model;
 
+import org.bson.Document;
+
 import java.util.Date;
+import java.util.List;
 
 public class Post {
 
@@ -9,10 +12,28 @@ public class Post {
     private String likes;
     private String shares;
     private String PostID;
+    private List<Document> likesBy;
+    private List<Document> sharesBy;
 
     private String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public List<Document> getLikesBy() {
+        return likesBy;
+    }
+
+    public void setLikesBy(List<Document> likesBy) {
+        this.likesBy = likesBy;
+    }
+
+    public List<Document> getSharesBy() {
+        return sharesBy;
+    }
+
+    public void setSharesBy(List<Document> sharesBy) {
+        this.sharesBy = sharesBy;
+    }
 
     public String getObjectID() {
         return objectID;

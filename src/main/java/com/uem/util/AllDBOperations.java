@@ -1074,6 +1074,15 @@ public class AllDBOperations {
                 bodyUpdate.put("read", body.getString("read"));
             }
 
+            if (body.has("readBy")){
+                if (message.getReadBy() == null || !message.getReadBy().toString().contains(body.getString("readBy"))){
+                    JSONObject tempBody = UtilsManager.messageToJson(message);
+                    JSONArray readBy = tempBody.has("readBy") ? tempBody.getJSONArray("readBy") : new JSONArray();
+                    readBy.put(body.getString("readBy"));
+                    bodyUpdate.put("readBy", readBy);
+                }
+            }
+
             if (bodyUpdate.length() == 0){
                 data.put("success", false);
                 data.put("response", "NOTHING_TO_UPDATE");
@@ -2070,6 +2079,7 @@ public class AllDBOperations {
                 message.setFrom(document.containsKey("From") ? document.getString("From") : null);
                 message.setTo(document.containsKey("To") ? document.getString("To") : null);
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
+                message.setReadBy(document.containsKey("readBy") ? document.getList("readBy", String.class) : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2133,6 +2143,7 @@ public class AllDBOperations {
                 message.setTo(document.containsKey("To") ? document.getString("To") : null);
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
                 message.setRead(document.containsKey("read") ? document.getString("read") : null);
+                message.setReadBy(document.containsKey("readBy") ? document.getList("readBy", String.class) : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2177,6 +2188,7 @@ public class AllDBOperations {
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
                 message.setRead(document.containsKey("read") ? document.getString("read") : null);
                 message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
+                message.setReadBy(document.containsKey("readBy") ? document.getList("readBy", String.class) : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2220,6 +2232,7 @@ public class AllDBOperations {
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
                 message.setRead(document.containsKey("read") ? document.getString("read") : null);
                 message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
+                message.setReadBy(document.containsKey("readBy") ? document.getList("readBy", String.class) : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2263,6 +2276,7 @@ public class AllDBOperations {
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
                 message.setRead(document.containsKey("read") ? document.getString("read") : null);
                 message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
+                message.setReadBy(document.containsKey("readBy") ? document.getList("readBy", String.class) : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2319,6 +2333,7 @@ public class AllDBOperations {
                 message.setText(document.containsKey("text") ? document.getString("text") : null);
                 message.setRead(document.containsKey("read") ? document.getString("read") : null);
                 message.setMessageID(document.containsKey("MessageID") ? document.getString("MessageID") : null);
+                message.setReadBy(document.containsKey("readBy") ? document.getList("readBy", String.class) : null);
 
                 message.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 message.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);

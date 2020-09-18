@@ -829,6 +829,13 @@ public class UtilsManager {
             object = message.get_created_at() != null ? object.put("_created_at", message.get_created_at()) : object;
             object = message.get_updated_at() != null ? object.put("_updated_at", message.get_updated_at()) : object;
 
+            List<String> readBy = message.getReadBy();
+            JSONArray array = new JSONArray();
+            for (String document : readBy) {
+                array.put((document));
+            }
+            object = array.length() > 0 ? object.put("readBy", array) : object;
+
             object = message.getFrom() != null ? object.put("From", message.getFrom()) : object;
             object = message.getText() != null ? object.put("text", message.getText()) : object;
             object = message.getTo() != null ? object.put("To", message.getTo()) : object;
@@ -851,6 +858,13 @@ public class UtilsManager {
             message.setTo(jsonObject.has("To") ? jsonObject.getString("To") : null);
             message.setRead(jsonObject.has("read") ? jsonObject.getString("read") : null);
             message.setMessageID(jsonObject.has("MessageID") ? jsonObject.getString("MessageID") : null);
+
+            List<String> readBy = new ArrayList<>();
+            JSONArray array = jsonObject.has("readBy") ? jsonObject.getJSONArray("readBy") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                readBy.add((String.valueOf(array.get(i))));
+            }
+            message.setReadBy(readBy);
 
             message.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             message.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);

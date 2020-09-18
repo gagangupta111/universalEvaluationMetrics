@@ -1,6 +1,7 @@
 package com.uem.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Message {
 
@@ -9,10 +10,19 @@ public class Message {
     private String text;
     private String read;
     private String MessageID;
+    private List<String> readBy;
 
     private String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public List<String> getReadBy() {
+        return readBy;
+    }
+
+    public void setReadBy(List<String> readBy) {
+        this.readBy = readBy;
+    }
 
     public String getRead() {
         return read;

@@ -27,7 +27,6 @@ public class MainController {
     @Autowired
     private MainService mainService;
 
-    // version 1
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public ResponseEntity<String> test() {
 
@@ -36,6 +35,41 @@ public class MainController {
                 .header("key", "value")
                 .body(mainService.test());
 
+    }
+
+    @RequestMapping(value = "/test/string", method = RequestMethod.GET)
+    public ResponseEntity<String> testStringArray() {
+
+        JSONArray array = new JSONArray();
+        array.put("one");
+        array.put("two");
+
+        logger.debug("REQUEST_RECIEVED-testStringArray");
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(array.toString());
+    }
+
+    @RequestMapping(value = "/test/json/{id}", method = RequestMethod.GET)
+    public ResponseEntity<String> testJson(@PathVariable("id") String id) {
+
+        try {
+
+            System.out.println("ID Value:" + id);
+
+            JSONObject object = new JSONObject();
+            object.put("key","value");
+            logger.debug("REQUEST_RECIEVED-MainController");
+            return ResponseEntity.ok()
+                    .header("key", "value")
+                    .body(object.toString());
+        }catch (Exception e){
+            JSONObject object = new JSONObject();
+            logger.debug("REQUEST_RECIEVED-MainController");
+            return ResponseEntity.badRequest()
+                    .header("key", "value")
+                    .body(mainService.test());
+        }
     }
 
     @RequestMapping(value = "/deleteAll/{secretNumber}", method = RequestMethod.GET)
@@ -63,28 +97,6 @@ public class MainController {
             return ResponseEntity.badRequest()
                     .header("key", "value")
                     .body("Not Matching secretNumber");
-        }
-    }
-
-    @RequestMapping(value = "/test/json/{id}", method = RequestMethod.GET)
-    public ResponseEntity<String> testJson(@PathVariable("id") String id) {
-
-        try {
-
-            System.out.println("ID Value:" + id);
-
-            JSONObject object = new JSONObject();
-            object.put("key","value");
-            logger.debug("REQUEST_RECIEVED-MainController");
-            return ResponseEntity.ok()
-                    .header("key", "value")
-                    .body(object.toString());
-        }catch (Exception e){
-            JSONObject object = new JSONObject();
-            logger.debug("REQUEST_RECIEVED-MainController");
-            return ResponseEntity.badRequest()
-                    .header("key", "value")
-                    .body(mainService.test());
         }
     }
 
