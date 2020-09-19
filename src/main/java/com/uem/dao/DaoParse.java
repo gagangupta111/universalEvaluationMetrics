@@ -497,7 +497,7 @@ public class DaoParse implements DaoInterface {
 
             if (body.getString("action").equalsIgnoreCase("likesBy")){
 
-                if (posts.get(0).getLikesBy().toString().contains(body.getString("UserID"))){
+                if (posts.get(0).getLikesBy() != null && posts.get(0).getLikesBy().toString().contains(body.getString("UserID"))){
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(true);
                     Map<String, Object> json = new HashMap<>();
@@ -515,7 +515,7 @@ public class DaoParse implements DaoInterface {
 
             }else if (body.getString("action").equalsIgnoreCase("sharesBy")){
 
-                if (posts.get(0).getSharesBy().toString().contains(body.getString("UserID"))){
+                if (posts.get(0).getSharesBy() != null && posts.get(0).getSharesBy().toString().contains(body.getString("UserID"))){
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(true);
                     Map<String, Object> json = new HashMap<>();
