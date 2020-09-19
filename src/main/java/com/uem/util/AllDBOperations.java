@@ -1139,6 +1139,24 @@ public class AllDBOperations {
                 bodyUpdate.put("shares", "" + 1);
             }
 
+            if (body.has("likesBy")){
+                if (post.getLikesBy() == null || !post.getLikesBy().toString().contains(body.getString("likesBy"))){
+                    JSONObject tempBody = UtilsManager.postToJson(post);
+                    JSONArray likesBy = tempBody.has("likesBy") ? tempBody.getJSONArray("likesBy") : new JSONArray();
+                    likesBy.put(body.getString("likesBy"));
+                    bodyUpdate.put("likesBy", likesBy);
+                }
+            }
+
+            if (body.has("sharesBy")){
+                if (post.getSharesBy() == null || !post.getSharesBy().toString().contains(body.getString("sharesBy"))){
+                    JSONObject tempBody = UtilsManager.postToJson(post);
+                    JSONArray sharesBy = tempBody.has("sharesBy") ? tempBody.getJSONArray("sharesBy") : new JSONArray();
+                    sharesBy.put(body.getString("sharesBy"));
+                    bodyUpdate.put("sharesBy", sharesBy);
+                }
+            }
+
             Map<String, JSONObject> map = new HashMap<>();
             map.put(post.getObjectID(), bodyUpdate);
 
@@ -1963,6 +1981,9 @@ public class AllDBOperations {
                 post.setLikes(document.containsKey("likes") ? document.getString("likes") : null);
                 post.setShares(document.containsKey("shares") ? document.getString("shares") : null);
                 post.setPostID(document.containsKey("PostID") ? document.getString("PostID") : null);
+
+                post.setLikesBy(document.containsKey("likesBy") ? document.getList("likesBy", String.class) : null);
+                post.setSharesBy(document.containsKey("sharesBy") ? document.getList("sharesBy", String.class) : null);
 
                 posts.add(post);
             }

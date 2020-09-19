@@ -658,6 +658,20 @@ public class UtilsManager {
             object = post.getUserID() != null ? object.put("UserID", post.getUserID()) : object;
             object = post.getPostID() != null ? object.put("PostID", post.getPostID()) : object;
 
+            List<String> likesBy = post.getLikesBy() != null ? post.getLikesBy() : new ArrayList<>();
+            JSONArray array = new JSONArray();
+            for (String document : likesBy) {
+                array.put((document));
+            }
+            object = array.length() > 0 ? object.put("likesBy", array) : object;
+
+            List<String> sharesBy = post.getSharesBy() != null ? post.getSharesBy() : new ArrayList<>();
+            array = new JSONArray();
+            for (String document : sharesBy) {
+                array.put((document));
+            }
+            object = array.length() > 0 ? object.put("sharesBy", array) : object;
+
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
@@ -885,6 +899,20 @@ public class UtilsManager {
             post.setText(jsonObject.has("text") ? jsonObject.getString("text") : null);
             post.setLikes(jsonObject.has("likes") ? jsonObject.getString("likes") : null);
             post.setShares(jsonObject.has("shares") ? jsonObject.getString("shares") : null);
+
+            List<String> likesBy = new ArrayList<>();
+            JSONArray array = jsonObject.has("likesBy") ? jsonObject.getJSONArray("likesBy") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                likesBy.add((String.valueOf(array.get(i))));
+            }
+            post.setLikesBy(likesBy);
+
+            List<String> sharesBy = new ArrayList<>();
+            array = jsonObject.has("sharesBy") ? jsonObject.getJSONArray("sharesBy") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                sharesBy.add((String.valueOf(array.get(i))));
+            }
+            post.setSharesBy(sharesBy);
 
             post.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
             post.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);

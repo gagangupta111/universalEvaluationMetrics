@@ -12,26 +12,26 @@ public class Post {
     private String likes;
     private String shares;
     private String PostID;
-    private List<Document> likesBy;
-    private List<Document> sharesBy;
+    private List<String> likesBy;
+    private List<String> sharesBy;
 
     private String objectID;
     private Date _created_at;
     private Date _updated_at;
 
-    public List<Document> getLikesBy() {
+    public List<String> getLikesBy() {
         return likesBy;
     }
 
-    public void setLikesBy(List<Document> likesBy) {
+    public void setLikesBy(List<String> likesBy) {
         this.likesBy = likesBy;
     }
 
-    public List<Document> getSharesBy() {
+    public List<String> getSharesBy() {
         return sharesBy;
     }
 
-    public void setSharesBy(List<Document> sharesBy) {
+    public void setSharesBy(List<String> sharesBy) {
         this.sharesBy = sharesBy;
     }
 
