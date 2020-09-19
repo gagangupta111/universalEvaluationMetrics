@@ -33,6 +33,7 @@ public interface DaoInterface {
     public CustomResponse getAllCourses();
     public CustomResponse getAllCourses(JSONObject body);
     public CustomResponse getAllPosts(JSONObject body);
+    public CustomResponse isPostToggledByUser(JSONObject body);
 
     public CustomResponse createCourse(JSONObject body);
     public CustomResponse getUniversity(String UnivID);

@@ -164,6 +164,10 @@ public class MainService {
         return dao.getAllPosts(body);
     }
 
+    public CustomResponse isPostToggledByUser(JSONObject body) {
+        return dao.isPostToggledByUser(body);
+    }
+
     public CustomResponse getAllMessengers(JSONObject body) {
         return dao.getAllMessengers(body);
     }

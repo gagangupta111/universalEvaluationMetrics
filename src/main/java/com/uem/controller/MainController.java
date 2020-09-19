@@ -1130,7 +1130,7 @@ public class MainController {
     }
 
     // version 2 - LinkedIn App
-    // all below api calls consider email as primary ID.
+    // all below api calls consider email as primary key.
     @GetMapping("/all/posts/{paramType}/{value}")
     @ResponseBody
     public ResponseEntity<String> getAllPosts(@PathVariable("paramType") String paramType, @PathVariable("value") String value) throws Exception {
@@ -1144,6 +1144,29 @@ public class MainController {
         }
 
         CustomResponse customResponse = mainService.getAllPosts(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    // this api call tell if a post is liked or shared by a user already or not
+    @GetMapping("/all/postsActionBy/{PostID}/{action}/{UserID}")
+    @ResponseBody
+    public ResponseEntity<String> isPostToggledByUser(@PathVariable("PostID") String PostID, @PathVariable("action") String action, @PathVariable("UserID") String UserID) throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("PostID", PostID);
+        jsonObject.put("action", action);
+        jsonObject.put("UserID", UserID);
+
+        CustomResponse customResponse = mainService.isPostToggledByUser(jsonObject);
+
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())

@@ -1,5 +1,6 @@
 package com.uem.dao;
 
+import com.google.api.services.bigquery.model.JsonObject;
 import com.uem.util.AllDBOperations;
 import com.uem.model.*;
 import com.uem.util.Constants;
@@ -485,7 +486,69 @@ public class DaoParse implements DaoInterface {
         return customResponse;
     }
 
-    // getAllCourses
+    // isPostToggledByUser
+    @Override
+    public CustomResponse isPostToggledByUser(JSONObject body) {
+
+        try {
+            JSONObject search = new JSONObject();
+            search.put("PostID", body.getString("PostID"));
+            List<Post> posts = AllDBOperations.getAllPostsInUEM(search);
+
+            if (body.getString("action").equalsIgnoreCase("likesBy")){
+
+                if (posts.get(0).getLikesBy().toString().contains(body.getString("UserID"))){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    Map<String, Object> json = new HashMap<>();
+                    json.put("toggled", "true");
+                    customResponse.setInfo(json);
+                    return customResponse;
+                }else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    Map<String, Object> json = new HashMap<>();
+                    json.put("toggled", "false");
+                    customResponse.setInfo(json);
+                    return customResponse;
+                }
+
+            }else if (body.getString("action").equalsIgnoreCase("sharesBy")){
+
+                if (posts.get(0).getSharesBy().toString().contains(body.getString("UserID"))){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    Map<String, Object> json = new HashMap<>();
+                    json.put("toggled", "true");
+                    customResponse.setInfo(json);
+                    return customResponse;
+                }else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    Map<String, Object> json = new HashMap<>();
+                    json.put("toggled", "false");
+                    customResponse.setInfo(json);
+                    return customResponse;
+                }
+            }else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.INVALID_CRITERIA);
+                return customResponse;
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
     @Override
     public CustomResponse getAllPosts(JSONObject body) {
 
