@@ -1139,7 +1139,7 @@ public class AllDBOperations {
                 bodyUpdate.put("shares", "" + 1);
             }
 
-            if (body.has("likesBy")){
+            if (body.has("likesBy") && !body.getString("likesBy").equalsIgnoreCase("none")){
                 if (post.getLikesBy() == null || !post.getLikesBy().toString().contains(body.getString("likesBy"))){
                     JSONObject tempBody = UtilsManager.postToJson(post);
                     JSONArray likesBy = tempBody.has("likesBy") ? tempBody.getJSONArray("likesBy") : new JSONArray();
@@ -1148,7 +1148,7 @@ public class AllDBOperations {
                 }
             }
 
-            if (body.has("sharesBy")){
+            if (body.has("sharesBy") && !body.getString("sharesBy").equalsIgnoreCase("none")){
                 if (post.getSharesBy() == null || !post.getSharesBy().toString().contains(body.getString("sharesBy"))){
                     JSONObject tempBody = UtilsManager.postToJson(post);
                     JSONArray sharesBy = tempBody.has("sharesBy") ? tempBody.getJSONArray("sharesBy") : new JSONArray();
