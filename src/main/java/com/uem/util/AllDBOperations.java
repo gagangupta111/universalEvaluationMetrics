@@ -1746,9 +1746,12 @@ public class AllDBOperations {
         return notifications;
     }
 
+    // todo : return all users which are accepted status as connection with the User .
+    // filtered by email if present
     public static List<Connection> searchAllConnectionsInUEM(JSONObject body) {
 
         List<Connection> connections = new ArrayList<>();
+        Set<String> users = new LinkedHashSet<>();
 
         String User = "";
         try {
