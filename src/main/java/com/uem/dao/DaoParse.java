@@ -908,14 +908,14 @@ public class DaoParse implements DaoInterface {
     public CustomResponse searchAllConnection(JSONObject body) {
 
         try {
-            List<Connection> connections = AllDBOperations.searchAllConnectionsInUEM(body);
+            List<User> users = AllDBOperations.searchAllConnectionsInUEM(body);
             Map<String, Object> map = new HashMap<>();
             JSONArray jsonArray = new JSONArray();
-            for (Connection connection : connections){
-                jsonArray.put(UtilsManager.connectionToJson(connection));
+            for (User user : users){
+                jsonArray.put(UtilsManager.userToJson(user));
             }
 
-            map.put("Connections", jsonArray);
+            map.put("Users", jsonArray);
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(true);
             customResponse.setMessage(Constants.SUCCESS);

@@ -1747,12 +1747,14 @@ public class AllDBOperations {
     }
 
     // todo : return all users which are accepted status as connection with the User .
-    // filtered by email if present
-    public static List<Connection> searchAllConnectionsInUEM(JSONObject body) {
+    // filtered by filterUser if present
+    public static List<User> searchAllConnectionsInUEM(JSONObject body) throws JSONException {
 
-        List<Connection> connections = new ArrayList<>();
+        Set<User> userSet = new LinkedHashSet<>();
         Set<String> users = new LinkedHashSet<>();
-
+        String filterUser = body.has("filterUser") && !body.getString("filterUser").equalsIgnoreCase("")
+                ? body.getString("filterUser") :
+                "";
         String User = "";
         try {
             User = body.has("User") ? String.valueOf(body.get("User")) : "";
@@ -1769,7 +1771,7 @@ public class AllDBOperations {
 
         List<String> filterString = new ArrayList<>();
 
-        if (User.length() > 0){
+        if (User.length() > 0 && !User.equalsIgnoreCase("none")){
 
             filterString.add("From:{$regex:/" + User + "/}");
 
@@ -1790,11 +1792,11 @@ public class AllDBOperations {
 
         BsonDocument filter = BsonDocument.parse(filterStringFinal);
 
-        List<Document> documents = MongoDBUtil.getAllConnections(filter);
+        List<Document> allConnections = MongoDBUtil.getAllConnections(filter);
 
         filterString = new ArrayList<>();
 
-        if (User.length() > 0){
+        if (User.length() > 0 && !User.equalsIgnoreCase("none")){
 
             filterString.add("To:{$regex:/" + User + "/}");
 
@@ -1815,29 +1817,28 @@ public class AllDBOperations {
 
         filter = BsonDocument.parse(filterStringFinal);
 
-        documents.addAll(MongoDBUtil.getAllConnections(filter));
+        allConnections.addAll(MongoDBUtil.getAllConnections(filter));
 
-        if (documents == null || documents.size() == 0) {
-            return connections;
+        if (allConnections == null || allConnections.size() == 0) {
+            return new ArrayList<>();
         } else {
-            for (Document document : documents) {
-                Connection connection = new Connection();
-
-                connection.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
-                connection.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
-                connection.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
-
-
-                connection.setConnectionID(document.containsKey("ConnectionID") ? document.getString("ConnectionID") : null);
-                connection.setFrom(document.containsKey("From") ? document.getString("From") : null);
-                connection.setTo(document.containsKey("To") ? document.getString("To") : null);
-                connection.setStatus(document.containsKey("status") ? document.getString("status") : null);
-
-                connections.add(connection);
+            for (Document document : allConnections) {
+                if (!document.getString("To").equalsIgnoreCase(body.getString("User"))){
+                    users.add(document.getString("To"));
+                }
+                if (!document.getString("From").equalsIgnoreCase(body.getString("User"))){
+                    users.add(document.getString("From"));
+                }
             }
         }
-        Collections.sort(connections, new ConnectionComparatorByUpdatedAt_Desc());
-        return connections;
+
+        for (String user : users){
+            if (user.contains(filterUser)){
+                userSet.addAll(getAllUsers_Email(user));
+            }
+        }
+        List<User> finalUsers = new ArrayList<>(userSet);
+        return finalUsers;
     }
 
     public static List<Connection> getAllConnectionsInUEM(JSONObject body) {
