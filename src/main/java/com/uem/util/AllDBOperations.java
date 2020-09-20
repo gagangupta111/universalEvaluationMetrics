@@ -1752,7 +1752,7 @@ public class AllDBOperations {
 
         Set<User> userSet = new LinkedHashSet<>();
         Set<String> users = new LinkedHashSet<>();
-        String filterUser = body.has("filterUser") && !body.getString("filterUser").equalsIgnoreCase("")
+        String filterUser = body.has("filterUser") && !body.getString("filterUser").equalsIgnoreCase("none")
                 ? body.getString("filterUser") :
                 "";
         String User = "";
@@ -2889,8 +2889,17 @@ public class AllDBOperations {
         List<User> users = new ArrayList<>();
         BsonDocument filter = BsonDocument
                 .parse("{ " +
-                        "Email:{$regex:/" + email + "/}" +
                         "}");
+        if (!email.equalsIgnoreCase("none")){
+            filter = BsonDocument
+                    .parse("{ " +
+                            "Email:{$regex:/" + email + "/}" +
+                            "}");
+        }else {
+            filter = BsonDocument
+                    .parse("{ " +
+                            "}");
+        }
         List<Document> documents = MongoDBUtil.getAllUniversalUsers(filter);
 
         Logs logs = new Logs();
