@@ -1659,11 +1659,11 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> updateUserInfoPhoto(
             @RequestParam(value = "Photo", required = false) MultipartFile Photo,
-            @RequestBody String body) throws Exception {
+            @RequestParam(value = "Email", required = true) String Email) throws Exception {
 
         try {
 
-            if (body == null || !body.contains("Email")){
+            if (Email == null || Email.length() == 0){
 
                 return ResponseEntity.badRequest()
                         .header("message", "INVALID_CRITERION")
@@ -1671,7 +1671,9 @@ public class MainController {
 
             }
 
-            JSONObject bodyObject = new JSONObject(body.trim());
+            JSONObject bodyObject = new JSONObject();
+            bodyObject.put("Email", Email);
+
             List<User> users = AllDBOperations.getAllUsers_Email(bodyObject.getString("Email"));
             if (users == null || users.size() == 0){
                 return ResponseEntity.badRequest()
