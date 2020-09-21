@@ -1139,6 +1139,11 @@ public class DaoParse implements DaoInterface {
                     customResponse.setInfo(map);
                     return customResponse;
                 } else {
+                    JSONObject notificationBody = new JSONObject();
+                    notificationBody.put("UserID", body.getString("To"));
+                    notificationBody.put("text", "Connection Request Received: From : " + body.getString("From"));
+                    createNotification(notificationBody);
+
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(true);
                     customResponse.setMessage(Constants.SUCCESS);
@@ -1220,6 +1225,11 @@ public class DaoParse implements DaoInterface {
                     customResponse.setInfo(map);
                     return customResponse;
                 } else {
+                    JSONObject notificationBody = new JSONObject();
+                    notificationBody.put("UserID", body.getString("To"));
+                    notificationBody.put("text", "Message Received: From : " + body.getString("From") + ". Message: " + body.getString("text"));
+                    createNotification(notificationBody);
+
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(true);
                     customResponse.setMessage(Constants.SUCCESS);
@@ -1401,6 +1411,12 @@ public class DaoParse implements DaoInterface {
                     customResponse.setInfo(map);
                     return customResponse;
                 } else {
+
+                    JSONObject notificationBody = new JSONObject();
+                    notificationBody.put("UserID", connections.get(0).getTo());
+                    notificationBody.put("text", "Connection Request " + body.getString("status") + ": From : " + connections.get(0).getFrom());
+                    createNotification(notificationBody);
+
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(true);
                     customResponse.setMessage(Constants.SUCCESS);
