@@ -148,6 +148,79 @@ public class ParseUtil {
             ParseUtil.batchDeleteAllInParseTable(objectIDs, "UnivAdmin");
         }
 
+        // Connections
+        documentList = MongoDBUtil.getAllConnections(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Connections");
+        }
+
+        // Posts
+
+        documentList = MongoDBUtil.getAllPosts(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Posts");
+        }
+
+        // Events
+        documentList = MongoDBUtil.getAllEvents(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Events");
+        }
+
+        // Messages
+        documentList = MongoDBUtil.getAllMessages(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Messages");
+        }
+
+        // Notifications
+        documentList = MongoDBUtil.getAllNotifications(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Notifications");
+        }
+
+        // UniversalUser
+        documentList = MongoDBUtil.getAllUniversalUsers(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "UniversalUser");
+        }
+
         return null;
     }
 
