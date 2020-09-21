@@ -1132,6 +1132,12 @@ public class DaoParse implements DaoInterface {
                 searchBody.put("To", body.getString("To"));
 
                 List<Connection> connections = AllDBOperations.getAllConnectionsInUEM(searchBody);
+
+                searchBody = new JSONObject();
+                searchBody.put("From", body.getString("To"));
+                searchBody.put("To", body.getString("From"));
+                connections.addAll(AllDBOperations.getAllConnectionsInUEM(searchBody));
+
                 if (connections.size() > 0){
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
