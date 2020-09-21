@@ -32,8 +32,14 @@ public class DaoParse implements DaoInterface {
 
         try {
             List<User> users = AllDBOperations.getAllUsers_Email(email);
-            if (users == null || users.size() == 0) {
+            if (users != null && users.size() > 0) {
 
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.ALREADY_EXIST);
+                return customResponse;
+
+            } else {
                 Map<String, Object> data = AllDBOperations.createUser_2(email, password);
 
                 if (Boolean.valueOf(String.valueOf(data.get("success")))) {
@@ -50,11 +56,6 @@ public class DaoParse implements DaoInterface {
                     customResponse.setMessage(Constants.SIGN_UP_FAILURE);
                     return customResponse;
                 }
-            } else {
-                CustomResponse customResponse = new CustomResponse();
-                customResponse.setSuccess(false);
-                customResponse.setMessage(Constants.ALREADY_EXIST);
-                return customResponse;
             }
         } catch (Exception e) {
             CustomResponse customResponse = new CustomResponse();
@@ -1427,7 +1428,7 @@ public class DaoParse implements DaoInterface {
                 } else {
 
                     JSONObject notificationBody = new JSONObject();
-                    notificationBody.put("UserID", connections.get(0).getTo());
+                    notificationBody.put("UserID", connections.get(0).getFrom());
                     notificationBody.put("text", "Connection Request " + body.getString("status") + ": From : " + connections.get(0).getFrom());
                     createNotification(notificationBody);
 

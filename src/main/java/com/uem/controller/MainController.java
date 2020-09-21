@@ -1131,19 +1131,21 @@ public class MainController {
 
     // version 2 - LinkedIn App
     // all below api calls consider email as primary key.
-    @GetMapping("/all/posts/{paramType}/{value}")
+    @PostMapping("/get/all/posts")
     @ResponseBody
-    public ResponseEntity<String> getAllPosts(@PathVariable("paramType") String paramType, @PathVariable("value") String value) throws Exception {
+    public ResponseEntity<String> getAllPosts(@RequestBody String body) throws Exception {
 
-        JSONObject jsonObject = new JSONObject();
+        if (body == null || (!body.contains("UserID") && !body.contains("PostID"))){
 
-        if (paramType.equalsIgnoreCase("UserID")){
-            jsonObject.put("UserID", value);
-        }else {
-            jsonObject.put("PostID", value);
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_CRITERION")
+                    .body("INVALID_CRITERION");
+
         }
 
-        CustomResponse customResponse = mainService.getAllPosts(jsonObject);
+        JSONObject object = new JSONObject(body.trim());
+
+        CustomResponse customResponse = mainService.getAllPosts(object);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
@@ -1156,15 +1158,19 @@ public class MainController {
     }
 
     // this api call tell if a post is liked or shared by a user already or not
-    @GetMapping("/all/postsActionBy/{PostID}/{action}/{UserID}")
+    @PostMapping("/get/all/postsActionBy")
     @ResponseBody
-    public ResponseEntity<String> isPostToggledByUser(@PathVariable("PostID") String PostID, @PathVariable("action") String action, @PathVariable("UserID") String UserID) throws Exception {
+    public ResponseEntity<String> isPostToggledByUser(@RequestBody String body) throws Exception {
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("PostID", PostID);
-        jsonObject.put("action", action);
-        jsonObject.put("UserID", UserID);
+        if (body == null || (!body.contains("PostID") && !body.contains("UserID") && !body.contains("action"))){
 
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_CRITERION")
+                    .body("INVALID_CRITERION");
+
+        }
+
+        JSONObject jsonObject = new JSONObject(body.trim());
         CustomResponse customResponse = mainService.isPostToggledByUser(jsonObject);
 
         if (customResponse.getSuccess()) {
@@ -1296,24 +1302,20 @@ public class MainController {
         }
     }
 
-    @GetMapping("/all/messages/{User1}/{User2}/{read}/{readByUser}")
+    @PostMapping("/get/all/readByUser/messages")
     @ResponseBody
     public ResponseEntity<String> getAllMessages_ReadBy(
-            @PathVariable("User1") String User1,
-            @PathVariable("User2") String User2,
-            @PathVariable("read") String read,
-            @PathVariable("readByUser") String readByUser
-    ) throws Exception {
+            @RequestBody String body) throws Exception {
 
-        JSONObject jsonObject = new JSONObject();
-        if (User1 != null && User2 != null
-                && !User1.equalsIgnoreCase("")
-                && !User2.equalsIgnoreCase("")){
-            jsonObject.put("User1", User1);
-            jsonObject.put("User2", User2);
-            jsonObject.put("read", read);
-            jsonObject.put("readByUser", readByUser);
+        if (body == null || !body.contains("User1") || !body.contains("User2") || !body.contains("read") || !body.contains("readByUser")){
+
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_CRITERION")
+                    .body("INVALID_CRITERION");
+
         }
+
+        JSONObject jsonObject = new JSONObject(body.trim());
 
         CustomResponse customResponse = mainService.getAllMessages(jsonObject);
         if (customResponse.getSuccess()) {
@@ -1327,22 +1329,20 @@ public class MainController {
         }
     }
 
-    @GetMapping("/all/messages/{User1}/{User2}/{read}")
+    @PostMapping("/get/all/messages")
     @ResponseBody
     public ResponseEntity<String> getAllMessages(
-            @PathVariable("User1") String User1,
-            @PathVariable("User2") String User2,
-            @PathVariable("read") String read
-            ) throws Exception {
+            @RequestBody String body) throws Exception {
 
-        JSONObject jsonObject = new JSONObject();
-        if (User1 != null && User2 != null
-                && !User1.equalsIgnoreCase("")
-                && !User2.equalsIgnoreCase("")){
-            jsonObject.put("User1", User1);
-            jsonObject.put("User2", User2);
-            jsonObject.put("read", read);
+        if (body == null || !body.contains("User1") || !body.contains("User2") || !body.contains("read")){
+
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_CRITERION")
+                    .body("INVALID_CRITERION");
+
         }
+
+        JSONObject jsonObject = new JSONObject(body.trim());
 
         CustomResponse customResponse = mainService.getAllMessages(jsonObject);
         if (customResponse.getSuccess()) {
@@ -1356,19 +1356,20 @@ public class MainController {
         }
     }
 
-    @GetMapping("/messages/{To}/{read}")
+    @PostMapping("/all/messages")
     @ResponseBody
     public ResponseEntity<String> getAllMessages_Read(
-            @PathVariable("To") String To,
-            @PathVariable("read") String read) throws Exception {
+            @RequestBody String body) throws Exception {
 
-        JSONObject jsonObject = new JSONObject();
-        if (To != null && read != null
-                && !To.equalsIgnoreCase("")
-                && !read.equalsIgnoreCase("")){
-            jsonObject.put("To", To);
-            jsonObject.put("read", read);
+        if (body == null || !body.contains("To") || !body.contains("read")){
+
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_CRITERION")
+                    .body("INVALID_CRITERION");
+
         }
+
+        JSONObject jsonObject = new JSONObject(body.trim());
 
         CustomResponse customResponse = mainService.getAllMessages(jsonObject);
         if (customResponse.getSuccess()) {
@@ -1382,21 +1383,22 @@ public class MainController {
         }
     }
 
-    @GetMapping("/all/messenger/{To}")
+    @PostMapping("/all/messenger")
     @ResponseBody
     public ResponseEntity<String> getAllMessengers_To(
-            @PathVariable("To") String To) {
+            @RequestBody String body) {
 
         try {
-            JSONObject jsonObject = new JSONObject();
-            if (To != null && !To.equalsIgnoreCase("")){
-                jsonObject.put("To", To);
-            }else {
+
+            if (body == null || !body.contains("To")){
+
                 return ResponseEntity.badRequest()
-                        .header("message", "To is required!")
-                        .body("To is required!");
+                        .header("message", "INVALID_CRITERION")
+                        .body("INVALID_CRITERION");
+
             }
 
+            JSONObject jsonObject = new JSONObject(body.trim());
             CustomResponse customResponse = mainService.getAllMessengers(jsonObject);
             if (customResponse.getSuccess()) {
                 return ResponseEntity.ok()
@@ -1540,49 +1542,69 @@ public class MainController {
         }
     }
 
-    @GetMapping("/all/search/users/{key}")
+    @PostMapping("/all/search/users")
     @ResponseBody
-    public ResponseEntity<String> getUserInfo_By_Anything(@PathVariable("key") String key) {
+    public ResponseEntity<String> getUserInfo_By_Anything(@RequestBody String body) {
 
-        CustomResponse customResponse = mainService.getAllUsers_By_Key(key);
+        try {
+            if (body == null || !body.contains("key")){
 
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
+                return ResponseEntity.badRequest()
+                        .header("message", "INVALID_CRITERION")
+                        .body("INVALID_CRITERION");
+
+            }
+
+            JSONObject object = new JSONObject(body.trim());
+            CustomResponse customResponse = mainService.getAllUsers_By_Key(object.getString("key"));
+
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
             return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
         }
     }
 
-    @GetMapping("/all/users/{email}")
+    @PostMapping("/all/users")
     @ResponseBody
-    public ResponseEntity<String> getUserInfo_Email(@PathVariable("email") String email) {
+    public ResponseEntity<String> getUserInfo_Email(@RequestBody String body) {
 
-        Logs logs = new Logs();
-        logs.setFrom(this.getClass().getName());
-        logs.setText(email);
-        logs.setLevel("info");
-        AllDBOperations.createLogs(logs);
+        try {
+            if (body == null || !body.contains("email")){
 
-        CustomResponse customResponse = mainService.getUserInfo_Email(email);
+                return ResponseEntity.badRequest()
+                        .header("message", "INVALID_CRITERION")
+                        .body("INVALID_CRITERION");
 
-        logs = new Logs();
-        logs.setFrom(this.getClass().getName());
-        logs.setText(customResponse.toString());
-        logs.setLevel("info");
-        AllDBOperations.createLogs(logs);
+            }
 
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
+            JSONObject object = new JSONObject(body.trim());
+            CustomResponse customResponse = mainService.getUserInfo_Email(object.getString("email"));
+
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }catch (Exception e){
+            logger.debug(UtilsManager.exceptionAsString(e));
             return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
         }
     }
 
@@ -1615,6 +1637,12 @@ public class MainController {
         String email = jsonObject.getString("email");
         String password = jsonObject.getString("password");
 
+        if ("none".equalsIgnoreCase(email)){
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID EMAIL")
+                    .body("INVLID EMAIL");
+        }
+
         CustomResponse customResponse = mainService.signUp_2(email, password);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
@@ -1627,30 +1655,24 @@ public class MainController {
         }
     }
 
-    @PutMapping("/update/userOnlyPhoto/{Email}")
+    @PutMapping("/update/userOnlyPhoto")
     @ResponseBody
     public ResponseEntity<String> updateUserInfoPhoto(
             @RequestParam(value = "Photo", required = false) MultipartFile Photo,
-            @PathVariable("Email") String Email) throws Exception {
+            @RequestBody String body) throws Exception {
 
         try {
 
-            if (Email == null || Email.length() == 0) {
+            if (body == null || !body.contains("Email")){
+
                 return ResponseEntity.badRequest()
-                        .header("key", "value")
-                        .body("INVALID_EMAIL");
+                        .header("message", "INVALID_CRITERION")
+                        .body("INVALID_CRITERION");
+
             }
 
-            JSONObject body = new JSONObject();
-            body = Email != null ? body.put("Email", Email) : body;
-
-            if (body.length() == 0) {
-                return ResponseEntity.badRequest()
-                        .header("key", "value")
-                        .body("NOTHING_TO_UPDATE");
-            }
-
-            List<User> users = AllDBOperations.getAllUsers_Email(Email);
+            JSONObject bodyObject = new JSONObject(body.trim());
+            List<User> users = AllDBOperations.getAllUsers_Email(bodyObject.getString("Email"));
             if (users == null || users.size() == 0){
                 return ResponseEntity.badRequest()
                         .header("key", "value")
@@ -1659,7 +1681,7 @@ public class MainController {
 
             if (Photo != null) {
 
-                String key_name = "USER_PHOTO_" + Email + Photo.getOriginalFilename();
+                String key_name = "USER_PHOTO_" + bodyObject.getString("Email") + Photo.getOriginalFilename();
                 File file = new File(key_name);
                 FileUtils.writeByteArrayToFile(file, Photo.getBytes());
 
@@ -1675,11 +1697,11 @@ public class MainController {
                 ObjectMetadata objectMetadata = putObjectResult.getMetadata();
                 object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
                 object.put("Name", key_name);
-                body.put("Photo", object);
+                bodyObject.put("Photo", object);
                 file.delete();
             }
 
-            Boolean aBoolean = mainService.updateUser_Only_Photo(body);
+            Boolean aBoolean = mainService.updateUser_Only_Photo(bodyObject);
             if (aBoolean) {
                 return ResponseEntity.ok()
                         .header("message", Constants.SUCCESS)
@@ -1698,37 +1720,36 @@ public class MainController {
 
     }
 
-    @PutMapping("/update/user/{Email}")
+    @PutMapping("/update/user")
     @ResponseBody
     public ResponseEntity<String> updateUserInfo(
-            @RequestBody String bodyB,
-            @PathVariable("Email") String Email) throws Exception {
+            @RequestBody String body) throws Exception {
 
         try {
 
-            if (Email == null || Email.length() == 0) {
+            if (body == null || !body.contains("Email")){
+
                 return ResponseEntity.badRequest()
-                        .header("key", "value")
-                        .body("INVALID_EMAIL");
+                        .header("message", "INVALID_CRITERION")
+                        .body("INVALID_CRITERION");
+
             }
 
-            JSONObject body = new JSONObject(bodyB);
-            body = Email != null ? body.put("Email", Email) : body;
-
+            JSONObject bodyObject = new JSONObject(body.trim());
             if (body.length() == 0) {
                 return ResponseEntity.badRequest()
                         .header("key", "value")
                         .body("NOTHING_TO_UPDATE");
             }
 
-            List<User> users = AllDBOperations.getAllUsers_Email(Email);
+            List<User> users = AllDBOperations.getAllUsers_Email(bodyObject.getString("Email"));
             if (users == null || users.size() == 0){
                 return ResponseEntity.badRequest()
                         .header("key", "value")
                         .body("EMAIL_DOES_NOT_EXIST");
             }
 
-            Boolean aBoolean = mainService.updateUserInfo_Email(body);
+            Boolean aBoolean = mainService.updateUserInfo_Email(bodyObject);
             if (aBoolean) {
                 return ResponseEntity.ok()
                         .header("message", Constants.SUCCESS)
