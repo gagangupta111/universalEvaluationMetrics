@@ -853,6 +853,9 @@ public class AllDBOperations {
             if (body.has("institution") && !body.getString("institution").equalsIgnoreCase("none")){
                 bodyUpdate.put("institution", body.getString("institution"));
             }
+            if (body.has("lastLogin") && !body.getString("lastLogin").equalsIgnoreCase("none")){
+                bodyUpdate.put("lastLogin", body.getString("lastLogin"));
+            }
 
             if (bodyUpdate.length() == 0){
                 data.put("success", false);
@@ -2816,6 +2819,7 @@ public class AllDBOperations {
                     user.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
                     user.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
                     user.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                    user.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
 
                     user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                     user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2887,6 +2891,7 @@ public class AllDBOperations {
                     user.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
                     user.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
                     user.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                    user.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
 
                     user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                     user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2948,6 +2953,7 @@ public class AllDBOperations {
                     user.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
                     user.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
                     user.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                    user.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
 
                     user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                     user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
@@ -2993,6 +2999,7 @@ public class AllDBOperations {
                     user.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
                     user.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
                     user.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                    user.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
 
                     user.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                     user.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);

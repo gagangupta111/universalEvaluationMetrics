@@ -21,10 +21,19 @@ public class User {
     private String aboutMe;
     private String profession;
     private String institution;
+    private String lastLogin;
 
-    private String objectID;
+    String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public String getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(String lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
     public String getAboutMe() {
         return aboutMe;

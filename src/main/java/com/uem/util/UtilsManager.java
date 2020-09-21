@@ -493,6 +493,7 @@ public class UtilsManager {
             object = user.getAboutMe() != null ? object.put("aboutMe", user.getAboutMe()) : object;
             object = user.getProfession() != null ? object.put("profession", user.getProfession()) : object;
             object = user.getInstitution() != null ? object.put("institution", user.getInstitution()) : object;
+            object = user.getLastLogin() != null ? object.put("lastLogin", user.getLastLogin()) : object;
 
             object = user.getObjectID() != null ? object.put("_id", user.getObjectID()) : object;
             object = user.get_created_at() != null ? object.put("_created_at", user.get_created_at()) : object;
