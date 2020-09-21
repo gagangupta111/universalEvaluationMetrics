@@ -18,9 +18,38 @@ public class User {
     private String DOB;
     private String info;
 
+    private String aboutMe;
+    private String profession;
+    private String institution;
+
     private String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public String getAboutMe() {
+        return aboutMe;
+    }
+
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public String getInstitution() {
+        return institution;
+    }
+
+    public void setInstitution(String institution) {
+        this.institution = institution;
+    }
+
     public String getObjectID() {
         return objectID;
     }

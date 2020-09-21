@@ -490,6 +490,10 @@ public class UtilsManager {
             object = user.getMobile() != null ? object.put("Mobile", user.getMobile()) : object;
             object = user.getName() != null ? object.put("Name", user.getName()) : object;
 
+            object = user.getAboutMe() != null ? object.put("aboutMe", user.getAboutMe()) : object;
+            object = user.getProfession() != null ? object.put("profession", user.getProfession()) : object;
+            object = user.getInstitution() != null ? object.put("institution", user.getInstitution()) : object;
+
             object = user.getObjectID() != null ? object.put("_id", user.getObjectID()) : object;
             object = user.get_created_at() != null ? object.put("_created_at", user.get_created_at()) : object;
             object = user.get_updated_at() != null ? object.put("_updated_at", user.get_updated_at()) : object;
