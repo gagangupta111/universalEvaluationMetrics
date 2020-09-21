@@ -207,6 +207,14 @@ public class DaoParse implements DaoInterface {
         }
 
         if (password.equals(users.get(0).getPassword())){
+
+            try {
+                JSONObject updateUser = new JSONObject();
+                updateUser.put("Email", email);
+                updateUser.put("lastLogin", UtilsManager.getUTCStandardDateFormat());
+                updateUserInfo_Email(updateUser);
+            }catch (Exception e){}
+
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(true);
             customResponse.setInfo(data);
