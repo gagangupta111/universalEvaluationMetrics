@@ -1038,6 +1038,39 @@ public class DaoParse implements DaoInterface {
         }
     }
 
+    // getAllMessages_ReadByMe
+    @Override
+    public CustomResponse getAllMessages_ReadByMe(JSONObject body) {
+
+        try {
+            List<Message> messages = AllDBOperations.getAllMessagesInUEM_Read_By_Me(
+                    String.valueOf(body.get("To")),
+                    String.valueOf(body.get("readByMe"))
+            );
+            Map<String, Object> map = new HashMap<>();
+            JSONArray jsonArray = new JSONArray();
+            for (Message message : messages){
+                jsonArray.put(UtilsManager.messageToJson(message));
+            }
+            map.put("Messages", jsonArray);
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
     @Override
     public CustomResponse getAllMessages(JSONObject body) {
 
@@ -1429,7 +1462,7 @@ public class DaoParse implements DaoInterface {
 
                     JSONObject notificationBody = new JSONObject();
                     notificationBody.put("UserID", connections.get(0).getFrom());
-                    notificationBody.put("text", "Connection Request " + body.getString("status") + ": From : " + connections.get(0).getFrom());
+                    notificationBody.put("text", "Connection Request " + body.getString("status") + ": By : " + connections.get(0).getTo());
                     createNotification(notificationBody);
 
                     CustomResponse customResponse = new CustomResponse();

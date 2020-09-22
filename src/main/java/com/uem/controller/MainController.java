@@ -1356,6 +1356,33 @@ public class MainController {
         }
     }
 
+    @PostMapping("/all/messages/me")
+    @ResponseBody
+    public ResponseEntity<String> getAllMessages_ReadBy_Me(
+            @RequestBody String body) throws Exception {
+
+        if (body == null || !body.contains("To") || !body.contains("readByMe")){
+
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_CRITERION")
+                    .body("INVALID_CRITERION");
+
+        }
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+
+        CustomResponse customResponse = mainService.getAllMessages_ReadByMe(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @PostMapping("/all/messages")
     @ResponseBody
     public ResponseEntity<String> getAllMessages_Read(

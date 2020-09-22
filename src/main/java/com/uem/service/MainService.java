@@ -176,6 +176,10 @@ public class MainService {
         return dao.getAllMessages(body);
     }
 
+    public CustomResponse getAllMessages_ReadByMe(JSONObject body) {
+        return dao.getAllMessages_ReadByMe(body);
+    }
+
     public CustomResponse getAllNotifications(JSONObject body) {
         return dao.getAllNotifications(body);
     }
