@@ -84,6 +84,10 @@ public class MainService {
         return dao.updateNotification(body, true);
     }
 
+    public CustomResponse updateNotifications_read_all(JSONObject body) {
+        return dao.updateNotifications_read_all(body, true);
+    }
+
     public CustomResponse updateConnection(JSONObject body) {
         return dao.updateConnection(body, true);
     }

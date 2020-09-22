@@ -1460,6 +1460,29 @@ public class MainController {
         }
     }
 
+    @PutMapping("/notifications/readAll")
+    @ResponseBody
+    public ResponseEntity<String> updateNotification_read_all(@RequestBody String body) throws Exception {
+
+        if (!body.contains("User")){
+            return ResponseEntity.badRequest()
+                    .header("message", "USER_IS_NEEDED")
+                    .body("USER_IS_NEEDED");
+        }
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.updateNotifications_read_all(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @PutMapping("/notifications")
     @ResponseBody
     public ResponseEntity<String> updateNotification(@RequestBody String body) throws Exception {

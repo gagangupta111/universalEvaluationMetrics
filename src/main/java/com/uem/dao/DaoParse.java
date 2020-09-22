@@ -1485,6 +1485,49 @@ public class DaoParse implements DaoInterface {
         }
     }
 
+    // updateNotifications_read_all
+    @Override
+    public CustomResponse updateNotifications_read_all(JSONObject body, Boolean append) {
+
+        try {
+
+            JSONObject searchBody = new JSONObject();
+            searchBody.put("UserID", body.getString("User"));
+            searchBody.put("read", "false");
+
+            List<Notification> notifications = AllDBOperations.getAllNotificationsInUEM(searchBody);
+            if (notifications == null || notifications.size() == 0) {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.NOTIFICATION_DOES_NOT_EXIST);
+                return customResponse;
+            } else {
+                for (Notification notification : notifications){
+                    JSONObject updateBody = new JSONObject();
+                    updateBody.put("read", "true");
+                    AllDBOperations.updateNotifications(notification, updateBody, append);
+                }
+                Map<String, Object> map = new HashMap<>();
+                map.put("success", "true");
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(true);
+                customResponse.setInfo(map);
+                customResponse.setMessage(Constants.SUCCESS);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
     @Override
     public CustomResponse updateNotification(JSONObject body, Boolean append) {
 

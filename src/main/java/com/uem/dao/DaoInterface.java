@@ -59,6 +59,7 @@ public interface DaoInterface {
     public CustomResponse createNotification(JSONObject body);
     public CustomResponse getAllNotifications(JSONObject body);
     public CustomResponse updateNotification(JSONObject body, Boolean append);
+    public CustomResponse updateNotifications_read_all(JSONObject body, Boolean append);
 
     public CustomResponse createConnection(JSONObject body);
     public CustomResponse getAllConnection(JSONObject body);
