@@ -1496,25 +1496,18 @@ public class DaoParse implements DaoInterface {
             searchBody.put("read", "false");
 
             List<Notification> notifications = AllDBOperations.getAllNotificationsInUEM(searchBody);
-            if (notifications == null || notifications.size() == 0) {
-                CustomResponse customResponse = new CustomResponse();
-                customResponse.setSuccess(false);
-                customResponse.setMessage(Constants.NOTIFICATION_DOES_NOT_EXIST);
-                return customResponse;
-            } else {
-                for (Notification notification : notifications){
-                    JSONObject updateBody = new JSONObject();
-                    updateBody.put("read", "true");
-                    AllDBOperations.updateNotifications(notification, updateBody, append);
-                }
-                Map<String, Object> map = new HashMap<>();
-                map.put("success", "true");
-                CustomResponse customResponse = new CustomResponse();
-                customResponse.setSuccess(true);
-                customResponse.setInfo(map);
-                customResponse.setMessage(Constants.SUCCESS);
-                return customResponse;
+            for (Notification notification : notifications){
+                JSONObject updateBody = new JSONObject();
+                updateBody.put("read", "true");
+                AllDBOperations.updateNotifications(notification, updateBody, append);
             }
+            Map<String, Object> map = new HashMap<>();
+            map.put("success", "true");
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setInfo(map);
+            customResponse.setMessage(Constants.SUCCESS);
+            return customResponse;
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
             CustomResponse customResponse = new CustomResponse();
