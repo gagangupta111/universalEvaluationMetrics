@@ -2,6 +2,7 @@ package com.uem.dao;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.uem.model.*;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface DaoInterface {
     public Boolean updateUserInfo_Email(JSONObject body);
     public Boolean updateUser_Only_Photo(JSONObject body);
 
-    public CustomResponse getUserInfo(String UserID);
+    public CustomResponse getUserInfo(String UserID, String type);
     public CustomResponse getAllUserInfo();
     public CustomResponse getUserInfo_Email(String email);
     public CustomResponse getAllUsers_By_Key(String key);

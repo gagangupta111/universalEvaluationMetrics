@@ -180,11 +180,33 @@ public class MainController {
         }
     }
 
-    @GetMapping("/user/{userID}")
+    @PostMapping("/userInfo")
     @ResponseBody
-    public ResponseEntity<String> getUserInfo(@PathVariable("userID") String userID) {
+    public ResponseEntity<String> getUserInfo(@RequestBody String body) throws Exception{
 
-        CustomResponse customResponse = mainService.getUserInfo(userID);
+        JSONObject jsonObject = new JSONObject(body.trim());
+        String email = jsonObject.has("email") ? jsonObject.getString("email") : null;
+        String type = jsonObject.has("type") ? jsonObject.getString("type") : null;
+
+        Set<String> set = new HashSet<>();
+        set.add(Constants.ADMIN);
+        set.add(Constants.STUDENT);
+        set.add(Constants.TEACHER);
+        set.add(Constants.COURSE_ADMIN);
+
+        if (type == null || !set.contains(type.toUpperCase())){
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_TYPE")
+                    .body("INVALID_TYPE");
+        }
+
+        if (email == null || type == null){
+            return ResponseEntity.badRequest()
+                    .header("message", "Either Email or type is not provided!")
+                    .body("Either Email or type is not provided!");
+        }
+
+        CustomResponse customResponse = mainService.getUserInfo(email, type);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())

@@ -144,8 +144,8 @@ public class MainService {
         return dao.getAllUserInfo();
     }
 
-    public CustomResponse getUserInfo(String UserID) {
-        return dao.getUserInfo(UserID);
+    public CustomResponse getUserInfo(String UserID, String type) {
+        return dao.getUserInfo(UserID, type);
     }
 
     public CustomResponse getUserInfo_Email(String UserID) {

@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import org.apache.log4j.Logger;
 import org.bson.Document;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -396,23 +397,69 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public CustomResponse getUserInfo(String UserID) {
-        List<User> users = new ArrayList<>();
-        users = AllDBOperations.getAllUsers_UserID(UserID);
+    public CustomResponse getUserInfo(String email, String type) {
 
-        JSONArray array = new JSONArray();
-        for (User univAdmin : users){
-            array.put(UtilsManager.userToJson(univAdmin));
+        try {
+            JSONObject user = new JSONObject();
+            switch (type.toUpperCase()) {
+                case "ADMIN":
+                    List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(email);
+                    if (univAdmins == null || univAdmins.size() == 0) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.LOGIN_FAILURE);
+                        return customResponse;
+                    }else {
+                        user = UtilsManager.adminToJson(univAdmins.get(0));
+                    }
+                    break;
+                case "STUDENT":
+                    List<Student> students = AllDBOperations.getAllStudents_UserID(email);
+                    if (students == null || students.size() == 0) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.LOGIN_FAILURE);
+                        return customResponse;
+                    }else {
+                        user = UtilsManager.studentToJson(students.get(0));
+                    }
+                    break;
+                case "TEACHER":
+                    List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(email);
+                    if (teachers == null || teachers.size() == 0) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.LOGIN_FAILURE);
+                        return customResponse;
+                    }else {
+                        user = UtilsManager.teacherToJson(teachers.get(0));
+                    }
+                    break;
+                default:
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    return customResponse;
+            }
+
+            List<User> userList = AllDBOperations.getAllUsers_Email(email);
+            user.put("Name", userList.get(0).getName());
+            user.put("Mobile", userList.get(0).getMobile());
+            user.put("DOB", userList.get(0).getDOB());
+            Map<String, Object> map = new HashMap<>();
+            map.put("User",  user);
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+        }catch (Exception e){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+            return customResponse;
         }
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("Users",  array);
-
-        CustomResponse customResponse = new CustomResponse();
-        customResponse.setSuccess(true);
-        customResponse.setMessage(Constants.SUCCESS);
-        customResponse.setInfo(map);
-        return customResponse;
     }
 
     @Override
