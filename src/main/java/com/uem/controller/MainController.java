@@ -100,60 +100,6 @@ public class MainController {
         }
     }
 
-    @PostMapping("/signup/{type}")
-    @ResponseBody
-    public ResponseEntity<String> signUp(@RequestBody String body,  @PathVariable("type") String type) throws Exception {
-
-        JSONObject jsonObject = new JSONObject(body.trim());
-        logger.debug("REQUEST_RECIEVED-signUp");
-        String email = jsonObject.getString("email");
-        String password = jsonObject.getString("password");
-
-        Set<String> set = new HashSet<>();
-        set.add(Constants.ADMIN);
-        set.add(Constants.STUDENT);
-        set.add(Constants.TEACHER);
-        set.add(Constants.COURSE_ADMIN);
-
-        if (type == null || !set.contains(type.toUpperCase())){
-            return ResponseEntity.badRequest()
-                    .header("message", "INVALID_TYPE")
-                    .body("INVALID_TYPE");
-        }
-
-        CustomResponse customResponse = mainService.signUp(email, type);
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
-
-    @PostMapping("/signin/{loginType}")
-    @ResponseBody
-    public ResponseEntity<String> signIn(@RequestBody String body, @PathVariable("loginType") String loginType) throws Exception {
-
-        JSONObject jsonObject = new JSONObject(body.trim());
-        logger.debug("REQUEST_RECIEVED-signUp");
-        String email = jsonObject.getString("email");
-        String password = jsonObject.getString("password");
-        CustomResponse customResponse = mainService.signIN(email, password, loginType.toUpperCase());
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
     @GetMapping("/admin/{adminID}")
     @ResponseBody
     public ResponseEntity<String> geAdminInfo(@PathVariable("adminID") String adminID) {
@@ -1818,6 +1764,86 @@ public class MainController {
                     .body(UtilsManager.exceptionAsString(e));
         }
 
+    }
+
+    // version 3
+    // Updation and Sync Issues in Education. Curriculum, Syllabus, Teacher's Trainings and Examinations.
+
+    @PostMapping("/signup/{type}")
+    @ResponseBody
+    public ResponseEntity<String> signUp(@RequestBody String body,  @PathVariable("type") String type) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        String email = jsonObject.has("email") ? jsonObject.getString("email") : null;
+        String password = jsonObject.has("password") ? jsonObject.getString("password") : null;
+
+        Set<String> set = new HashSet<>();
+        set.add(Constants.ADMIN);
+        set.add(Constants.STUDENT);
+        set.add(Constants.TEACHER);
+        set.add(Constants.COURSE_ADMIN);
+
+        if (type == null || !set.contains(type.toUpperCase())){
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_TYPE")
+                    .body("INVALID_TYPE");
+        }
+
+        if (email == null || password == null){
+            return ResponseEntity.badRequest()
+                    .header("message", "Either Email or password is not provided!")
+                    .body("Either Email or password is not provided!");
+        }
+
+
+        CustomResponse customResponse = mainService.signUp(email, type);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/signin/{type}")
+    @ResponseBody
+    public ResponseEntity<String> signIn(@RequestBody String body, @PathVariable("loginType") String type) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        String email = jsonObject.has("email") ? jsonObject.getString("email") : null;
+        String password = jsonObject.has("password") ? jsonObject.getString("password") : null;
+
+        Set<String> set = new HashSet<>();
+        set.add(Constants.ADMIN);
+        set.add(Constants.STUDENT);
+        set.add(Constants.TEACHER);
+        set.add(Constants.COURSE_ADMIN);
+
+        if (type == null || !set.contains(type.toUpperCase())){
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_TYPE")
+                    .body("INVALID_TYPE");
+        }
+
+        if (email == null || password == null){
+            return ResponseEntity.badRequest()
+                    .header("message", "Either Email or password is not provided!")
+                    .body("Either Email or password is not provided!");
+        }
+
+        CustomResponse customResponse = mainService.signIN(email, password, type.toUpperCase());
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
     }
 
 }
