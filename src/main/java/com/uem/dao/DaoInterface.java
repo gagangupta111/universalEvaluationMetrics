@@ -9,7 +9,7 @@ import java.util.List;
 public interface DaoInterface {
 
     public String test();
-    public CustomResponse signUp(String email, String type);
+    public CustomResponse signUp(String email, String password, String type);
     public CustomResponse signUp_2(String email, String type);
     public CustomResponse signIn(String email, String password, String loginType);
     public CustomResponse signIn2(String email, String password);

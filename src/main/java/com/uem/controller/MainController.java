@@ -1796,7 +1796,7 @@ public class MainController {
         }
 
 
-        CustomResponse customResponse = mainService.signUp(email, type);
+        CustomResponse customResponse = mainService.signUp(email, password, type);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
@@ -1810,7 +1810,7 @@ public class MainController {
 
     @PostMapping("/signin/{type}")
     @ResponseBody
-    public ResponseEntity<String> signIn(@RequestBody String body, @PathVariable("loginType") String type) throws Exception {
+    public ResponseEntity<String> signIn(@RequestBody String body, @PathVariable("type") String type) throws Exception {
 
         JSONObject jsonObject = new JSONObject(body.trim());
         String email = jsonObject.has("email") ? jsonObject.getString("email") : null;
@@ -1838,7 +1838,7 @@ public class MainController {
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
+                    .body(customResponse.getInfoAsJson().toString());
         } else {
             return ResponseEntity.badRequest()
                     .header("message", customResponse.getMessage())

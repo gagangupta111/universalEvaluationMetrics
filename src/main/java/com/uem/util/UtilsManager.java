@@ -519,6 +519,12 @@ public class UtilsManager {
             object = univAdmin.getUserID() != null ? object.put("UserID", univAdmin.getUserID()) : object;
             object = univAdmin.getInfo() != null ? object.put("info", univAdmin.getInfo()) : object;
 
+            object = univAdmin.getPassword() != null ? object.put("password", univAdmin.getPassword()) : object;
+            object = univAdmin.getAboutMe() != null ? object.put("aboutMe", univAdmin.getAboutMe()) : object;
+            object = univAdmin.getInstitution() != null ? object.put("institution", univAdmin.getInstitution()) : object;
+            object = univAdmin.getProfession() != null ? object.put("profession", univAdmin.getProfession()) : object;
+            object = univAdmin.getLastLogin() != null ? object.put("lastLogin", univAdmin.getLastLogin()) : object;
+
             object = univAdmin.getObjectID() != null ? object.put("_id", univAdmin.getObjectID()) : object;
             object = univAdmin.get_created_at() != null ? object.put("_created_at", univAdmin.get_created_at()) : object;
             object = univAdmin.get_updated_at() != null ? object.put("_updated_at", univAdmin.get_updated_at()) : object;
@@ -549,6 +555,12 @@ public class UtilsManager {
             univAdmin.setUEM_ID(jsonObject.has("UEM_ID") ? jsonObject.getString("UEM_ID") : null);
             univAdmin.setUserID(jsonObject.has("UserID") ? jsonObject.getString("UserID") : null);
             univAdmin.setInfo(jsonObject.has("info") ? jsonObject.getString("info") : null);
+
+            univAdmin.setPassword(jsonObject.has("password") ? jsonObject.getString("password") : null);
+            univAdmin.setAboutMe(jsonObject.has("aboutMe") ? jsonObject.getString("aboutMe") : null);
+            univAdmin.setInstitution(jsonObject.has("institution") ? jsonObject.getString("institution") : null);
+            univAdmin.setProfession(jsonObject.has("profession") ? jsonObject.getString("profession") : null);
+            univAdmin.setLastLogin(jsonObject.has("lastLogin") ? jsonObject.getString("lastLogin") : null);
 
             List<Document> courses = new ArrayList<>();
             JSONArray array = jsonObject.has("Documents") ? jsonObject.getJSONArray("Documents") : new JSONArray();

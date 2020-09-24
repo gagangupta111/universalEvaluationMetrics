@@ -69,13 +69,13 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public CustomResponse signUp(String email, String type) {
+    public CustomResponse signUp(String email, String password, String type) {
 
         try {
             List<User> users = AllDBOperations.getAllUsers_Email(email);
             if (users == null || users.size() == 0) {
 
-                Map<String, Object> data = AllDBOperations.createUser(email);
+                Map<String, Object> data = AllDBOperations.createUser(email, password);
 
                 if (Boolean.valueOf(String.valueOf(data.get("success")))) {
 
@@ -83,13 +83,13 @@ public class DaoParse implements DaoInterface {
                     Map<String, Object> adminResponse = new HashMap<>();
 
                     if (Constants.ADMIN.equals(type.toUpperCase())) {
-                        adminResponse = AllDBOperations.createAdmin(email);
+                        adminResponse = AllDBOperations.createAdmin(email, password);
                     } else if (Constants.TEACHER.equals(type.toUpperCase())) {
-                        adminResponse = AllDBOperations.createTeacher(email);
+                        adminResponse = AllDBOperations.createTeacher(email, password);
                     } else if (Constants.STUDENT.equals(type.toUpperCase())) {
-                        adminResponse = AllDBOperations.createStudent(email);
+                        adminResponse = AllDBOperations.createStudent(email, password);
                     } else if (Constants.COURSE_ADMIN.equals(type.toUpperCase())) {
-                        adminResponse = AllDBOperations.createCourseAdmin(email);
+                        adminResponse = AllDBOperations.createCourseAdmin(email, password);
                     }
 
                     if (Boolean.valueOf(String.valueOf(adminResponse.get("success")))) {
@@ -122,7 +122,7 @@ public class DaoParse implements DaoInterface {
                 if (Constants.ADMIN.equals(type.toUpperCase())) {
                     List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(email);
                     if (univAdmins == null || univAdmins.size() == 0) {
-                        adminResponse = AllDBOperations.createAdmin(email);
+                        adminResponse = AllDBOperations.createAdmin(email, password);
                     } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
@@ -132,7 +132,7 @@ public class DaoParse implements DaoInterface {
                 } else if (Constants.TEACHER.equals(type.toUpperCase())) {
                     List<Teacher> univAdmins = AllDBOperations.getAllTeachers_UserID(email);
                     if (univAdmins == null || univAdmins.size() == 0) {
-                        adminResponse = AllDBOperations.createTeacher(email);
+                        adminResponse = AllDBOperations.createTeacher(email, password);
                     } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
@@ -142,7 +142,7 @@ public class DaoParse implements DaoInterface {
                 } else if (Constants.STUDENT.equals(type.toUpperCase())) {
                     List<Student> univAdmins = AllDBOperations.getAllStudents_UserID(email);
                     if (univAdmins == null || univAdmins.size() == 0) {
-                        adminResponse = AllDBOperations.createStudent(email);
+                        adminResponse = AllDBOperations.createStudent(email, password);
                     } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
@@ -152,7 +152,7 @@ public class DaoParse implements DaoInterface {
                 } else if (Constants.COURSE_ADMIN.equals(type.toUpperCase())) {
                     List<CourseAdmin> univAdmins = AllDBOperations.getAllCourseAdmins_UserID(email);
                     if (univAdmins == null || univAdmins.size() == 0) {
-                        adminResponse = AllDBOperations.createCourseAdmin(email);
+                        adminResponse = AllDBOperations.createCourseAdmin(email, password);
                     } else {
                         CustomResponse customResponse = new CustomResponse();
                         customResponse.setSuccess(false);
@@ -234,7 +234,7 @@ public class DaoParse implements DaoInterface {
 
         List<User> users = AllDBOperations.getAllUsers_Email(email);
 
-        if (users == null || users.size() == 0 || !password.equals(users.get(0).getPassword())) {
+        if (users == null || users.size() == 0) {
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(false);
             customResponse.setMessage(Constants.LOGIN_FAILURE);
@@ -243,29 +243,29 @@ public class DaoParse implements DaoInterface {
 
         switch (loginType) {
             case "ADMIN":
-                List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(users.get(0).getUserID());
-                if (univAdmins == null || univAdmins.size() == 0) {
+                List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(email);
+                if (univAdmins == null || univAdmins.size() == 0 || !password.equalsIgnoreCase(univAdmins.get(0).getPassword())) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
-                    customResponse.setMessage(Constants.ADMIN_LOGIN_FAILURE);
+                    customResponse.setMessage(Constants.LOGIN_FAILURE);
                     return customResponse;
                 }
                 break;
             case "STUDENT":
-                List<Student> students = AllDBOperations.getAllStudents_UserID(users.get(0).getUserID());
-                if (students == null || students.size() == 0) {
+                List<Student> students = AllDBOperations.getAllStudents_UserID(email);
+                if (students == null || students.size() == 0 || !password.equalsIgnoreCase(students.get(0).getPassword())) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
-                    customResponse.setMessage(Constants.STUDENT_LOGIN_FAILURE);
+                    customResponse.setMessage(Constants.LOGIN_FAILURE);
                     return customResponse;
                 }
                 break;
             case "TEACHER":
-                List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(users.get(0).getUserID());
+                List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(email);
                 if (teachers == null || teachers.size() == 0) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
-                    customResponse.setMessage(Constants.TEACHER_LOGIN_FAILURE);
+                    customResponse.setMessage(Constants.LOGIN_FAILURE);
                     return customResponse;
                 }
                 break;
@@ -279,6 +279,8 @@ public class DaoParse implements DaoInterface {
         CustomResponse customResponse = new CustomResponse();
         customResponse.setSuccess(true);
         customResponse.setMessage(Constants.SUCCESS);
+        Map<String, Object> info = new HashMap<>();
+        customResponse.setInfo(info);
         return customResponse;
     }
 

@@ -56,7 +56,7 @@ public class AllDBOperations {
         }
     }
 
-    public static Map<String, Object> createUser(String email) {
+    public static Map<String, Object> createUser(String email, String password) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
@@ -64,7 +64,7 @@ public class AllDBOperations {
 
             String UserID = UtilsManager.generateUniqueID();
             String Email = email;
-            String Password = UtilsManager.generateUniqueID();
+            String Password = password;
 
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
@@ -91,7 +91,7 @@ public class AllDBOperations {
         }
     }
 
-    public static Map<String, Object> createAdmin(String UserID) {
+    public static Map<String, Object> createAdmin(String UserID, String password) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
@@ -102,6 +102,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
+            body.put("password", password);
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "UnivAdmin");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
@@ -313,7 +314,7 @@ public class AllDBOperations {
         }
     }
 
-    public static Map<String, Object> createTeacher(String UserID) {
+    public static Map<String, Object> createTeacher(String UserID, String password) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
@@ -324,6 +325,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
+            body.put("password", password);
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "Teacher");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
@@ -344,7 +346,7 @@ public class AllDBOperations {
 
     }
 
-    public static Map<String, Object> createStudent(String UserID) {
+    public static Map<String, Object> createStudent(String UserID, String password) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
@@ -355,6 +357,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
+            body.put("password", password);
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "Student");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
@@ -375,7 +378,7 @@ public class AllDBOperations {
 
     }
 
-    public static Map<String, Object> createCourseAdmin(String UserID) {
+    public static Map<String, Object> createCourseAdmin(String UserID, String password) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
@@ -386,6 +389,7 @@ public class AllDBOperations {
             JSONObject body = new JSONObject();
             body.put("UserID", UserID);
             body.put("UEM_ID", UEM_ID);
+            body.put("password", password);
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "CourseAdmin");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
             if (status >= 200 && status < 300) {
@@ -1512,6 +1516,13 @@ public class AllDBOperations {
                 univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
                 univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
                 univAdmin.setBatches(document.containsKey("Batches") ? document.getList("Batches", Document.class) : null);
+
+                univAdmin.setPassword(document.containsKey("password") ? document.getString("password") : null);
+                univAdmin.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
+                univAdmin.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                univAdmin.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
+                univAdmin.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
+
                 univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
@@ -2723,10 +2734,16 @@ public class AllDBOperations {
                 univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
                 univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
                 univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+
+                univAdmin.setPassword(document.containsKey("password") ? document.getString("password") : null);
+                univAdmin.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
+                univAdmin.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                univAdmin.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
+                univAdmin.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
+
                 univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
-
                 univAdmin.setPhoto(document.containsKey("Photo") ? document.get("Photo", Document.class) : null);
 
                 univAdmins.add(univAdmin);
@@ -2754,6 +2771,14 @@ public class AllDBOperations {
                 univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
                 univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
                 univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+
+                univAdmin.setPassword(document.containsKey("password") ? document.getString("password") : null);
+                univAdmin.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
+                univAdmin.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                univAdmin.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
+                univAdmin.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
+
+
                 univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);
@@ -2786,6 +2811,13 @@ public class AllDBOperations {
                 univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
                 univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
                 univAdmin.setBatches(document.containsKey("Batches") ? document.getList("Batches", Document.class) : null);
+
+                univAdmin.setPassword(document.containsKey("password") ? document.getString("password") : null);
+                univAdmin.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
+                univAdmin.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                univAdmin.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
+                univAdmin.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
+
                 univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);

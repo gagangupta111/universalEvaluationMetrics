@@ -40,8 +40,8 @@ public class MainService {
         return dao.signUp_2(email, password);
     }
 
-    public CustomResponse signUp(String email, String type) {
-        return dao.signUp(email, type);
+    public CustomResponse signUp(String email, String password,  String type) {
+        return dao.signUp(email, password, type);
     }
 
     public CustomResponse signIN2(String email, String password) {
