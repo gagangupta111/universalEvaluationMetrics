@@ -772,6 +772,79 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateUser_By_Email_Only_Photo_Type(JSONObject body) {
+
+        String objectID = "";
+        String tableName = "";
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            switch (body.getString("type").toUpperCase()) {
+                case "ADMIN":
+                    tableName = "UnivAdmin";
+                    List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(body.getString("Email"));
+                    if (univAdmins == null || univAdmins.size() == 0) {
+                        return data;
+                    }else {
+                        objectID = univAdmins.get(0).getObjectID();
+                    }
+                    break;
+                case "STUDENT":
+                    tableName = "Student";
+                    List<Student> students = AllDBOperations.getAllStudents_UserID(body.getString("Email"));
+                    if (students == null || students.size() == 0){
+                        return data;
+                    }else {
+                        objectID = students.get(0).getObjectID();
+                    }
+                    break;
+                case "TEACHER":
+                    tableName = "Teacher";
+                    List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(body.getString("Email"));
+                    if (teachers == null || teachers.size() == 0) {
+                        return data;
+                    }else {
+                        objectID = teachers.get(0).getObjectID();
+                    }
+                    break;
+                default:
+                    return data;
+            }
+
+            JSONObject bodyUpdate = new JSONObject();
+            if (body.has("Photo")){
+                bodyUpdate.put("Photo", body.get("Photo"));
+            }
+
+            if (bodyUpdate.length() == 0){
+                data.put("success", false);
+                data.put("response", "NOTHING_TO_UPDATE");
+                return data;
+            }
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(objectID, bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, tableName);
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateUser_By_Email_Only_Photo(JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
@@ -815,6 +888,108 @@ public class AllDBOperations {
             data.put("exception", UtilsManager.exceptionAsString(e));
             return data;
         }
+    }
+
+    public static Map<String, Object> updateUser_Email_Type(JSONObject body) {
+
+        String objectID = "";
+        String tableName = "";
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            // Update Admin, Student, or Teacher
+            switch (body.getString("type").toUpperCase()) {
+                case "ADMIN":
+                    tableName = "UnivAdmin";
+                    List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(body.getString("Email"));
+                    if (univAdmins == null || univAdmins.size() == 0) {
+                        return data;
+                    }else {
+                        objectID = univAdmins.get(0).getObjectID();
+                    }
+                    break;
+                case "STUDENT":
+                    tableName = "Student";
+                    List<Student> students = AllDBOperations.getAllStudents_UserID(body.getString("Email"));
+                    if (students == null || students.size() == 0){
+                        return data;
+                    }else {
+                        objectID = students.get(0).getObjectID();
+                    }
+                    break;
+                case "TEACHER":
+                    tableName = "Teacher";
+                    List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(body.getString("Email"));
+                    if (teachers == null || teachers.size() == 0) {
+                        return data;
+                    }else {
+                        objectID = teachers.get(0).getObjectID();
+                    }
+                    break;
+                default:
+                    return data;
+            }
+
+            JSONObject bodyUpdate = new JSONObject();
+
+            if (body.has("Password") && !body.getString("Password").equalsIgnoreCase("none")){
+                bodyUpdate.put("Password", body.getString("Password"));
+            }
+            if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
+                bodyUpdate.put("info", body.getString("info"));
+            }
+            if (body.has("aboutMe") && !body.getString("aboutMe").equalsIgnoreCase("none")){
+                bodyUpdate.put("aboutMe", body.getString("aboutMe"));
+            }
+            if (body.has("profession") && !body.getString("profession").equalsIgnoreCase("none")){
+                bodyUpdate.put("profession", body.getString("profession"));
+            }
+            if (body.has("institution") && !body.getString("institution").equalsIgnoreCase("none")){
+                bodyUpdate.put("institution", body.getString("institution"));
+            }
+            if (body.has("lastLogin") && !body.getString("lastLogin").equalsIgnoreCase("none")){
+                bodyUpdate.put("lastLogin", body.getString("lastLogin"));
+            }
+
+            if (bodyUpdate.length() > 0){
+                Map<String, JSONObject> map = new HashMap<>();
+                map.put(objectID, bodyUpdate);
+                ParseUtil.batchUpdateInParseTable(map, tableName);
+            }
+
+            // Update Basic User Info
+            bodyUpdate = new JSONObject();
+            if (body.has("Name") && !body.getString("Name").equalsIgnoreCase("none")){
+                bodyUpdate.put("Name", body.getString("Name"));
+            }
+            if (body.has("Mobile") && !body.getString("Mobile").equalsIgnoreCase("none")){
+                bodyUpdate.put("Mobile", body.getString("Mobile"));
+            }
+            if (body.has("Address") && !body.getString("Address").equalsIgnoreCase("none")){
+                bodyUpdate.put("Address", body.getString("Address"));
+            }
+            if (body.has("DOB") && !body.getString("DOB").equalsIgnoreCase("none")){
+                bodyUpdate.put("DOB", body.getString("DOB"));
+            }
+
+            if (bodyUpdate.length() > 0){
+                List<User> users = getAllUsers_Email(body.getString("Email"));
+                if (users == null || users.size() == 0) {
+                    data.put("message", Constants.NO_INFO_FOUND);
+                    return data;
+                }
+                Map<String, JSONObject> map = new HashMap<>();
+                map.put(users.get(0).getObjectID(), bodyUpdate);
+                ParseUtil.batchUpdateInParseTable(map, "UniversalUser");
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+
+        data.put("success", true);
+        return data;
     }
 
     public static Map<String, Object> updateUser_Email(JSONObject body) {

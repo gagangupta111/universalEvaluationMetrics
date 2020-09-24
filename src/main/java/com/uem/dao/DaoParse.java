@@ -302,12 +302,48 @@ public class DaoParse implements DaoInterface {
         }
     }
 
+    // updateUser_Only_Photo_Type
+    @Override
+    public Boolean updateUser_Only_Photo_Type(JSONObject body) {
+
+        try {
+
+            Map<String, Object> map = AllDBOperations.updateUser_By_Email_Only_Photo_Type(body);
+            if (Boolean.valueOf(String.valueOf(map.get("success")))) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return false;
+        }
+    }
+
     @Override
     public Boolean updateUser_Only_Photo(JSONObject body) {
 
         try {
 
             Map<String, Object> map = AllDBOperations.updateUser_By_Email_Only_Photo(body);
+            if (Boolean.valueOf(String.valueOf(map.get("success")))) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return false;
+        }
+    }
+
+    // updateUserInfo_Email_Type
+    @Override
+    public Boolean updateUserInfo_Email_Type(JSONObject body) {
+
+        try {
+
+            Map<String, Object> map = AllDBOperations.updateUser_Email_Type(body);
             if (Boolean.valueOf(String.valueOf(map.get("success")))) {
                 return true;
             } else {
@@ -446,6 +482,7 @@ public class DaoParse implements DaoInterface {
             user.put("Name", userList.get(0).getName());
             user.put("Mobile", userList.get(0).getMobile());
             user.put("DOB", userList.get(0).getDOB());
+            user.put("Address", userList.get(0).getAddress());
             Map<String, Object> map = new HashMap<>();
             map.put("User",  user);
 

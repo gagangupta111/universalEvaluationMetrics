@@ -164,60 +164,6 @@ public class MainController {
         }
     }
 
-    @GetMapping("/all/user")
-    @ResponseBody
-    public ResponseEntity<String> getAllUsersInfo() {
-
-        CustomResponse customResponse = mainService.getAllUserInfo();
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
-    @PostMapping("/userInfo")
-    @ResponseBody
-    public ResponseEntity<String> getUserInfo(@RequestBody String body) throws Exception{
-
-        JSONObject jsonObject = new JSONObject(body.trim());
-        String email = jsonObject.has("email") ? jsonObject.getString("email") : null;
-        String type = jsonObject.has("type") ? jsonObject.getString("type") : null;
-
-        Set<String> set = new HashSet<>();
-        set.add(Constants.ADMIN);
-        set.add(Constants.STUDENT);
-        set.add(Constants.TEACHER);
-        set.add(Constants.COURSE_ADMIN);
-
-        if (type == null || !set.contains(type.toUpperCase())){
-            return ResponseEntity.badRequest()
-                    .header("message", "INVALID_TYPE")
-                    .body("INVALID_TYPE");
-        }
-
-        if (email == null || type == null){
-            return ResponseEntity.badRequest()
-                    .header("message", "Either Email or type is not provided!")
-                    .body("Either Email or type is not provided!");
-        }
-
-        CustomResponse customResponse = mainService.getUserInfo(email, type);
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfoAsJson().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
     @GetMapping("/courses")
     @ResponseBody
     public ResponseEntity<String> getAllCourses() {
@@ -1867,5 +1813,182 @@ public class MainController {
                     .body(customResponse.getMessage());
         }
     }
+
+    @PostMapping("/userInfo")
+    @ResponseBody
+    public ResponseEntity<String> getUserInfo(@RequestBody String body) throws Exception{
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        String email = jsonObject.has("email") ? jsonObject.getString("email") : null;
+        String type = jsonObject.has("type") ? jsonObject.getString("type") : null;
+
+        Set<String> set = new HashSet<>();
+        set.add(Constants.ADMIN);
+        set.add(Constants.STUDENT);
+        set.add(Constants.TEACHER);
+        set.add(Constants.COURSE_ADMIN);
+
+        if (type == null || !set.contains(type.toUpperCase())){
+            return ResponseEntity.badRequest()
+                    .header("message", "INVALID_TYPE")
+                    .body("INVALID_TYPE");
+        }
+
+        if (email == null || type == null){
+            return ResponseEntity.badRequest()
+                    .header("message", "Either Email or type is not provided!")
+                    .body("Either Email or type is not provided!");
+        }
+
+        CustomResponse customResponse = mainService.getUserInfo(email, type);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/all/user")
+    @ResponseBody
+    public ResponseEntity<String> getAllUsersInfo() {
+
+        CustomResponse customResponse = mainService.getAllUserInfo();
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PutMapping("/update/userOnlyPhoto/{type}")
+    @ResponseBody
+    public ResponseEntity<String> updateUserInfoPhoto_type(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+            @RequestParam(value = "Email", required = true) String Email,
+            @RequestParam(value = "type", required = true) String type) throws Exception {
+
+        try {
+
+            if (Email == null || Email.length() == 0 || type == null || type.length() == 0){
+
+                return ResponseEntity.badRequest()
+                        .header("message", "INVALID_CRITERION")
+                        .body("INVALID_CRITERION");
+
+            }
+
+            Set<String> set = new HashSet<>();
+            set.add(Constants.ADMIN);
+            set.add(Constants.STUDENT);
+            set.add(Constants.TEACHER);
+            set.add(Constants.COURSE_ADMIN);
+
+            if (type == null || !set.contains(type.toUpperCase())){
+                return ResponseEntity.badRequest()
+                        .header("message", "INVALID_TYPE")
+                        .body("INVALID_TYPE");
+            }
+
+            JSONObject bodyObject = new JSONObject();
+            bodyObject.put("Email", Email);
+            bodyObject.put("type", type);
+
+            if (Photo != null) {
+
+                String key_name = "USER_PHOTO_" + bodyObject.getString("Email") + Photo.getOriginalFilename();
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Photo.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
+                object.put("Name", key_name);
+                bodyObject.put("Photo", object);
+                file.delete();
+            }
+
+            Boolean aBoolean = mainService.updateUser_Only_Photo_Type(bodyObject);
+            if (aBoolean) {
+                return ResponseEntity.ok()
+                        .header("message", Constants.SUCCESS)
+                        .body(new JSONObject().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body(Constants.FAILURE);
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+
+    }
+
+    @PutMapping("/update/user/{type}")
+    @ResponseBody
+    public ResponseEntity<String> updateUserInfo_type(
+            @RequestBody String body) throws Exception {
+
+        try {
+
+            if (body == null || !body.contains("Email")){
+
+                return ResponseEntity.badRequest()
+                        .header("message", "INVALID_CRITERION")
+                        .body("INVALID_CRITERION");
+
+            }
+
+            JSONObject bodyObject = new JSONObject(body.trim());
+
+            Set<String> set = new HashSet<>();
+            set.add(Constants.ADMIN);
+            set.add(Constants.STUDENT);
+            set.add(Constants.TEACHER);
+            set.add(Constants.COURSE_ADMIN);
+
+            if (!bodyObject.has("type") || !set.contains(bodyObject.getString("type") .toUpperCase())){
+                return ResponseEntity.badRequest()
+                        .header("message", "INVALID_TYPE")
+                        .body("INVALID_TYPE");
+            }
+
+            Boolean aBoolean = mainService.updateUserInfo_Email_type(bodyObject);
+            if (aBoolean) {
+                return ResponseEntity.ok()
+                        .header("message", Constants.SUCCESS)
+                        .body(new JSONObject().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("key", "value")
+                        .body(Constants.FAILURE);
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+
+    }
+
 
 }

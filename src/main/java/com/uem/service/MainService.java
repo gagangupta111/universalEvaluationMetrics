@@ -136,8 +136,16 @@ public class MainService {
         return dao.updateUser_Only_Photo(body);
     }
 
+    public Boolean updateUser_Only_Photo_Type(JSONObject body) {
+        return dao.updateUser_Only_Photo_Type(body);
+    }
+
     public Boolean updateUserInfo_Email(JSONObject body) {
         return dao.updateUserInfo_Email(body);
+    }
+
+    public Boolean updateUserInfo_Email_type(JSONObject body) {
+        return dao.updateUserInfo_Email_Type(body);
     }
 
     public CustomResponse getAllUserInfo() {

@@ -17,7 +17,9 @@ public interface DaoInterface {
 
     public Boolean updateUserInfo(JSONObject body);
     public Boolean updateUserInfo_Email(JSONObject body);
+    public Boolean updateUserInfo_Email_Type(JSONObject body);
     public Boolean updateUser_Only_Photo(JSONObject body);
+    public Boolean updateUser_Only_Photo_Type(JSONObject body);
 
     public CustomResponse getUserInfo(String UserID, String type);
     public CustomResponse getAllUserInfo();
