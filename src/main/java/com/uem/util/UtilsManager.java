@@ -478,6 +478,31 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject moduleToJson(Module module) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = module.getModuleID() != null ? object.put("ModuleID", module.getModuleID()) : object;
+            object = module.getPhoto() != null ? object.put("Photo", module.getPhoto()) : object;
+            object = module.getInfo() != null ? object.put("info", module.getInfo()) : object;
+            object = module.getUnivID() != null ? object.put("UnivID", module.getUnivID()) : object;
+            object = module.getName() != null ? object.put("Name", module.getName()) : object;
+
+            object = module.getObjectID() != null ? object.put("_id", module.getObjectID()) : object;
+            object = module.get_created_at() != null ? object.put("_created_at", module.get_created_at()) : object;
+            object = module.get_updated_at() != null ? object.put("_updated_at", module.get_updated_at()) : object;
+
+            Document photo = module.getPhoto();
+            object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
+
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
     public static JSONObject userToJson(User user) {
 
         JSONObject object = new JSONObject();
@@ -833,6 +858,26 @@ public class UtilsManager {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
+    }
+
+    public static Module jsonToModule(JSONObject jsonObject) {
+
+        Module event = new Module();
+
+        try {
+            event.setModuleID(jsonObject.has("ModuleID") ? jsonObject.getString("ModuleID") : null);
+            event.setName(jsonObject.has("Name") ? jsonObject.getString("Name") : null);
+            event.setUnivID(jsonObject.has("UnivID") ? jsonObject.getString("UnivID") : null);
+            event.setInfo(jsonObject.has("info") ? jsonObject.getString("info") : null);
+            event.setPhoto(jsonObject.has("Photo") ? (Document) jsonObject.get("Photo") : null);
+
+            event.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            event.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            event.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return event;
     }
 
     public static Event jsonToEvent(JSONObject jsonObject) {

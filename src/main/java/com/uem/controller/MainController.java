@@ -2047,4 +2047,20 @@ public class MainController {
         }
     }
 
+    @GetMapping("/Modules/{UnivID}")
+    @ResponseBody
+    public ResponseEntity<String> getModules(@PathVariable("univID") String univID) throws Exception {
+
+        CustomResponse customResponse = mainService.getUniversity(univID);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
 }
