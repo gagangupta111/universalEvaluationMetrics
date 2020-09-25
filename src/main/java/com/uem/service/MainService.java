@@ -52,8 +52,16 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
+    public CustomResponse getModules(String univID) {
+        return dao.getModules(univID);
+    }
+
     public CustomResponse getUniversity(String univID) {
         return dao.getUniversity(univID);
+    }
+
+    public CustomResponse createModules(JSONObject body) {
+        return dao.createModules(body);
     }
 
     public CustomResponse createUniversity(JSONObject body) {

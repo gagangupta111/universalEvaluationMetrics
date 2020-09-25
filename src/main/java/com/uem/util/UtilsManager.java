@@ -484,7 +484,6 @@ public class UtilsManager {
         try {
 
             object = module.getModuleID() != null ? object.put("ModuleID", module.getModuleID()) : object;
-            object = module.getPhoto() != null ? object.put("Photo", module.getPhoto()) : object;
             object = module.getInfo() != null ? object.put("info", module.getInfo()) : object;
             object = module.getUnivID() != null ? object.put("UnivID", module.getUnivID()) : object;
             object = module.getName() != null ? object.put("Name", module.getName()) : object;

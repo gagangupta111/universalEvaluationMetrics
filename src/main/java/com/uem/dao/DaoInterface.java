@@ -40,12 +40,15 @@ public interface DaoInterface {
 
     public CustomResponse createCourse(JSONObject body);
     public CustomResponse getUniversity(String UnivID);
+    public CustomResponse getModules(String UnivID);
     public CustomResponse createUniversity(JSONObject body);
     public CustomResponse updateUniversity(JSONObject body, Boolean append);
     public CustomResponse updateUniversity_New(JSONObject body);
     public CustomResponse updateAdmin(JSONObject body, Boolean append);
     public CustomResponse updateStudent(JSONObject body, Boolean append);
     public CustomResponse updateTeacher(JSONObject body, Boolean append);
+
+    public CustomResponse createModules(JSONObject body);
 
     public CustomResponse createPost(JSONObject body);
     public CustomResponse updatePost(JSONObject body, Boolean append);

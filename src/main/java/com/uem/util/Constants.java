@@ -30,6 +30,7 @@ public interface Constants {
     public static final String  ALREADY_EXIST = "ALREADY_EXIST";
 
     public static final String  UNIVERSITY_CREATION_FAILURE = " Name, Website and AdminID is required to create University!";
+    public static final String  MODULE_CREATION_FAILURE = " Name, and UnivID is required to create Module!";
     public static final String  COURSE_CREATION_FAILURE = " Name and CourseAdmin is required to create Course!";
     public static final String  BATCH_CREATION_FAILURE = " Duration, SpanOver, Starting, Completion, Calendar, Billing, UnivID and CourseAdmin" +
             " is required to create Course OR Must be Requested Status with UEM_ID!";

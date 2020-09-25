@@ -853,6 +853,76 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getModules(String UnivID) {
+        List<Module> users = new ArrayList<>();
+        users = AllDBOperations.getAll_Modules_UnivID(UnivID);
+
+        JSONArray array = new JSONArray();
+        for (Module univAdmin : users){
+            array.put(UtilsManager.moduleToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Modules",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+
+    }
+
+
+    // createModules
+    @Override
+    public CustomResponse createModules(JSONObject body) {
+
+        try {
+            if (body.has("UnivID") && body.has("Name")) {
+
+                List<Module> modules = AllDBOperations.getAll_Modules_Name(body.getString("Name"));
+                if (modules != null && modules.size() > 0){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.ALREADY_EXIST);
+                    return customResponse;
+                }
+
+                Map<String, Object> map = AllDBOperations.createModule(body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.MODULE_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse createUniversity(JSONObject body) {
 
         try {

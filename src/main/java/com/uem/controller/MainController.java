@@ -2049,13 +2049,30 @@ public class MainController {
 
     @GetMapping("/Modules/{UnivID}")
     @ResponseBody
-    public ResponseEntity<String> getModules(@PathVariable("univID") String univID) throws Exception {
+    public ResponseEntity<String> getModules(@PathVariable("UnivID") String univID) throws Exception {
 
-        CustomResponse customResponse = mainService.getUniversity(univID);
+        CustomResponse customResponse = mainService.getModules(univID);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
                     .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/Modules")
+    @ResponseBody
+    public ResponseEntity<String> createModules(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createModules(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
         } else {
             return ResponseEntity.badRequest()
                     .header("message", customResponse.getMessage())

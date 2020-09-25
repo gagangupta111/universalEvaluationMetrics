@@ -36,6 +36,7 @@ public class MongoDBUtil {
     public static MongoCollection<Document> connections = null;
     public static MongoCollection<Document> events = null;
     public static MongoCollection<Document> logs = null;
+    public static MongoCollection<Document> Module = null;
 
     public static MongoDatabase getDataBase() {
 
@@ -180,6 +181,15 @@ public class MongoDBUtil {
             return UniversalUser;
         } else {
             return UniversalUser;
+        }
+    }
+
+    public static MongoCollection<Document> getModules() {
+        if (null == Module) {
+            Module = getDataBase().getCollection("Module");
+            return Module;
+        } else {
+            return Module;
         }
     }
 
@@ -358,6 +368,19 @@ public class MongoDBUtil {
         } catch (Exception e) {
             logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllTeachers \n" + UtilsManager.exceptionAsString(e));
             RollbarManager.sendExceptionOnRollBar("getAllTeachers", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Document> getAllModules(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getModules();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllUniversity \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllUniversity", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }
