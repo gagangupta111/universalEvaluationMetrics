@@ -380,31 +380,32 @@ public class UtilsManager {
             object = university.getUnivID() != null ? object.put("UnivID", university.getUnivID()) : object;
             object = university.getName() != null ? object.put("Name", university.getName()) : object;
             object = university.getStarted() != null ? object.put("Started", university.getStarted()) : object;
+            object = university.getInfo() != null ? object.put("info", university.getInfo()) : object;
 
             object = university.getAdminID() != null ? object.put("AdminID", university.getAdminID()) : object;
 
-            List<String> univAdmins = university.getUnivAdmins();
+            List<String> univAdmins = university.getUnivAdmins() != null ? university.getUnivAdmins() : new ArrayList<>();
             JSONArray array = new JSONArray();
             for (String univAdmin : univAdmins) {
                 array.put(univAdmin);
             }
             object = array.length() > 0 ? object.put("UnivAdmins", array) : object;
 
-            List<Document> students = university.getStudents();
+            List<Document> students = university.getStudents() != null ? university.getStudents() : new ArrayList<>();
             array = new JSONArray();
             for (Document document : students) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Students", array) : object;
 
-            List<Document> teachers = university.getTeachers();
+            List<Document> teachers = university.getTeachers() != null ? university.getTeachers() : new ArrayList<>();
             array = new JSONArray();
             for (Document document : teachers) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Teachers", array) : object;
 
-            List<Document> courses = university.getCourses();
+            List<Document> courses = university.getCourses() != null ? university.getCourses() : new ArrayList<>();
             array = new JSONArray();
             for (Document document : courses) {
                 array.put(new JSONObject(document.toJson()));
@@ -419,15 +420,12 @@ public class UtilsManager {
             Document moreInfo = university.getMoreInfo();
             object = moreInfo != null && moreInfo.size() > 0 ? object.put("MoreInfo", new JSONObject(moreInfo.toJson())) : object;
 
-            List<Document> actionLogs = university.getActionLogs();
+            List<Document> actionLogs = university.getActionLogs() != null ? university.getActionLogs() : new ArrayList<>();
             array = new JSONArray();
             for (Document document : actionLogs) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("ActionLogs", array) : object;
-
-            Document info = university.getMoreInfo();
-            object = info != null && info.size() > 0 ? object.put("info", new JSONObject(info.toJson())) : object;
 
             Document photo = university.getPhoto();
             object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;

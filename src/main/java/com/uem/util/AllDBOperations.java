@@ -1685,6 +1685,7 @@ public class AllDBOperations {
                 University university = new University();
                 university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
                 university.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
                 university.setName(document.containsKey("Name") ? document.getString("Name") : null);
                 university.setStarted(document.containsKey("Started") ? document.getString("Started") : null);

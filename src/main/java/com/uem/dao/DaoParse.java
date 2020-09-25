@@ -842,7 +842,7 @@ public class DaoParse implements DaoInterface {
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("Students",  array);
+        map.put("Universities",  array);
 
         CustomResponse customResponse = new CustomResponse();
         customResponse.setSuccess(true);
