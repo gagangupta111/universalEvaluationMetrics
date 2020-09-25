@@ -555,7 +555,7 @@ public class UtilsManager {
             object = univAdmin.get_created_at() != null ? object.put("_created_at", univAdmin.get_created_at()) : object;
             object = univAdmin.get_updated_at() != null ? object.put("_updated_at", univAdmin.get_updated_at()) : object;
 
-            List<Document> documents = univAdmin.getDocuments();
+            List<Document> documents = univAdmin.getDocuments() != null ? univAdmin.getDocuments() : new ArrayList<>();
             JSONArray array = new JSONArray();
             for (Document document : documents) {
                 array.put(new JSONObject(document.toJson()));
@@ -623,14 +623,14 @@ public class UtilsManager {
             object = student.get_created_at() != null ? object.put("_created_at", student.get_created_at()) : object;
             object = student.get_updated_at() != null ? object.put("_updated_at", student.get_updated_at()) : object;
 
-            List<Document> batches = student.getBatches();
+            List<Document> batches = student.getBatches() != null ? student.getBatches() : new ArrayList<>();
             JSONArray array = new JSONArray();
             for (Document document : batches) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Batches", array) : object;
 
-            List<Document> documents = student.getDocuments();
+            List<Document> documents = student.getDocuments() != null ? student.getDocuments() : new ArrayList<>();
             array = new JSONArray();
             for (Document document : documents) {
                 array.put(new JSONObject(document.toJson()));
