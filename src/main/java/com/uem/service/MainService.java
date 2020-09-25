@@ -108,6 +108,10 @@ public class MainService {
         return dao.updateUniversity(body, append);
     }
 
+    public CustomResponse updateUniversity_New(JSONObject body) {
+        return dao.updateUniversity_New(body);
+    }
+
     public CustomResponse updateBatch(JSONObject body, Boolean append) {
         return dao.updateBatch(body, append);
     }

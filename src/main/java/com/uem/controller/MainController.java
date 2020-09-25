@@ -269,23 +269,6 @@ public class MainController {
         }
     }
 
-    @PostMapping("/University")
-    @ResponseBody
-    public ResponseEntity<String> createUniversity(@RequestBody String body) throws Exception {
-
-        JSONObject jsonObject = new JSONObject(body.trim());
-        CustomResponse customResponse = mainService.createUniversity(jsonObject);
-        if (customResponse.getSuccess()) {
-            return ResponseEntity.ok()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getInfo().toString());
-        } else {
-            return ResponseEntity.badRequest()
-                    .header("message", customResponse.getMessage())
-                    .body(customResponse.getMessage());
-        }
-    }
-
     @GetMapping("/courses/search")
     @ResponseBody
     public ResponseEntity<String> getCoursesSearch(@RequestParam Map<String,String> allRequestParams) throws Exception {
@@ -1988,6 +1971,80 @@ public class MainController {
                     .body(UtilsManager.exceptionAsString(e));
         }
 
+    }
+
+    @PutMapping("/update/university/{univID}")
+    @ResponseBody
+    public ResponseEntity<String> updateUniversity_New(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+            @RequestParam(value = "info", required = false) String info,
+            @PathVariable("univID") String univID) throws Exception {
+
+        try {
+            if (univID == null || univID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+            body = info != null ? body.put("info", info.trim()) : body;
+            body.put("UnivID", univID);
+
+            if (Photo != null) {
+
+                String key_name = "UNIVERSITY_PHOTO_" + univID + "_" + Photo.getOriginalFilename();;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Photo.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
+                object.put("Name", key_name);
+                body.put("Photo", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.updateUniversity_New(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PostMapping("/University")
+    @ResponseBody
+    public ResponseEntity<String> createUniversity(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createUniversity(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfo().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
     }
 
 

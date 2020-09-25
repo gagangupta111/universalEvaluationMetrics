@@ -308,6 +308,8 @@ public class UtilsManager {
             university.setName(jsonObject.has("Name") ? jsonObject.getString("Name") : null);
             university.setStarted(jsonObject.has("Started") ? jsonObject.getString("Started") : null);
 
+            university.setAdminID(jsonObject.has("AdminID") ? jsonObject.getString("AdminID") : null);
+
             List<String> univAdmins = new ArrayList<>();
             JSONArray array = jsonObject.has("UnivAdmins") ? jsonObject.getJSONArray("UnivAdmins") : new JSONArray();
             for (int i = 0; i < array.length(); i++) {
@@ -378,6 +380,8 @@ public class UtilsManager {
             object = university.getUnivID() != null ? object.put("UnivID", university.getUnivID()) : object;
             object = university.getName() != null ? object.put("Name", university.getName()) : object;
             object = university.getStarted() != null ? object.put("Started", university.getStarted()) : object;
+
+            object = university.getAdminID() != null ? object.put("AdminID", university.getAdminID()) : object;
 
             List<String> univAdmins = university.getUnivAdmins();
             JSONArray array = new JSONArray();

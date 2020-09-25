@@ -856,7 +856,15 @@ public class DaoParse implements DaoInterface {
     public CustomResponse createUniversity(JSONObject body) {
 
         try {
-            if (body.has("Name") && body.has("Website") && body.has("AdminID")) {
+            if (body.has("UnivID") && body.has("AdminID")) {
+
+                List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("UnivID"));
+                if (universities != null && universities.size() > 0){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.ALREADY_EXIST);
+                    return customResponse;
+                }
 
                 Map<String, Object> map = AllDBOperations.createUniversity(body);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
@@ -1630,6 +1638,46 @@ public class DaoParse implements DaoInterface {
             } else {
 
                 Map<String, Object> map = AllDBOperations.updateNotifications(notifications.get(0), body, append);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse updateUniversity_New(JSONObject body) {
+
+        try {
+
+            List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("UnivID"));
+            if (universities == null || universities.size() == 0) {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.UNIVERSITY_DOES_NOT_EXIST);
+                return customResponse;
+            } else {
+                Map<String, Object> map = AllDBOperations.updateUniversity_New(universities.get(0), body);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);

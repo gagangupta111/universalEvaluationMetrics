@@ -7,23 +7,35 @@ import java.util.List;
 
 public class University {
 
-    private String UnivID;
-    private String Name;
+    private String UnivID; // unique name by user itself
     private Document Photo;
+
+    private String AdminID; // Created By, Owner
+    private Date _created_at; // created time
+
+    private Date _updated_at; // last edited time
+    private String info; // more info, about, description etc
+    private String Website; // website
+
     private String Started;
     private List<String> UnivAdmins;
     private List<Document> Students;
     private List<Document> Teachers;
     private List<Document> Courses;
-    private String Website;
+
     private Document MoreInfo;
     private Document LegalInfo;
     private List<Document> ActionLogs;
-    private String info;
-
+    private String Name;
     private String objectID;
-    private Date _created_at;
-    private Date _updated_at;
+
+    public String getAdminID() {
+        return AdminID;
+    }
+
+    public void setAdminID(String adminID) {
+        AdminID = adminID;
+    }
 
     public String getUnivID() {
         return UnivID;

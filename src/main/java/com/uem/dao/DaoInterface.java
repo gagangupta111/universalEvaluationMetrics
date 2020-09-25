@@ -42,6 +42,7 @@ public interface DaoInterface {
     public CustomResponse getUniversity(String UnivID);
     public CustomResponse createUniversity(JSONObject body);
     public CustomResponse updateUniversity(JSONObject body, Boolean append);
+    public CustomResponse updateUniversity_New(JSONObject body);
     public CustomResponse updateAdmin(JSONObject body, Boolean append);
     public CustomResponse updateStudent(JSONObject body, Boolean append);
     public CustomResponse updateTeacher(JSONObject body, Boolean append);

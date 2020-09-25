@@ -674,21 +674,10 @@ public class AllDBOperations {
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
         try {
-            String UnivID = UtilsManager.generateUniqueID();
-            String Name = university.getString("Name");
-            String Website = university.getString("Website");
-            String AdminID = university.getString("AdminID");
 
-            university.put("UnivID", UnivID);
-            university.remove("AdminID");
-
-            JSONArray array = new JSONArray();
-            array.put(AdminID);
-
-            university.put("UnivAdmins", array);
             university.put("Started", UtilsManager.getUTCStandardDateFormat());
 
-            array = new JSONArray();
+            JSONArray array = new JSONArray();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Action", "UNIVERSITY_STARTED");
             jsonObject.put("Time", UtilsManager.getUTCStandardDateFormat());
@@ -701,8 +690,8 @@ public class AllDBOperations {
             if (status >= 200 && status < 300) {
                 JSONObject permission = new JSONObject();
                 permission.put("PermissionID", UtilsManager.generateUniqueID());
-                permission.put("UnivID", UnivID);
-                permission.put("UEM_ID", AdminID);
+                permission.put("UnivID", university.getString("UnivID"));
+                permission.put("UEM_ID", university.getString("AdminID"));
 
                 array = new JSONArray();
                 array.put("OWNER");
@@ -1091,6 +1080,45 @@ public class AllDBOperations {
                 data.put("exception", result.get("exception"));
                 return data;
             }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
+    public static Map<String, Object> updateUniversity_New(University university, JSONObject body) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            JSONObject bodyUpdate = new JSONObject();
+            if (body.has("info")){
+                bodyUpdate.put("info", body.getString("info"));
+            }
+            if (body.has("Photo")){
+                bodyUpdate.put("Photo", body.get("Photo"));
+            }
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(university.getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "University");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
 
         } catch (Exception e) {
             data.put("exception", UtilsManager.exceptionAsString(e));
@@ -1532,6 +1560,69 @@ public class AllDBOperations {
             for (Document document : documents) {
                 University university = new University();
                 university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setStarted(document.containsKey("Started") ? document.getString("Started") : null);
+                university.setUnivAdmins(document.containsKey("UnivID") ? document.getList("UnivAdmins", String.class) : new ArrayList<>());
+
+                university.setStudents(
+                        document.containsKey("Students")
+                                ? document.getList("Students", Document.class)
+                                : new ArrayList<>());
+                university.setTeachers(
+                        document.containsKey("Teachers")
+                                ? document.getList("Teachers", Document.class)
+                                : new ArrayList<>());
+                university.setCourses(
+                        document.containsKey("Courses")
+                                ? document.getList("Courses", Document.class)
+                                : new ArrayList<>());
+                university.setWebsite((document.getString("Website")));
+                university.setLegalInfo(
+                        document.containsKey("LegalInfo")
+                                ? document.get("LegalInfo", Document.class)
+                                : new Document());
+                university.setMoreInfo(
+                        document.containsKey("MoreInfo")
+                                ? document.get("MoreInfo", Document.class)
+                                : new Document());
+
+                university.setActionLogs(
+                        document.containsKey("ActionLogs")
+                                ? document.getList("ActionLogs", Document.class)
+                                : new ArrayList<>());
+
+                university.setInfo((document.getString("info")));
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                universities.add(university);
+            }
+        }
+        return universities;
+    }
+
+    public static List<University> getAllUniversities_AdminID(String AdminID) {
+
+        List<University> universities = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "AdminID:{$regex:/" + AdminID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllUniversity(filter);
+        if (documents == null || documents.size() == 0) {
+            return universities;
+        } else {
+            for (Document document : documents) {
+                University university = new University();
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
 
                 university.setName(document.containsKey("Name") ? document.getString("Name") : null);
                 university.setStarted(document.containsKey("Started") ? document.getString("Started") : null);
@@ -1593,6 +1684,7 @@ public class AllDBOperations {
             for (Document document : documents) {
                 University university = new University();
                 university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setAdminID(document.containsKey("AdminID") ? document.getString("AdminID") : null);
 
                 university.setName(document.containsKey("Name") ? document.getString("Name") : null);
                 university.setStarted(document.containsKey("Started") ? document.getString("Started") : null);
