@@ -1363,6 +1363,47 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateModule(Module post, JSONObject body) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            JSONObject bodyUpdate = new JSONObject();
+
+            if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
+                bodyUpdate.put("info", body.getString("info"));
+            }
+
+            if (body.has("Photo")){
+                bodyUpdate.put("Photo", body.get("Photo"));
+            }
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(post.getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Module");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updatePost(Post post, JSONObject body, Boolean append) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1744,6 +1785,38 @@ public class AllDBOperations {
         BsonDocument filter = BsonDocument
                 .parse("{ " +
                         "Name:{$regex:/" + Name + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllModules(filter);
+        if (documents == null || documents.size() == 0) {
+            return modules;
+        } else {
+            for (Document document : documents) {
+                Module university = new Module();
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                modules.add(university);
+            }
+        }
+        return modules;
+    }
+
+    public static List<Module> getAll_Modules_ModuleID(String ModuleID) {
+
+        List<Module> modules = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "ModuleID:{$regex:/" + ModuleID + "/}" +
                         "}");
         List<Document> documents = MongoDBUtil.getAllModules(filter);
         if (documents == null || documents.size() == 0) {

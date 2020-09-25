@@ -2080,4 +2080,61 @@ public class MainController {
         }
     }
 
+    @PutMapping("/update/module/{ModuleID}")
+    @ResponseBody
+    public ResponseEntity<String> update_Module(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+            @RequestParam(value = "info", required = false) String info,
+            @PathVariable("ModuleID") String ModuleID) throws Exception {
+
+        try {
+            if (ModuleID == null || ModuleID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+            body = info != null ? body.put("info", info.trim()) : body;
+            body.put("ModuleID", ModuleID);
+
+            if (Photo != null) {
+
+                String key_name = "MODULE_PHOTO_" + ModuleID + "_" + Photo.getOriginalFilename();;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Photo.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
+                object.put("Name", key_name);
+                body.put("Photo", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.update_module(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfo().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
 }

@@ -116,6 +116,10 @@ public class MainService {
         return dao.updateUniversity(body, append);
     }
 
+    public CustomResponse update_module(JSONObject body) {
+        return dao.updateModule(body);
+    }
+
     public CustomResponse updateUniversity_New(JSONObject body) {
         return dao.updateUniversity_New(body);
     }

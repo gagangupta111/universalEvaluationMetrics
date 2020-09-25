@@ -15,6 +15,7 @@ public interface Constants {
     public static final String  NO_INFO_FOUND = "NO_INFO_FOUND";
     public static final String  AMAZON_S3_ERROR = "AMAZON_S3_ERROR";
 
+    public static final String  MODULE_DOES_NOT_EXIST = "MODULE_DOES_NOT_EXIST";
     public static final String  UNIVERSITY_DOES_NOT_EXIST = "UNIVERSITY_DOES_NOT_EXIST";
     public static final String  POST_DOES_NOT_EXIST = "POST_DOES_NOT_EXIST";
     public static final String  NOTIFICATION_DOES_NOT_EXIST = "NOTIFICATION_DOES_NOT_EXIST";

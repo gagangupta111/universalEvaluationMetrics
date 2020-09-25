@@ -1776,6 +1776,46 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse updateModule(JSONObject body) {
+
+        try {
+
+            List<Module> modules = AllDBOperations.getAll_Modules_ModuleID(body.getString("ModuleID"));
+            if (modules == null || modules.size() == 0) {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.MODULE_DOES_NOT_EXIST);
+                return customResponse;
+            } else {
+                Map<String, Object> map = AllDBOperations.updateModule(modules.get(0), body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse updateUniversity(JSONObject body, Boolean append) {
 
         try {

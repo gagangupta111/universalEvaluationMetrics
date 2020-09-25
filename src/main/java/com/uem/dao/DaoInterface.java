@@ -49,6 +49,7 @@ public interface DaoInterface {
     public CustomResponse updateTeacher(JSONObject body, Boolean append);
 
     public CustomResponse createModules(JSONObject body);
+    public CustomResponse updateModule(JSONObject body);
 
     public CustomResponse createPost(JSONObject body);
     public CustomResponse updatePost(JSONObject body, Boolean append);
