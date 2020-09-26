@@ -1126,6 +1126,12 @@ public class AllDBOperations {
             if (body.has("info")){
                 bodyUpdate.put("info", body.getString("info"));
             }
+            if (body.has("Name")){
+                bodyUpdate.put("Name", body.getString("Name"));
+            }
+            if (body.has("Website")){
+                bodyUpdate.put("Website", body.getString("Website"));
+            }
             if (body.has("Photo")){
                 bodyUpdate.put("Photo", body.get("Photo"));
             }

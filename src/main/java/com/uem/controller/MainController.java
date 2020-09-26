@@ -1962,6 +1962,8 @@ public class MainController {
     public ResponseEntity<String> updateUniversity_New(
             @RequestParam(value = "Photo", required = false) MultipartFile Photo,
             @RequestParam(value = "info", required = false) String info,
+            @RequestParam(value = "Name", required = false) String Name,
+            @RequestParam(value = "Website", required = false) String Website,
             @PathVariable("univID") String univID) throws Exception {
 
         try {
@@ -1972,6 +1974,8 @@ public class MainController {
             }
             JSONObject body = new JSONObject();
             body = info != null ? body.put("info", info.trim()) : body;
+            body = Name != null ? body.put("Name", Name.trim()) : body;
+            body = Website != null ? body.put("Website", Website.trim()) : body;
             body.put("UnivID", univID);
 
             if (Photo != null) {
