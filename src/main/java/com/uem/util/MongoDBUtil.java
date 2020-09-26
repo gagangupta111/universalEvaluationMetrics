@@ -37,6 +37,7 @@ public class MongoDBUtil {
     public static MongoCollection<Document> events = null;
     public static MongoCollection<Document> logs = null;
     public static MongoCollection<Document> Module = null;
+    public static MongoCollection<Document> Level = null;
 
     public static MongoDatabase getDataBase() {
 
@@ -181,6 +182,15 @@ public class MongoDBUtil {
             return UniversalUser;
         } else {
             return UniversalUser;
+        }
+    }
+
+    public static MongoCollection<Document> getLevels() {
+        if (null == Level) {
+            Level = getDataBase().getCollection("Level");
+            return Level;
+        } else {
+            return Level;
         }
     }
 
@@ -368,6 +378,19 @@ public class MongoDBUtil {
         } catch (Exception e) {
             logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllTeachers \n" + UtilsManager.exceptionAsString(e));
             RollbarManager.sendExceptionOnRollBar("getAllTeachers", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Document> getAllLevels(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getLevels();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllLevels \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllLevels", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }

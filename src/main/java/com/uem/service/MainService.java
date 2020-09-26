@@ -52,6 +52,10 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
+    public CustomResponse get_Levels_By_LevelID(String ModuleID) {
+        return dao.getLevels_By_LevelID(ModuleID);
+    }
+
     public CustomResponse getModules_By_ModuleID(String ModuleID) {
         return dao.getModules_By_ModuleID(ModuleID);
     }
@@ -74,6 +78,10 @@ public class MainService {
 
     public CustomResponse createModules(JSONObject body) {
         return dao.createModules(body);
+    }
+
+    public CustomResponse createLevels(JSONObject body) {
+        return dao.createLevels(body);
     }
 
     public CustomResponse createUniversity(JSONObject body) {
@@ -126,6 +134,10 @@ public class MainService {
 
     public CustomResponse updateUniversity(JSONObject body, Boolean append) {
         return dao.updateUniversity(body, append);
+    }
+
+    public CustomResponse update_level(JSONObject body) {
+        return dao.updateLevel(body);
     }
 
     public CustomResponse update_module(JSONObject body) {

@@ -935,6 +935,27 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getLevels_By_LevelID(String UnivID) {
+        List<Level> users = new ArrayList<>();
+        users = AllDBOperations.getAll_Levels_ID(UnivID);
+
+        JSONArray array = new JSONArray();
+        for (Level univAdmin : users){
+            array.put(UtilsManager.levelToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Levels",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+
+    }
+
+    @Override
     public CustomResponse getModules_By_ModuleID(String UnivID) {
         List<Module> users = new ArrayList<>();
         users = AllDBOperations.getAll_Modules_ModuleID(UnivID);
@@ -1010,6 +1031,53 @@ public class DaoParse implements DaoInterface {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.MODULE_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse createLevels(JSONObject body) {
+
+        try {
+            if (body.has("ModuleID") && body.has("UnivID") && body.has("Name")) {
+
+                List<Level> modules = AllDBOperations.getAll_Levels_Name(body.getString("Name"));
+                if (modules != null && modules.size() > 0){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.ALREADY_EXIST);
+                    return customResponse;
+                }
+
+                Map<String, Object> map = AllDBOperations.createLevel(body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.LEVEL_CREATION_FAILURE);
                 return customResponse;
             }
         } catch (Exception e) {
@@ -1851,6 +1919,46 @@ public class DaoParse implements DaoInterface {
                 return customResponse;
             } else {
                 Map<String, Object> map = AllDBOperations.updateUniversity_New(universities.get(0), body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse updateLevel(JSONObject body) {
+
+        try {
+
+            List<Level> modules = AllDBOperations.getAll_Levels_ID(body.getString("LevelID"));
+            if (modules == null || modules.size() == 0) {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.LEVEL_DOES_NOT_EXIST);
+                return customResponse;
+            } else {
+                Map<String, Object> map = AllDBOperations.updateLevel(modules.get(0), body);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);

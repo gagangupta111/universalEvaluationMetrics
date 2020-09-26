@@ -16,6 +16,7 @@ public interface Constants {
     public static final String  AMAZON_S3_ERROR = "AMAZON_S3_ERROR";
 
     public static final String  MODULE_DOES_NOT_EXIST = "MODULE_DOES_NOT_EXIST";
+    public static final String  LEVEL_DOES_NOT_EXIST = "LEVEL_DOES_NOT_EXIST";
     public static final String  UNIVERSITY_DOES_NOT_EXIST = "UNIVERSITY_DOES_NOT_EXIST";
     public static final String  POST_DOES_NOT_EXIST = "POST_DOES_NOT_EXIST";
     public static final String  NOTIFICATION_DOES_NOT_EXIST = "NOTIFICATION_DOES_NOT_EXIST";
@@ -32,6 +33,7 @@ public interface Constants {
 
     public static final String  UNIVERSITY_CREATION_FAILURE = " Name, Website and AdminID is required to create University!";
     public static final String  MODULE_CREATION_FAILURE = " Name, and UnivID is required to create Module!";
+    public static final String  LEVEL_CREATION_FAILURE = " ModuleID, Name, and UnivID is required to create Module!";
     public static final String  COURSE_CREATION_FAILURE = " Name and CourseAdmin is required to create Course!";
     public static final String  BATCH_CREATION_FAILURE = " Duration, SpanOver, Starting, Completion, Calendar, Billing, UnivID and CourseAdmin" +
             " is required to create Course OR Must be Requested Status with UEM_ID!";

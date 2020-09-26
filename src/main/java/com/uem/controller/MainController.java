@@ -2124,6 +2124,22 @@ public class MainController {
         }
     }
 
+    @GetMapping("/get/Levels/{LevelID}")
+    @ResponseBody
+    public ResponseEntity<String> get_Levels_By_ID(@PathVariable("LevelID") String LevelID) throws Exception {
+
+        CustomResponse customResponse = mainService.get_Levels_By_LevelID(LevelID);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @GetMapping("/get/Modules/{ModuleID}")
     @ResponseBody
     public ResponseEntity<String> getModules_By_ID(@PathVariable("ModuleID") String ModuleID) throws Exception {
@@ -2244,6 +2260,111 @@ public class MainController {
             }
 
             CustomResponse customResponse = mainService.update_module(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PostMapping("/Levels")
+    @ResponseBody
+    public ResponseEntity<String> create_Levels(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createLevels(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PutMapping("/update/levelPhotoOnly/{LevelID}")
+    @ResponseBody
+    public ResponseEntity<String> update_Level_Photo_Only(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+            @PathVariable("LevelID") String LevelID) throws Exception {
+
+        try {
+            if (LevelID == null || LevelID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+            body.put("LevelID", LevelID);
+
+            if (Photo != null) {
+
+                String key_name = "LEVEL_PHOTO" + LevelID + "_" + Photo.getOriginalFilename();;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Photo.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
+                object.put("Name", key_name);
+                body.put("Photo", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.update_level(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PutMapping("/update/level/{LevelID}")
+    @ResponseBody
+    public ResponseEntity<String> update_Level_Info(
+            @RequestBody String bodyString,
+            @PathVariable("LevelID") String LevelID) throws Exception {
+
+        try {
+            if (LevelID == null || LevelID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject(bodyString.trim());
+            body.put("LevelID", LevelID);
+
+            CustomResponse customResponse = mainService.update_level(body);
             if (customResponse.getSuccess()) {
                 return ResponseEntity.ok()
                         .header("message", customResponse.getMessage())

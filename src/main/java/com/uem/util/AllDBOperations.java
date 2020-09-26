@@ -283,6 +283,34 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> createLevel(JSONObject post) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+            String LevelID = UtilsManager.generateUniqueID();
+            post.put("LevelID", LevelID);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(post, "Level");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", post);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", post);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", post);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createModule(JSONObject post) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1373,6 +1401,51 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateLevel(Level post, JSONObject body) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            JSONObject bodyUpdate = new JSONObject();
+
+            if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
+                bodyUpdate.put("info", body.getString("info"));
+            }
+
+            if (body.has("Photo")){
+                bodyUpdate.put("Photo", body.get("Photo"));
+            }
+
+            if (bodyUpdate.length() == 0){
+                return data;
+            }
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(post.getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Level");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateModule(Module post, JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1775,6 +1848,72 @@ public class AllDBOperations {
             for (Document document : documents) {
                 Module university = new Module();
                 university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                modules.add(university);
+            }
+        }
+        return modules;
+    }
+
+    public static List<Level> getAll_Levels_ID(String LevelID) {
+
+        List<Level> modules = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "LevelID:{$regex:/" + LevelID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllLevels(filter);
+        if (documents == null || documents.size() == 0) {
+            return modules;
+        } else {
+            for (Document document : documents) {
+                Level university = new Level();
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
+                university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                modules.add(university);
+            }
+        }
+        return modules;
+    }
+
+    public static List<Level> getAll_Levels_Name(String Name) {
+
+        List<Level> modules = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "Name:{$regex:/" + Name + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllLevels(filter);
+        if (documents == null || documents.size() == 0) {
+            return modules;
+        } else {
+            for (Document document : documents) {
+                Level university = new Level();
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
