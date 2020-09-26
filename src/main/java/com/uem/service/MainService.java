@@ -52,6 +52,10 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
+    public CustomResponse getModules_By_ModuleID(String ModuleID) {
+        return dao.getModules_By_ModuleID(ModuleID);
+    }
+
     public CustomResponse getModules(String univID) {
         return dao.getModules(univID);
     }

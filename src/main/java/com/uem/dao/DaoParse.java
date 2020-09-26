@@ -935,6 +935,27 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getModules_By_ModuleID(String UnivID) {
+        List<Module> users = new ArrayList<>();
+        users = AllDBOperations.getAll_Modules_ModuleID(UnivID);
+
+        JSONArray array = new JSONArray();
+        for (Module univAdmin : users){
+            array.put(UtilsManager.moduleToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Modules",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+
+    }
+
+    @Override
     public CustomResponse getModules(String UnivID) {
         List<Module> users = new ArrayList<>();
         users = AllDBOperations.getAll_Modules_UnivID(UnivID);

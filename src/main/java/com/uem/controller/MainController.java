@@ -2097,6 +2097,22 @@ public class MainController {
         }
     }
 
+    @GetMapping("/get/Modules/{ModuleID}")
+    @ResponseBody
+    public ResponseEntity<String> getModules_By_ID(@PathVariable("ModuleID") String ModuleID) throws Exception {
+
+        CustomResponse customResponse = mainService.getModules_By_ModuleID(ModuleID);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
     @GetMapping("/Modules/{UnivID}")
     @ResponseBody
     public ResponseEntity<String> getModules(@PathVariable("UnivID") String univID) throws Exception {
