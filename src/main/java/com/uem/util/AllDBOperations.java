@@ -1899,6 +1899,39 @@ public class AllDBOperations {
         return modules;
     }
 
+    public static List<Level> getAll_Levels_ModuleID(String Name) {
+
+        List<Level> modules = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "ModuleID:{$regex:/" + Name + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllLevels(filter);
+        if (documents == null || documents.size() == 0) {
+            return modules;
+        } else {
+            for (Document document : documents) {
+                Level university = new Level();
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+                university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
+                university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                modules.add(university);
+            }
+        }
+        return modules;
+    }
+
     public static List<Level> getAll_Levels_Name(String Name) {
 
         List<Level> modules = new ArrayList<>();

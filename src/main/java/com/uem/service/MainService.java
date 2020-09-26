@@ -60,6 +60,10 @@ public class MainService {
         return dao.getModules_By_ModuleID(ModuleID);
     }
 
+    public CustomResponse getlevels_By_ModuleID(String univID) {
+        return dao.getLevels_By_ModuleID(univID);
+    }
+
     public CustomResponse getModules(String univID) {
         return dao.getModules(univID);
     }
@@ -70,6 +74,10 @@ public class MainService {
 
     public CustomResponse getUniversity(JSONObject body) {
         return dao.getUniversity(body);
+    }
+
+    public CustomResponse getLevels_Filter(JSONObject body) {
+        return dao.getLevels_Filter(body);
     }
 
     public CustomResponse getModules(JSONObject body) {

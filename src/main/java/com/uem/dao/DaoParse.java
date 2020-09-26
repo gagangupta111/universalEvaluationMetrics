@@ -853,6 +853,47 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getLevels_Filter(JSONObject body) {
+
+        try {
+            List<Level> modules = new ArrayList<>();
+            modules = AllDBOperations.getAll_Levels_ModuleID(body.getString("ModuleID"));
+
+            JSONArray array = new JSONArray();
+            for (Level module : modules){
+                if (body.has("Name")
+                        && body.getString("Name").equalsIgnoreCase("none")){
+                    array.put(UtilsManager.levelToJson(module));
+                }
+                if (body.has("Name")
+                        && !body.getString("Name").equalsIgnoreCase("none")
+                        && module.getName().toUpperCase().contains(body.getString("Name").toUpperCase())){
+                    array.put(UtilsManager.levelToJson(module));
+                }
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Levels",  array);
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+
+        }catch (Exception e){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse getModules(JSONObject body) {
 
         try {
@@ -932,6 +973,27 @@ public class DaoParse implements DaoInterface {
             customResponse.setInfo(map);
             return customResponse;
         }
+    }
+
+    @Override
+    public CustomResponse getLevels_By_ModuleID(String UnivID) {
+        List<Level> users = new ArrayList<>();
+        users = AllDBOperations.getAll_Levels_ModuleID(UnivID);
+
+        JSONArray array = new JSONArray();
+        for (Level univAdmin : users){
+            array.put(UtilsManager.levelToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Levels",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+
     }
 
     @Override

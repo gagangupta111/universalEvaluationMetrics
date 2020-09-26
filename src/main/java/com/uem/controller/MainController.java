@@ -2062,6 +2062,29 @@ public class MainController {
         }
     }
 
+    @PostMapping("/Levels/search")
+    @ResponseBody
+    public ResponseEntity<String> get_Levels_Input_Filter(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        if (object.has("ModuleID") && object.has("Name") ){
+            CustomResponse customResponse = mainService.getLevels_Filter(object);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("message", "ModuleID, Name is required!")
+                    .body("AdminID, UnivID required!");
+        }
+    }
+
     @PostMapping("/Modules/search")
     @ResponseBody
     public ResponseEntity<String> get_Modules_Input_Filter(@RequestBody String body) throws Exception {
@@ -2145,6 +2168,22 @@ public class MainController {
     public ResponseEntity<String> getModules_By_ID(@PathVariable("ModuleID") String ModuleID) throws Exception {
 
         CustomResponse customResponse = mainService.getModules_By_ModuleID(ModuleID);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @GetMapping("/levels/{ModuleID}")
+    @ResponseBody
+    public ResponseEntity<String> getLevels_By_Module_ID(@PathVariable("ModuleID") String ModuleID) throws Exception {
+
+        CustomResponse customResponse = mainService.getlevels_By_ModuleID(ModuleID);
         if (customResponse.getSuccess()) {
             return ResponseEntity.ok()
                     .header("message", customResponse.getMessage())
