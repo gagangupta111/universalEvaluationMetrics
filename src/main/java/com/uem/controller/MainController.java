@@ -2176,7 +2176,7 @@ public class MainController {
     @PutMapping("/update/module/{ModuleID}")
     @ResponseBody
     public ResponseEntity<String> update_Module(
-            @RequestParam(value = "info", required = false) String info,
+            @RequestBody String bodyString,
             @PathVariable("ModuleID") String ModuleID) throws Exception {
 
         try {
@@ -2185,8 +2185,7 @@ public class MainController {
                         .header("message", "")
                         .body("");
             }
-            JSONObject body = new JSONObject();
-            body = info != null ? body.put("info", info.trim()) : body;
+            JSONObject body = new JSONObject(bodyString.trim());
             body.put("ModuleID", ModuleID);
 
             CustomResponse customResponse = mainService.update_module(body);
