@@ -1957,13 +1957,10 @@ public class MainController {
 
     }
 
-    @PutMapping("/update/university/{univID}")
+    @PutMapping("/update/universityOnlyPhoto/{univID}")
     @ResponseBody
-    public ResponseEntity<String> updateUniversity_New(
+    public ResponseEntity<String> updateUniversity_New_Photo_Only(
             @RequestParam(value = "Photo", required = false) MultipartFile Photo,
-            @RequestParam(value = "info", required = false) String info,
-            @RequestParam(value = "Name", required = false) String Name,
-            @RequestParam(value = "Website", required = false) String Website,
             @PathVariable("univID") String univID) throws Exception {
 
         try {
@@ -1973,9 +1970,6 @@ public class MainController {
                         .body("");
             }
             JSONObject body = new JSONObject();
-            body = info != null ? body.put("info", info.trim()) : body;
-            body = Name != null ? body.put("Name", Name.trim()) : body;
-            body = Website != null ? body.put("Website", Website.trim()) : body;
             body.put("UnivID", univID);
 
             if (Photo != null) {
@@ -1999,6 +1993,39 @@ public class MainController {
                 body.put("Photo", object);
                 file.delete();
             }
+
+            CustomResponse customResponse = mainService.updateUniversity_New(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PutMapping("/update/university/{univID}")
+    @ResponseBody
+    public ResponseEntity<String> updateUniversity_New(
+            @RequestBody String bodyString,
+            @PathVariable("univID") String univID) throws Exception {
+
+        try {
+            if (univID == null || univID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject(bodyString.trim());
+            body.put("UnivID", univID);
 
             CustomResponse customResponse = mainService.updateUniversity_New(body);
             if (customResponse.getSuccess()) {
@@ -2149,7 +2176,6 @@ public class MainController {
     @PutMapping("/update/module/{ModuleID}")
     @ResponseBody
     public ResponseEntity<String> update_Module(
-            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
             @RequestParam(value = "info", required = false) String info,
             @PathVariable("ModuleID") String ModuleID) throws Exception {
 
@@ -2161,6 +2187,39 @@ public class MainController {
             }
             JSONObject body = new JSONObject();
             body = info != null ? body.put("info", info.trim()) : body;
+            body.put("ModuleID", ModuleID);
+
+            CustomResponse customResponse = mainService.update_module(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PutMapping("/update/modulePhotoOnly/{ModuleID}")
+    @ResponseBody
+    public ResponseEntity<String> update_Module(
+            @RequestParam(value = "Photo", required = false) MultipartFile Photo,
+            @PathVariable("ModuleID") String ModuleID) throws Exception {
+
+        try {
+            if (ModuleID == null || ModuleID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
             body.put("ModuleID", ModuleID);
 
             if (Photo != null) {

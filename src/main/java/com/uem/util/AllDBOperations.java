@@ -1136,6 +1136,10 @@ public class AllDBOperations {
                 bodyUpdate.put("Photo", body.get("Photo"));
             }
 
+            if (bodyUpdate.length() == 0){
+                return data;
+            }
+
             Map<String, JSONObject> map = new HashMap<>();
             map.put(university.getObjectID(), bodyUpdate);
 
@@ -1383,6 +1387,10 @@ public class AllDBOperations {
 
             if (body.has("Photo")){
                 bodyUpdate.put("Photo", body.get("Photo"));
+            }
+
+            if (bodyUpdate.length() == 0){
+                return data;
             }
 
             Map<String, JSONObject> map = new HashMap<>();
