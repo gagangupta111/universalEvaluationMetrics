@@ -2031,6 +2031,29 @@ public class MainController {
         }
     }
 
+    @PostMapping("/University/search")
+    @ResponseBody
+    public ResponseEntity<String> getUniversity_Users_Filter(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        if (object.has("AdminID") && object.has("UnivID") ){
+            CustomResponse customResponse = mainService.getUniversity(object);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("message", "AdminID, UnivID required!")
+                    .body("AdminID, UnivID required!");
+        }
+    }
+
     @GetMapping("/University/{univID}")
     @ResponseBody
     public ResponseEntity<String> getUniversity(@PathVariable("univID") String univID) throws Exception {

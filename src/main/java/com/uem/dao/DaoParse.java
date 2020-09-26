@@ -853,6 +853,47 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getUniversity(JSONObject body) {
+
+        try {
+            List<University> universities = new ArrayList<>();
+            universities = AllDBOperations.getAllUniversities_AdminID(body.getString("AdminID"));
+
+            JSONArray array = new JSONArray();
+            for (University university : universities){
+                if (body.has("UnivID")
+                        && body.getString("UnivID").equalsIgnoreCase("none")){
+                    array.put(UtilsManager.universityToJson(university));
+                }
+                if (body.has("UnivID")
+                        && !body.getString("UnivID").equalsIgnoreCase("none")
+                        && university.getUnivID().toUpperCase().contains(body.getString("UnivID").toUpperCase())){
+                    array.put(UtilsManager.universityToJson(university));
+                }
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Universities",  array);
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+
+        }catch (Exception e){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse getModules(String UnivID) {
         List<Module> users = new ArrayList<>();
         users = AllDBOperations.getAll_Modules_UnivID(UnivID);

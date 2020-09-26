@@ -60,6 +60,10 @@ public class MainService {
         return dao.getUniversity(univID);
     }
 
+    public CustomResponse getUniversity(JSONObject body) {
+        return dao.getUniversity(body);
+    }
+
     public CustomResponse createModules(JSONObject body) {
         return dao.createModules(body);
     }
