@@ -64,6 +64,10 @@ public class MainService {
         return dao.getUniversity(body);
     }
 
+    public CustomResponse getModules(JSONObject body) {
+        return dao.getModules(body);
+    }
+
     public CustomResponse createModules(JSONObject body) {
         return dao.createModules(body);
     }

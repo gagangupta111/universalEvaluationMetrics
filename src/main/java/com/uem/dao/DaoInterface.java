@@ -42,6 +42,7 @@ public interface DaoInterface {
     public CustomResponse getUniversity(String UnivID);
 
     public CustomResponse getUniversity(JSONObject body);
+    public CustomResponse getModules(JSONObject body);
 
     public CustomResponse getModules(String UnivID);
     public CustomResponse createUniversity(JSONObject body);

@@ -853,6 +853,47 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getModules(JSONObject body) {
+
+        try {
+            List<Module> modules = new ArrayList<>();
+            modules = AllDBOperations.getAll_Modules_UnivID(body.getString("UnivID"));
+
+            JSONArray array = new JSONArray();
+            for (Module module : modules){
+                if (body.has("ModuleID")
+                        && body.getString("ModuleID").equalsIgnoreCase("none")){
+                    array.put(UtilsManager.moduleToJson(module));
+                }
+                if (body.has("ModuleID")
+                        && !body.getString("ModuleID").equalsIgnoreCase("none")
+                        && module.getName().toUpperCase().contains(body.getString("ModuleID").toUpperCase())){
+                    array.put(UtilsManager.moduleToJson(module));
+                }
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Modules",  array);
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+
+        }catch (Exception e){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse getUniversity(JSONObject body) {
 
         try {
