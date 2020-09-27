@@ -478,6 +478,44 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject questionToJson(Question level) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = level.getLevelID() != null ? object.put("LevelID", level.getLevelID()) : object;
+            object = level.getQuestionID() != null ? object.put("QuestionID", level.getQuestionID()) : object;
+            object = level.getInfo() != null ? object.put("info", level.getInfo()) : object;
+            object = level.getName() != null ? object.put("Name", level.getName()) : object;
+
+            List<Document> Videos = level.getVideos();
+            JSONArray array = new JSONArray();
+            for (Document document : Videos) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Videos", array) : object;
+
+            List<Document> Images = level.getImages();
+            array = new JSONArray();
+            for (Document document : Images) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Images", array) : object;
+
+            object = level.getObjectID() != null ? object.put("_id", level.getObjectID()) : object;
+            object = level.get_created_at() != null ? object.put("_created_at", level.get_created_at()) : object;
+            object = level.get_updated_at() != null ? object.put("_updated_at", level.get_updated_at()) : object;
+
+            Document photo = level.getPhoto();
+            object = photo != null && photo.size() > 0 ? object.put("Photo", new JSONObject(photo.toJson())) : object;
+
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
     public static JSONObject levelToJson(Level level) {
 
         JSONObject object = new JSONObject();
@@ -896,6 +934,40 @@ public class UtilsManager {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
+    }
+
+    public static Question jsonToQuestion(JSONObject jsonObject) {
+
+        Question event = new Question();
+
+        try {
+            event.setQuestionID(jsonObject.has("QuestionID") ? jsonObject.getString("QuestionID") : null);
+            event.setLevelID(jsonObject.has("levelID") ? jsonObject.getString("levelID") : null);
+            event.setName(jsonObject.has("Name") ? jsonObject.getString("Name") : null);
+            event.setInfo(jsonObject.has("info") ? jsonObject.getString("info") : null);
+            event.setPhoto(jsonObject.has("Photo") ? (Document) jsonObject.get("Photo") : null);
+
+            List<Document> Images = new ArrayList<>();
+            JSONArray array = jsonObject.has("Images") ? jsonObject.getJSONArray("Images") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                Images.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            event.setImages(Images);
+
+            List<Document> Videos = new ArrayList<>();
+            array = jsonObject.has("Videos") ? jsonObject.getJSONArray("Videos") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                Videos.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            event.setVideos(Videos);
+
+            event.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            event.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            event.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return event;
     }
 
     public static Level jsonToLevel(JSONObject jsonObject) {

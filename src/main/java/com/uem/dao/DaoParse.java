@@ -853,6 +853,47 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse getQuestions_Filter(JSONObject body) {
+
+        try {
+            List<Question> modules = new ArrayList<>();
+            modules = AllDBOperations.getAll_Questions_LevelID(body.getString("LevelID"));
+
+            JSONArray array = new JSONArray();
+            for (Question module : modules){
+                if (body.has("Name")
+                        && body.getString("Name").equalsIgnoreCase("none")){
+                    array.put(UtilsManager.questionToJson(module));
+                }
+                if (body.has("Name")
+                        && !body.getString("Name").equalsIgnoreCase("none")
+                        && module.getName().toUpperCase().contains(body.getString("Name").toUpperCase())){
+                    array.put(UtilsManager.questionToJson(module));
+                }
+            }
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Questions",  array);
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(map);
+            return customResponse;
+
+        }catch (Exception e){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse getLevels_Filter(JSONObject body) {
 
         try {
@@ -975,6 +1016,50 @@ public class DaoParse implements DaoInterface {
         }
     }
 
+    // get_Questions_By_QuestionID
+    @Override
+    public CustomResponse get_Questions_By_LevelID(String UnivID) {
+        List<Question> users = new ArrayList<>();
+        users = AllDBOperations.getAll_Questions_LevelID(UnivID);
+
+        JSONArray array = new JSONArray();
+        for (Question univAdmin : users){
+            array.put(UtilsManager.questionToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Questions",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+
+    }
+
+    // get_Questions_By_QuestionID
+    @Override
+    public CustomResponse get_Questions_By_QuestionID(String UnivID) {
+        List<Question> users = new ArrayList<>();
+        users = AllDBOperations.getAll_Questions_ID(UnivID);
+
+        JSONArray array = new JSONArray();
+        for (Question univAdmin : users){
+            array.put(UtilsManager.questionToJson(univAdmin));
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("Questions",  array);
+
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setSuccess(true);
+        customResponse.setMessage(Constants.SUCCESS);
+        customResponse.setInfo(map);
+        return customResponse;
+
+    }
+
     @Override
     public CustomResponse getLevels_By_ModuleID(String UnivID) {
         List<Level> users = new ArrayList<>();
@@ -1093,6 +1178,53 @@ public class DaoParse implements DaoInterface {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.MODULE_CREATION_FAILURE);
+                return customResponse;
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse createQuestions(JSONObject body) {
+
+        try {
+            if (body.has("LevelID") && body.has("Name")) {
+
+                List<Question> modules = AllDBOperations.getAll_Questions_Name(body.getString("Name"));
+                if (modules != null && modules.size() > 0){
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.ALREADY_EXIST);
+                    return customResponse;
+                }
+
+                Map<String, Object> map = AllDBOperations.createQuestion(body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            } else {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.QUESTION_CREATION_FAILURE);
                 return customResponse;
             }
         } catch (Exception e) {
@@ -2009,18 +2141,18 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
-    public CustomResponse updateLevelImages(JSONObject body) {
+    public CustomResponse updateQuestion(JSONObject body) {
 
         try {
 
-            List<Level> modules = AllDBOperations.getAll_Levels_ID(body.getString("LevelID"));
+            List<Question> modules = AllDBOperations.getAll_Questions_ID(body.getString("QuestionID"));
             if (modules == null || modules.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
                 customResponse.setMessage(Constants.LEVEL_DOES_NOT_EXIST);
                 return customResponse;
             } else {
-                Map<String, Object> map = AllDBOperations.updateLevel(modules.get(0), body);
+                Map<String, Object> map = AllDBOperations.updateQuestion(modules.get(0), body);
                 if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);

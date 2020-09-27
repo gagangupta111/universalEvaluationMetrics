@@ -59,9 +59,14 @@ public interface DaoInterface {
 
     public CustomResponse getLevels_By_ModuleID(String UnivID);
     public CustomResponse updateLevel(JSONObject body);
-    public CustomResponse updateLevelImages(JSONObject body);
     public CustomResponse createLevels(JSONObject body);
     public CustomResponse getLevels_By_LevelID(String UnivID);
+
+    public CustomResponse createQuestions(JSONObject body);
+    public CustomResponse get_Questions_By_QuestionID(String UnivID);
+    public CustomResponse get_Questions_By_LevelID(String UnivID);
+    public CustomResponse getQuestions_Filter(JSONObject body);
+    public CustomResponse updateQuestion(JSONObject body);
 
     public CustomResponse createPost(JSONObject body);
     public CustomResponse updatePost(JSONObject body, Boolean append);

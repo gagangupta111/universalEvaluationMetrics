@@ -52,12 +52,20 @@ public class MainService {
         return dao.signIn(email, password, loginType);
     }
 
+    public CustomResponse get_Questions_By_LevelID(String ModuleID) {
+        return dao.get_Questions_By_LevelID(ModuleID);
+    }
+
     public CustomResponse get_Levels_By_LevelID(String ModuleID) {
         return dao.getLevels_By_LevelID(ModuleID);
     }
 
     public CustomResponse getModules_By_ModuleID(String ModuleID) {
         return dao.getModules_By_ModuleID(ModuleID);
+    }
+
+    public CustomResponse get_Questions_QuestionID(String univID) {
+        return dao.get_Questions_By_QuestionID(univID);
     }
 
     public CustomResponse getlevels_By_ModuleID(String univID) {
@@ -76,6 +84,10 @@ public class MainService {
         return dao.getUniversity(body);
     }
 
+    public CustomResponse get_Questions_Filter(JSONObject body) {
+        return dao.getQuestions_Filter(body);
+    }
+
     public CustomResponse getLevels_Filter(JSONObject body) {
         return dao.getLevels_Filter(body);
     }
@@ -86,6 +98,10 @@ public class MainService {
 
     public CustomResponse createModules(JSONObject body) {
         return dao.createModules(body);
+    }
+
+    public CustomResponse createQuestions(JSONObject body) {
+        return dao.createQuestions(body);
     }
 
     public CustomResponse createLevels(JSONObject body) {
@@ -146,6 +162,10 @@ public class MainService {
 
     public CustomResponse update_level_Images(JSONObject body) {
         return dao.updateLevel(body);
+    }
+
+    public CustomResponse update_Question(JSONObject body) {
+        return dao.updateQuestion(body);
     }
 
     public CustomResponse update_level(JSONObject body) {

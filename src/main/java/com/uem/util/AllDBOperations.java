@@ -283,6 +283,34 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> createQuestion(JSONObject post) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+            String QuestionID = UtilsManager.generateUniqueID();
+            post.put("QuestionID", QuestionID);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(post, "Questions");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", post);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", post);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", post);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createLevel(JSONObject post) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1401,6 +1429,73 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateQuestion(Question question, JSONObject body) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            JSONObject bodyUpdate = new JSONObject();
+
+            if (body.has("VideoID") && !body.getString("VideoID").equalsIgnoreCase("none")){
+                Document Video = new Document();
+                Video.put("VideoID", body.getString("VideoID"));
+                Video.put("Name", body.getString("Name"));
+                if (question.getVideos() == null){
+                    question.setVideos(new ArrayList<>());
+                }
+                question.getVideos().add(Video);
+                bodyUpdate.put("Videos", UtilsManager.questionToJson(question).get("Videos"));
+            }
+
+            if (body.has("Image")){
+                Document Image = new Document();
+                Image.put("Image", Document.parse(String.valueOf(body.get("Image"))));
+                Image.put("Name", body.getString("Name"));
+                if (question.getImages() == null){
+                    question.setImages(new ArrayList<>());
+                }
+                question.getImages().add(Image);
+                bodyUpdate.put("Images", UtilsManager.questionToJson(question).get("Images"));
+            }
+
+            if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
+                bodyUpdate.put("info", body.getString("info"));
+            }
+
+            if (body.has("Photo")){
+                bodyUpdate.put("Photo", body.get("Photo"));
+            }
+
+            if (bodyUpdate.length() == 0){
+                return data;
+            }
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(question.getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Questions");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateLevel(Level level, JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1940,6 +2035,108 @@ public class AllDBOperations {
                 university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
+                university.setVideos(document.containsKey("Videos") ? document.getList("Videos", Document.class) : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                modules.add(university);
+            }
+        }
+        return modules;
+    }
+
+    public static List<Question> getAll_Questions_LevelID(String LevelID) {
+
+        List<Question> modules = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "LevelID:{$regex:/" + LevelID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllQuestions(filter);
+        if (documents == null || documents.size() == 0) {
+            return modules;
+        } else {
+            for (Document document : documents) {
+                Question university = new Question();
+                university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
+                university.setVideos(document.containsKey("Videos") ? document.getList("Videos", Document.class) : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                modules.add(university);
+            }
+        }
+        return modules;
+    }
+
+    public static List<Question> getAll_Questions_Name(String Name) {
+
+        List<Question> modules = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "Name:{$regex:/" + Name + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllQuestions(filter);
+        if (documents == null || documents.size() == 0) {
+            return modules;
+        } else {
+            for (Document document : documents) {
+                Question university = new Question();
+                university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
+                university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
+                university.setVideos(document.containsKey("Videos") ? document.getList("Videos", Document.class) : null);
+
+                university.setName(document.containsKey("Name") ? document.getString("Name") : null);
+                university.setPhoto(
+                        document.containsKey("Photo")
+                                ? document.get("Photo", Document.class)
+                                : new Document());
+
+                university.setObjectID(document.getString("_id"));
+                university.set_created_at(document.getDate("_created_at"));
+                university.set_updated_at(document.getDate("_updated_at"));
+                modules.add(university);
+            }
+        }
+        return modules;
+    }
+
+    public static List<Question> getAll_Questions_ID(String ID) {
+
+        List<Question> modules = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "QuestionID:{$regex:/" + ID + "/}" +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllQuestions(filter);
+        if (documents == null || documents.size() == 0) {
+            return modules;
+        } else {
+            for (Document document : documents) {
+                Question university = new Question();
+                university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
                 university.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
