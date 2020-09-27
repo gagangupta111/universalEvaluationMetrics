@@ -2068,6 +2068,7 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 Question university = new Question();
+                university.setQuestionID(document.containsKey("QuestionID") ? document.getString("QuestionID") : null);
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
@@ -2102,6 +2103,7 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 Question university = new Question();
+                university.setQuestionID(document.containsKey("QuestionID") ? document.getString("QuestionID") : null);
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
@@ -2136,6 +2138,7 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 Question university = new Question();
+                university.setQuestionID(document.containsKey("QuestionID") ? document.getString("QuestionID") : null);
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
