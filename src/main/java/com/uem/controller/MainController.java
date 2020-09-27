@@ -2333,6 +2333,63 @@ public class MainController {
         }
     }
 
+    @PutMapping("/update/levelImages/{LevelID}")
+    @ResponseBody
+    public ResponseEntity<String> update_Level_Images(
+            @RequestParam(value = "Image", required = false) MultipartFile Image,
+            @RequestParam(value = "Name", required = false) String Name,
+            @PathVariable("LevelID") String LevelID) throws Exception {
+
+        try {
+            if (LevelID == null || LevelID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+            body.put("LevelID", LevelID);
+            body.put("Name", Name);
+
+            if (Image != null) {
+
+                String key_name = "LEVEL_IMAGE" + LevelID + "_" + Image.getOriginalFilename();;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Image.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
+                object.put("Name", key_name);
+                body.put("Image", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.update_level(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
     @PutMapping("/update/levelPhotoOnly/{LevelID}")
     @ResponseBody
     public ResponseEntity<String> update_Level_Photo_Only(

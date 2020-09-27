@@ -59,6 +59,7 @@ public interface DaoInterface {
 
     public CustomResponse getLevels_By_ModuleID(String UnivID);
     public CustomResponse updateLevel(JSONObject body);
+    public CustomResponse updateLevelImages(JSONObject body);
     public CustomResponse createLevels(JSONObject body);
     public CustomResponse getLevels_By_LevelID(String UnivID);
 

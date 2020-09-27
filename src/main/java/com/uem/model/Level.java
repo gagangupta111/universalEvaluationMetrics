@@ -3,6 +3,7 @@ package com.uem.model;
 import org.bson.Document;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class Level {
@@ -14,9 +15,28 @@ public class Level {
     private Document Photo;
     private String info;
 
+    private List<Document> Images;
+    private List<Document> Videos;
+
     String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public List<Document> getImages() {
+        return Images;
+    }
+
+    public void setImages(List<Document> images) {
+        Images = images;
+    }
+
+    public List<Document> getVideos() {
+        return Videos;
+    }
+
+    public void setVideos(List<Document> videos) {
+        Videos = videos;
+    }
 
     public String getLevelID() {
         return LevelID;

@@ -2009,6 +2009,46 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse updateLevelImages(JSONObject body) {
+
+        try {
+
+            List<Level> modules = AllDBOperations.getAll_Levels_ID(body.getString("LevelID"));
+            if (modules == null || modules.size() == 0) {
+                CustomResponse customResponse = new CustomResponse();
+                customResponse.setSuccess(false);
+                customResponse.setMessage(Constants.LEVEL_DOES_NOT_EXIST);
+                return customResponse;
+            } else {
+                Map<String, Object> map = AllDBOperations.updateLevel(modules.get(0), body);
+                if (map == null || Boolean.valueOf(String.valueOf(map.get("success"))) == false) {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                } else {
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(true);
+                    customResponse.setMessage(Constants.SUCCESS);
+                    customResponse.setInfo(map);
+                    return customResponse;
+                }
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse updateLevel(JSONObject body) {
 
         try {

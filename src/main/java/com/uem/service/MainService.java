@@ -144,6 +144,10 @@ public class MainService {
         return dao.updateUniversity(body, append);
     }
 
+    public CustomResponse update_level_Images(JSONObject body) {
+        return dao.updateLevel(body);
+    }
+
     public CustomResponse update_level(JSONObject body) {
         return dao.updateLevel(body);
     }

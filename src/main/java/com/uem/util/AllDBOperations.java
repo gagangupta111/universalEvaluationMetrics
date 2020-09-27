@@ -1401,13 +1401,35 @@ public class AllDBOperations {
         }
     }
 
-    public static Map<String, Object> updateLevel(Level post, JSONObject body) {
+    public static Map<String, Object> updateLevel(Level level, JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
         data.put("success", false);
         try {
 
             JSONObject bodyUpdate = new JSONObject();
+
+            if (body.has("VideoID") && !body.getString("VideoID").equalsIgnoreCase("none")){
+                Document Video = new Document();
+                Video.put("VideoID", body.getString("VideoID"));
+                Video.put("Name", body.getString("Name"));
+                if (level.getVideos() == null){
+                    level.setVideos(new ArrayList<>());
+                }
+                level.getVideos().add(Video);
+                bodyUpdate.put("Videos", UtilsManager.levelToJson(level).get("Videos"));
+            }
+
+            if (body.has("Image")){
+                Document Image = new Document();
+                Image.put("Image", Document.parse(String.valueOf(body.get("Image"))));
+                Image.put("Name", body.getString("Name"));
+                if (level.getImages() == null){
+                    level.setImages(new ArrayList<>());
+                }
+                level.getImages().add(Image);
+                bodyUpdate.put("Images", UtilsManager.levelToJson(level).get("Images"));
+            }
 
             if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
                 bodyUpdate.put("info", body.getString("info"));
@@ -1422,7 +1444,7 @@ public class AllDBOperations {
             }
 
             Map<String, JSONObject> map = new HashMap<>();
-            map.put(post.getObjectID(), bodyUpdate);
+            map.put(level.getObjectID(), bodyUpdate);
 
             Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Level");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
@@ -1884,6 +1906,9 @@ public class AllDBOperations {
                 university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
+                university.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
+                university.setVideos(document.containsKey("Videos") ? document.getList("Videos", Document.class) : null);
+
                 university.setName(document.containsKey("Name") ? document.getString("Name") : null);
                 university.setPhoto(
                         document.containsKey("Photo")
@@ -1917,6 +1942,9 @@ public class AllDBOperations {
                 university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
 
+                university.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
+                university.setVideos(document.containsKey("Videos") ? document.getList("Videos", Document.class) : null);
+
                 university.setName(document.containsKey("Name") ? document.getString("Name") : null);
                 university.setPhoto(
                         document.containsKey("Photo")
@@ -1949,6 +1977,9 @@ public class AllDBOperations {
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                university.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
+                university.setVideos(document.containsKey("Videos") ? document.getList("Videos", Document.class) : null);
 
                 university.setName(document.containsKey("Name") ? document.getString("Name") : null);
                 university.setPhoto(
