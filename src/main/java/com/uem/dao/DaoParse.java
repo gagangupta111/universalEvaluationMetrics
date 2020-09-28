@@ -1128,16 +1128,16 @@ public class DaoParse implements DaoInterface {
         // Map of Module Name as key , values : total levels, levels reached, ratings overall
         try {
 
-            Map<String, Object> moduleMap = new HashMap<>();
+            JSONArray moduleArray = new JSONArray();
             List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(body.getString("ModuleID"));
 
             for (Level level : levels){
 
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("LevelInfo", UtilsManager.levelToJson(level));
+                JSONObject moduleObject = new JSONObject();
+                moduleObject.put("LevelInfo", UtilsManager.levelToJson(level));
 
                 List<Question> questions = AllDBOperations.getAll_Questions_LevelID(level.getLevelID());
-                jsonObject.put("Total_Questions", questions.size());
+                moduleObject.put("Total_Questions", questions.size());
 
                 int countAnswers = 0;
                 List<Integer> averageRatings = new ArrayList<>();
@@ -1157,14 +1157,14 @@ public class DaoParse implements DaoInterface {
                         }
                     }
                 }
-                jsonObject.put("Total_Answers", countAnswers);
+                moduleObject.put("Total_Answers", countAnswers);
                 Integer sum = 0;
                 for (Integer integer : averageRatings){
                     sum += integer;
                 }
-                jsonObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
-                jsonObject.put("Completion", questions.size() > 0 && countAnswers > 0 ? (questions.size()/countAnswers)*100 : 0);
-                moduleMap.put(level.getName(), jsonObject);
+                moduleObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
+                moduleObject.put("Completion", questions.size() > 0 && countAnswers > 0 ? (questions.size()/countAnswers)*100 : 0);
+                moduleArray.put(moduleObject);
             }
 
             CustomResponse customResponse = new CustomResponse();
@@ -1172,7 +1172,7 @@ public class DaoParse implements DaoInterface {
             customResponse.setMessage(Constants.SUCCESS);
 
             Map<String, Object> map = new HashMap<>();
-            map.put("Levels", moduleMap);
+            map.put("Levels", moduleArray);
 
             customResponse.setInfo(map);
             return customResponse;
@@ -1195,16 +1195,16 @@ public class DaoParse implements DaoInterface {
         // Map of Module Name as key , values : total levels, levels reached, ratings overall
         try {
 
-            Map<String, Object> moduleMap = new HashMap<>();
+            JSONArray modulesArray = new JSONArray();
             List<Module> modules = AllDBOperations.getAll_Modules_UnivID(body.getString("UnivID"));
 
             for (Module module : modules){
 
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("ModuleInfo", UtilsManager.moduleToJson(module));
+                JSONObject moduleObject = new JSONObject();
+                moduleObject.put("ModuleInfo", UtilsManager.moduleToJson(module));
 
                 List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(module.getModuleID());
-                jsonObject.put("Total_Levels", levels.size());
+                moduleObject.put("Total_Levels", levels.size());
 
                 int count = 0;
                 List<Integer> averageRatings = new ArrayList<>();
@@ -1224,13 +1224,13 @@ public class DaoParse implements DaoInterface {
                         }
                     }
                 }
-                jsonObject.put("Levels_Accessed", count);
+                moduleObject.put("Levels_Accessed", count);
                 Integer sum = 0;
                 for (Integer integer : averageRatings){
                     sum += integer;
                 }
-                jsonObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
-                moduleMap.put(module.getName(), jsonObject);
+                moduleObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
+                modulesArray.put(moduleObject);
             }
 
             CustomResponse customResponse = new CustomResponse();
@@ -1238,7 +1238,7 @@ public class DaoParse implements DaoInterface {
             customResponse.setMessage(Constants.SUCCESS);
 
             Map<String, Object> map = new HashMap<>();
-            map.put("Modules", moduleMap);
+            map.put("Modules", modulesArray);
 
             customResponse.setInfo(map);
             return customResponse;
