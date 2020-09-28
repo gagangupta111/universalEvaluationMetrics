@@ -2825,4 +2825,84 @@ public class MainController {
         }
     }
 
+    @PostMapping("/student/all/modules")
+    @ResponseBody
+    public ResponseEntity<String> get_All_Modules_For_Student(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        if (object.has("StudentID")
+                && object.has("UnivID")
+                && !object.getString("StudentID").equalsIgnoreCase("none")
+                && !object.getString("UnivID").equalsIgnoreCase("none")){
+            CustomResponse customResponse = mainService.get_All_Modules_Student(object);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("message", "LevelID, Name is required!")
+                    .body("LevelID, Name required!");
+        }
+    }
+
+    @PostMapping("/student/all/levels")
+    @ResponseBody
+    public ResponseEntity<String> get_All_Levels_For_Student(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        if (object.has("StudentID")
+                && object.has("UnivID")
+                && object.has("ModuleID")
+                && !object.getString("ModuleID").equalsIgnoreCase("none")
+                && !object.getString("StudentID").equalsIgnoreCase("none")
+                && !object.getString("UnivID").equalsIgnoreCase("none")){
+            CustomResponse customResponse = mainService.get_All_Levels_Student(object);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("message", "LevelID, Name is required!")
+                    .body("LevelID, Name required!");
+        }
+    }
+
+    @PostMapping("/student/question/answer")
+    @ResponseBody
+    public ResponseEntity<String> get_Question_Answer_Student(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        if (object.has("StudentID")
+                && object.has("QuestionID")
+                && !object.getString("QuestionID").equalsIgnoreCase("none")
+                && !object.getString("StudentID").equalsIgnoreCase("none")){
+            CustomResponse customResponse = mainService.get_Question_Answer_Student(object);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("message", "LevelID, Name is required!")
+                    .body("LevelID, Name required!");
+        }
+    }
+
 }

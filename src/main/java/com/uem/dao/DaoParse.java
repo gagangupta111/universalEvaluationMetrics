@@ -6,6 +6,7 @@ import com.uem.model.*;
 import com.uem.util.Constants;
 import com.uem.util.LogUtil;
 import com.uem.util.UtilsManager;
+import io.netty.util.internal.MathUtil;
 import javafx.geometry.Pos;
 import org.apache.log4j.Logger;
 import org.bson.Document;
@@ -1087,7 +1088,165 @@ public class DaoParse implements DaoInterface {
 
     }
 
-    // get_Questions_By_QuestionID
+    // get_Question_Answer_Student
+    @Override
+    public CustomResponse get_Question_Answer_Student(JSONObject body) {
+
+        try {
+
+            Map<String, Object> questionAnswer = new HashMap<>();
+            List<Question> questions = AllDBOperations.getAll_Questions_ID(body.getString("QuestionID"));
+            questionAnswer.put("QuestionInfo", UtilsManager.questionToJson(questions.get(0)));
+
+            JSONObject searchBody = new JSONObject();
+            searchBody.put("QuestionID", body.getString("QuestionID"));
+            searchBody.put("StudentID", body.getString("StudentID"));
+            List<Answer> answers = AllDBOperations.get_All_Answers_Many_Filter(searchBody);
+            questionAnswer.put("AnswerInfo", answers.size() > 0 ? UtilsManager.answerToJson(answers.get(0)) : new JSONObject());
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(questionAnswer);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse get_All_Levels_Student(JSONObject body) {
+
+        // Map of Module Name as key , values : total levels, levels reached, ratings overall
+        try {
+
+            Map<String, Object> moduleMap = new HashMap<>();
+            List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(body.getString("ModuleID"));
+
+            for (Level level : levels){
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("LevelInfo", UtilsManager.levelToJson(level));
+
+                List<Question> questions = AllDBOperations.getAll_Questions_LevelID(level.getLevelID());
+                jsonObject.put("Total_Questions", questions.size());
+
+                int countAnswers = 0;
+                List<Integer> averageRatings = new ArrayList<>();
+
+                for (Question question : questions){
+
+                    JSONObject searchBody = new JSONObject();
+                    searchBody.put("QuestionID", question.getQuestionID());
+                    searchBody.put("StudentID", body.getString("StudentID"));
+                    List<Answer> answers = AllDBOperations.get_All_Answers_Many_Filter(searchBody);
+                    if (answers != null && answers.size() > 0){
+                        countAnswers++;
+                        for (Answer answer : answers){
+                            if (answer.getTeacherRatings() != null){
+                                averageRatings.add(Integer.valueOf(answer.getTeacherRatings()));
+                            }
+                        }
+                    }
+                }
+                jsonObject.put("Total_Answers", countAnswers);
+                Integer sum = 0;
+                for (Integer integer : averageRatings){
+                    sum += integer;
+                }
+                jsonObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
+                jsonObject.put("Completion", questions.size() > 0 && countAnswers > 0 ? (questions.size()/countAnswers)*100 : 0);
+                moduleMap.put(level.getName(), jsonObject);
+            }
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(moduleMap);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse get_All_Modules_Student(JSONObject body) {
+
+        // Map of Module Name as key , values : total levels, levels reached, ratings overall
+        try {
+
+            Map<String, Object> moduleMap = new HashMap<>();
+            List<Module> modules = AllDBOperations.getAll_Modules_UnivID(body.getString("UnivID"));
+
+            for (Module module : modules){
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("ModuleInfo", UtilsManager.moduleToJson(module));
+
+                List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(module.getModuleID());
+                jsonObject.put("Total_Levels", levels.size());
+
+                int count = 0;
+                List<Integer> averageRatings = new ArrayList<>();
+
+                for (Level level : levels){
+
+                    JSONObject searchBody = new JSONObject();
+                    searchBody.put("LevelID", level.getLevelID());
+                    searchBody.put("StudentID", body.getString("StudentID"));
+                    List<Answer> answers = AllDBOperations.get_All_Answers_Many_Filter(searchBody);
+                    if (answers != null && answers.size() > 0){
+                        count++;
+                        for (Answer answer : answers){
+                            if (answer.getTeacherRatings() != null){
+                                averageRatings.add(Integer.valueOf(answer.getTeacherRatings()));
+                            }
+                        }
+                    }
+                }
+                jsonObject.put("Levels_Accessed", count);
+                Integer sum = 0;
+                for (Integer integer : averageRatings){
+                    sum += integer;
+                }
+                jsonObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
+                moduleMap.put(module.getName(), jsonObject);
+            }
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            customResponse.setInfo(moduleMap);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
     @Override
     public CustomResponse get_Questions_By_QuestionID(String UnivID) {
         List<Question> users = new ArrayList<>();

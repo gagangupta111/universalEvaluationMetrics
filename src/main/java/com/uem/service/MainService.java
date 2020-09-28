@@ -88,6 +88,20 @@ public class MainService {
         return dao.getAnswers_Filter(body);
     }
 
+    // get_Question_Answer_Student
+
+    public CustomResponse get_Question_Answer_Student(JSONObject body) {
+        return dao.get_Question_Answer_Student(body);
+    }
+
+    public CustomResponse get_All_Levels_Student(JSONObject body) {
+        return dao.get_All_Levels_Student(body);
+    }
+
+    public CustomResponse get_All_Modules_Student(JSONObject body) {
+        return dao.get_All_Modules_Student(body);
+    }
+
     public CustomResponse get_Questions_Filter(JSONObject body) {
         return dao.getQuestions_Filter(body);
     }
