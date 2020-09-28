@@ -233,56 +233,72 @@ public class DaoParse implements DaoInterface {
     @Override
     public CustomResponse signIn(String email, String password, String loginType) {
 
-        List<User> users = AllDBOperations.getAllUsers_Email(email);
+        try {
+            List<User> users = AllDBOperations.getAllUsers_Email(email);
 
-        if (users == null || users.size() == 0) {
-            CustomResponse customResponse = new CustomResponse();
-            customResponse.setSuccess(false);
-            customResponse.setMessage(Constants.LOGIN_FAILURE);
-            return customResponse;
-        }
-
-        switch (loginType) {
-            case "ADMIN":
-                List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(email);
-                if (univAdmins == null || univAdmins.size() == 0 || !password.equalsIgnoreCase(univAdmins.get(0).getPassword())) {
-                    CustomResponse customResponse = new CustomResponse();
-                    customResponse.setSuccess(false);
-                    customResponse.setMessage(Constants.LOGIN_FAILURE);
-                    return customResponse;
-                }
-                break;
-            case "STUDENT":
-                List<Student> students = AllDBOperations.getAllStudents_UserID(email);
-                if (students == null || students.size() == 0 || !password.equalsIgnoreCase(students.get(0).getPassword())) {
-                    CustomResponse customResponse = new CustomResponse();
-                    customResponse.setSuccess(false);
-                    customResponse.setMessage(Constants.LOGIN_FAILURE);
-                    return customResponse;
-                }
-                break;
-            case "TEACHER":
-                List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(email);
-                if (teachers == null || teachers.size() == 0) {
-                    CustomResponse customResponse = new CustomResponse();
-                    customResponse.setSuccess(false);
-                    customResponse.setMessage(Constants.LOGIN_FAILURE);
-                    return customResponse;
-                }
-                break;
-            default:
+            if (users == null || users.size() == 0) {
                 CustomResponse customResponse = new CustomResponse();
                 customResponse.setSuccess(false);
-                customResponse.setMessage(Constants.INTERNAL_ERROR);
+                customResponse.setMessage(Constants.LOGIN_FAILURE);
                 return customResponse;
-        }
+            }
 
-        CustomResponse customResponse = new CustomResponse();
-        customResponse.setSuccess(true);
-        customResponse.setMessage(Constants.SUCCESS);
-        Map<String, Object> info = new HashMap<>();
-        customResponse.setInfo(info);
-        return customResponse;
+            JSONObject body = new JSONObject();
+            body.put("lastLogin", UtilsManager.getUTCStandardDateFormat());
+
+            switch (loginType) {
+                case "ADMIN":
+                    List<UnivAdmin> univAdmins = AllDBOperations.getAllAdmin_UserID(email);
+                    if (univAdmins == null || univAdmins.size() == 0 || !password.equalsIgnoreCase(univAdmins.get(0).getPassword())) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.LOGIN_FAILURE);
+                        return customResponse;
+                    }
+                    AllDBOperations.updateAdmin(univAdmins.get(0), body, true);
+                    break;
+                case "STUDENT":
+                    List<Student> students = AllDBOperations.getAllStudents_UserID(email);
+                    if (students == null || students.size() == 0 || !password.equalsIgnoreCase(students.get(0).getPassword())) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.LOGIN_FAILURE);
+                        return customResponse;
+                    }
+                    AllDBOperations.updateStudent(students.get(0), body, true);
+                    break;
+                case "TEACHER":
+                    List<Teacher> teachers = AllDBOperations.getAllTeachers_UserID(email);
+                    if (teachers == null || teachers.size() == 0) {
+                        CustomResponse customResponse = new CustomResponse();
+                        customResponse.setSuccess(false);
+                        customResponse.setMessage(Constants.LOGIN_FAILURE);
+                        return customResponse;
+                    }
+                    AllDBOperations.updateTeacher(teachers.get(0), body, true);
+                    break;
+                default:
+                    CustomResponse customResponse = new CustomResponse();
+                    customResponse.setSuccess(false);
+                    customResponse.setMessage(Constants.INTERNAL_ERROR);
+                    return customResponse;
+            }
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+            Map<String, Object> info = new HashMap<>();
+            customResponse.setInfo(info);
+            return customResponse;
+        }catch (Exception e){
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+            Map<String, Object> map = new HashMap<>();
+            map.put("error", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
     }
 
     @Override
@@ -1152,8 +1168,12 @@ public class DaoParse implements DaoInterface {
         try {
             if (body.has("UnivID") && body.has("Name")) {
 
-                List<Module> modules = AllDBOperations.getAll_Modules_Name(body.getString("Name"));
-                if (modules != null && modules.size() > 0){
+                JSONObject searchBody = new JSONObject();
+                searchBody.put("ModuleID", body.getString("Name"));
+                searchBody.put("UnivID", body.getString("UnivID"));
+
+                CustomResponse searchModules = getModules(searchBody);
+                if (searchModules.getInfoAsJson().getJSONArray("Modules").length() > 0 ){
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
                     customResponse.setMessage(Constants.ALREADY_EXIST);
@@ -1199,8 +1219,12 @@ public class DaoParse implements DaoInterface {
         try {
             if (body.has("LevelID") && body.has("Name")) {
 
-                List<Question> modules = AllDBOperations.getAll_Questions_Name(body.getString("Name"));
-                if (modules != null && modules.size() > 0){
+                JSONObject searchBody = new JSONObject();
+                searchBody.put("LevelID", body.getString("LevelID"));
+                searchBody.put("Name", body.getString("Name"));
+
+                CustomResponse questionsFilter = getQuestions_Filter(searchBody);
+                if (questionsFilter.getInfoAsJson().getJSONArray("Questions").length() > 0 ){
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
                     customResponse.setMessage(Constants.ALREADY_EXIST);
@@ -1246,8 +1270,12 @@ public class DaoParse implements DaoInterface {
         try {
             if (body.has("ModuleID") && body.has("UnivID") && body.has("Name")) {
 
-                List<Level> modules = AllDBOperations.getAll_Levels_Name(body.getString("Name"));
-                if (modules != null && modules.size() > 0){
+                JSONObject searchBody = new JSONObject();
+                searchBody.put("ModuleID", body.getString("ModuleID"));
+                searchBody.put("Name", body.getString("Name"));
+
+                CustomResponse searchLevels = getLevels_Filter(searchBody);
+                if (searchLevels.getInfoAsJson().getJSONArray("Levels").length() > 0 ){
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(false);
                     customResponse.setMessage(Constants.ALREADY_EXIST);

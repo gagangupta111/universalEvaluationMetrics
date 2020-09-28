@@ -1179,13 +1179,13 @@ public class AllDBOperations {
         try {
 
             JSONObject bodyUpdate = new JSONObject();
-            if (body.has("info")){
+            if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
                 bodyUpdate.put("info", body.getString("info"));
             }
-            if (body.has("Name")){
+            if (body.has("Name")  && !body.getString("Name").equalsIgnoreCase("none")){
                 bodyUpdate.put("Name", body.getString("Name"));
             }
-            if (body.has("Website")){
+            if (body.has("Website")  && !body.getString("Website").equalsIgnoreCase("none")){
                 bodyUpdate.put("Website", body.getString("Website"));
             }
             if (body.has("Photo")){
