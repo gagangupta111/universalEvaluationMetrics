@@ -478,6 +478,48 @@ public class UtilsManager {
         return object;
     }
 
+    public static JSONObject answerToJson(Answer level) {
+
+        JSONObject object = new JSONObject();
+        try {
+
+            object = level.getUnivID() != null ? object.put("UnivID", level.getUnivID()) : object;
+            object = level.getModuleID() != null ? object.put("ModuleID", level.getModuleID()) : object;
+            object = level.getLevelID() != null ? object.put("LevelID", level.getLevelID()) : object;
+            object = level.getQuestionID() != null ? object.put("QuestionID", level.getQuestionID()) : object;
+            object = level.getAnswerID() != null ? object.put("AnswerID", level.getAnswerID()) : object;
+            object = level.getStudentID() != null ? object.put("StudentID", level.getStudentID()) : object;
+
+            object = level.getTeacherID() != null ? object.put("TeacherID", level.getTeacherID()) : object;
+            object = level.getTeacherComments() != null ? object.put("TeacherComments", level.getTeacherComments()) : object;
+            object = level.getTeacherRatings() != null ? object.put("TeacherRatings", level.getTeacherRatings()) : object;
+
+            object = level.getInfo() != null ? object.put("info", level.getInfo()) : object;
+
+            List<Document> Videos = level.getVideos() != null ? level.getVideos() : new ArrayList<>();
+            JSONArray array = new JSONArray();
+            for (Document document : Videos) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Videos", array) : object;
+
+            List<Document> Images = level.getImages() != null ? level.getImages() : new ArrayList<>();
+            array = new JSONArray();
+            for (Document document : Images) {
+                array.put(new JSONObject(document.toJson()));
+            }
+            object = array.length() > 0 ? object.put("Images", array) : object;
+
+            object = level.getObjectID() != null ? object.put("_id", level.getObjectID()) : object;
+            object = level.get_created_at() != null ? object.put("_created_at", level.get_created_at()) : object;
+            object = level.get_updated_at() != null ? object.put("_updated_at", level.get_updated_at()) : object;
+
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return object;
+    }
+
     public static JSONObject questionToJson(Question level) {
 
         JSONObject object = new JSONObject();
@@ -491,14 +533,14 @@ public class UtilsManager {
             object = level.getInfo() != null ? object.put("info", level.getInfo()) : object;
             object = level.getName() != null ? object.put("Name", level.getName()) : object;
 
-            List<Document> Videos = level.getVideos();
+            List<Document> Videos = level.getVideos() != null ? level.getVideos() : new ArrayList<>();
             JSONArray array = new JSONArray();
             for (Document document : Videos) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Videos", array) : object;
 
-            List<Document> Images = level.getImages();
+            List<Document> Images = level.getImages() != null ? level.getImages() : new ArrayList<>();
             array = new JSONArray();
             for (Document document : Images) {
                 array.put(new JSONObject(document.toJson()));
@@ -530,14 +572,14 @@ public class UtilsManager {
             object = level.getUnivID() != null ? object.put("UnivID", level.getUnivID()) : object;
             object = level.getName() != null ? object.put("Name", level.getName()) : object;
 
-            List<Document> Videos = level.getVideos();
+            List<Document> Videos = level.getVideos() != null ? level.getVideos() : new ArrayList<>();
             JSONArray array = new JSONArray();
             for (Document document : Videos) {
                 array.put(new JSONObject(document.toJson()));
             }
             object = array.length() > 0 ? object.put("Videos", array) : object;
 
-            List<Document> Images = level.getImages();
+            List<Document> Images = level.getImages() != null ? level.getImages() : new ArrayList<>();
             array = new JSONArray();
             for (Document document : Images) {
                 array.put(new JSONObject(document.toJson()));
@@ -937,6 +979,47 @@ public class UtilsManager {
             logger.debug(UtilsManager.exceptionAsString(e));
         }
         return object;
+    }
+
+    public static Answer jsonToAnswer(JSONObject jsonObject) {
+
+        Answer event = new Answer();
+
+        try {
+            event.setUnivID(jsonObject.has("UnivID") ? jsonObject.getString("UnivID") : null);
+            event.setModuleID(jsonObject.has("ModuleID") ? jsonObject.getString("ModuleID") : null);
+            event.setLevelID(jsonObject.has("levelID") ? jsonObject.getString("levelID") : null);
+            event.setQuestionID(jsonObject.has("QuestionID") ? jsonObject.getString("QuestionID") : null);
+            event.setAnswerID(jsonObject.has("AnswerID") ? jsonObject.getString("AnswerID") : null);
+            event.setStudentID(jsonObject.has("StudentID") ? jsonObject.getString("StudentID") : null);
+
+            event.setTeacherID(jsonObject.has("TeacherID") ? jsonObject.getString("TeacherID") : null);
+            event.setTeacherComments(jsonObject.has("TeacherComments") ? jsonObject.getString("TeacherComments") : null);
+            event.setTeacherRatings(jsonObject.has("TeacherRatings") ? jsonObject.getString("TeacherRatings") : null);
+
+            event.setInfo(jsonObject.has("info") ? jsonObject.getString("info") : null);
+
+            List<Document> Images = new ArrayList<>();
+            JSONArray array = jsonObject.has("Images") ? jsonObject.getJSONArray("Images") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                Images.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            event.setImages(Images);
+
+            List<Document> Videos = new ArrayList<>();
+            array = jsonObject.has("Videos") ? jsonObject.getJSONArray("Videos") : new JSONArray();
+            for (int i = 0; i < array.length(); i++) {
+                Videos.add(Document.parse(String.valueOf(array.get(i))));
+            }
+            event.setVideos(Videos);
+
+            event.setObjectID(jsonObject.has("_id") ? jsonObject.getString("_id") : null);
+            event.set_created_at(jsonObject.has("_created_at") ? Date.from(Instant.parse(jsonObject.getString("_created_at"))) : null);
+            event.set_updated_at(jsonObject.has("_updated_at") ? Date.from(Instant.parse(jsonObject.getString("_updated_at"))) : null);
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+        }
+        return event;
     }
 
     public static Question jsonToQuestion(JSONObject jsonObject) {

@@ -68,6 +68,10 @@ public interface DaoInterface {
     public CustomResponse getQuestions_Filter(JSONObject body);
     public CustomResponse updateQuestion(JSONObject body);
 
+    public CustomResponse createAnswers(JSONObject body);
+    public CustomResponse getAnswers_Filter(JSONObject body);
+    public CustomResponse updateAnswer(JSONObject body);
+
     public CustomResponse createPost(JSONObject body);
     public CustomResponse updatePost(JSONObject body, Boolean append);
 

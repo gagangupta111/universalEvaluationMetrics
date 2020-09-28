@@ -84,6 +84,10 @@ public class MainService {
         return dao.getUniversity(body);
     }
 
+    public CustomResponse get_Answers_Filter(JSONObject body) {
+        return dao.getAnswers_Filter(body);
+    }
+
     public CustomResponse get_Questions_Filter(JSONObject body) {
         return dao.getQuestions_Filter(body);
     }
@@ -98,6 +102,10 @@ public class MainService {
 
     public CustomResponse createModules(JSONObject body) {
         return dao.createModules(body);
+    }
+
+    public CustomResponse createAnswers(JSONObject body) {
+        return dao.createAnswers(body);
     }
 
     public CustomResponse createQuestions(JSONObject body) {
@@ -162,6 +170,10 @@ public class MainService {
 
     public CustomResponse update_level_Images(JSONObject body) {
         return dao.updateLevel(body);
+    }
+
+    public CustomResponse update_Answer(JSONObject body) {
+        return dao.updateAnswer(body);
     }
 
     public CustomResponse update_Question(JSONObject body) {

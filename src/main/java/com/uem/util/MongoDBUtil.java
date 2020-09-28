@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.uem.model.Answer;
 import org.apache.log4j.Logger;
 import org.bson.BsonDocument;
 import org.bson.Document;
@@ -39,6 +40,7 @@ public class MongoDBUtil {
     public static MongoCollection<Document> Module = null;
     public static MongoCollection<Document> Level = null;
     public static MongoCollection<Document> Questions = null;
+    public static MongoCollection<Document> Answers = null;
 
     public static MongoDatabase getDataBase() {
 
@@ -183,6 +185,15 @@ public class MongoDBUtil {
             return UniversalUser;
         } else {
             return UniversalUser;
+        }
+    }
+
+    public static MongoCollection<Document> getAnswers() {
+        if (null == Answers) {
+            Answers = getDataBase().getCollection("Answers");
+            return Answers;
+        } else {
+            return Answers;
         }
     }
 
@@ -388,6 +399,19 @@ public class MongoDBUtil {
         } catch (Exception e) {
             logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllTeachers \n" + UtilsManager.exceptionAsString(e));
             RollbarManager.sendExceptionOnRollBar("getAllTeachers", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Document> getAllAnswers(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getAnswers();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllAnswers \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllAnswers", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }

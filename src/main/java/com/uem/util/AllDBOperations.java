@@ -283,6 +283,34 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> createAnswer(JSONObject post) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+            String AnswerID = UtilsManager.generateUniqueID();
+            post.put("AnswerID", AnswerID);
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(post, "Answers");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", post);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", post);
+                return data;
+            }
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            data.put("body", post);
+            return data;
+        }
+    }
+
     public static Map<String, Object> createQuestion(JSONObject post) {
 
         Map<String, Object> data = new HashMap<>();
@@ -1429,6 +1457,75 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> updateAnswer(Answer answer, JSONObject body) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            JSONObject bodyUpdate = new JSONObject();
+
+            if (body.has("VideoID") && !body.getString("VideoID").equalsIgnoreCase("none")){
+                Document Video = new Document();
+                Video.put("VideoID", body.getString("VideoID"));
+                Video.put("Name", body.getString("Name"));
+                if (answer.getVideos() == null){
+                    answer.setVideos(new ArrayList<>());
+                }
+                answer.getVideos().add(Video);
+                bodyUpdate.put("Videos", UtilsManager.answerToJson(answer).get("Videos"));
+            }
+            if (body.has("Image")){
+                Document Image = new Document();
+                Image.put("Image", Document.parse(String.valueOf(body.get("Image"))));
+                Image.put("Name", body.getString("Name"));
+                if (answer.getImages() == null){
+                    answer.setImages(new ArrayList<>());
+                }
+                answer.getImages().add(Image);
+                bodyUpdate.put("Images", UtilsManager.answerToJson(answer).get("Images"));
+            }
+            if (body.has("info") && !body.getString("info").equalsIgnoreCase("none")){
+                bodyUpdate.put("info", body.getString("info"));
+            }
+            if (body.has("TeacherID") && !body.getString("TeacherID").equalsIgnoreCase("none")){
+                bodyUpdate.put("TeacherID", body.getString("TeacherID"));
+            }
+            if (body.has("TeacherComments") && !body.getString("TeacherComments").equalsIgnoreCase("none")){
+                bodyUpdate.put("TeacherComments", body.getString("TeacherComments"));
+            }
+            if (body.has("TeacherRatings") && !body.getString("TeacherRatings").equalsIgnoreCase("none")){
+                bodyUpdate.put("TeacherRatings", body.getString("TeacherRatings"));
+            }
+            if (bodyUpdate.length() == 0){
+                return data;
+            }
+
+            Map<String, JSONObject> map = new HashMap<>();
+            map.put(answer.getObjectID(), bodyUpdate);
+
+            Map<String, Object> result = ParseUtil.batchUpdateInParseTable(map, "Answers");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+
+            if (status >= 200 && status < 300) {
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                data.put("exception", result.get("exception"));
+                data.put("body", body);
+                return data;
+            }
+
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+    }
+
     public static Map<String, Object> updateQuestion(Question question, JSONObject body) {
 
         Map<String, Object> data = new HashMap<>();
@@ -2053,6 +2150,92 @@ public class AllDBOperations {
             }
         }
         return modules;
+    }
+
+    public static List<Answer> get_All_Answers_Many_Filter(JSONObject searchBody) {
+
+        List<Answer> answers = new ArrayList<>();
+        List<String> filtersList = new ArrayList<>();
+        String finalFilter = "";
+
+        try {
+            BsonDocument filter = BsonDocument
+                    .parse("{ " +
+                            "}");
+
+            if (searchBody.has("UnivID") && !searchBody.getString("UnivID").equalsIgnoreCase("none")){
+                filtersList.add("UnivID:{$regex:/" + searchBody.getString("UnivID") + "/}");
+            }
+            if (searchBody.has("ModuleID") && !searchBody.getString("ModuleID").equalsIgnoreCase("none")){
+                filtersList.add("ModuleID:{$regex:/" + searchBody.getString("ModuleID") + "/}");
+            }
+            if (searchBody.has("LevelID") && !searchBody.getString("LevelID").equalsIgnoreCase("none")){
+                filtersList.add("LevelID:{$regex:/" + searchBody.getString("LevelID") + "/}");
+            }
+            if (searchBody.has("QuestionID") && !searchBody.getString("QuestionID").equalsIgnoreCase("none")){
+                filtersList.add("QuestionID:{$regex:/" + searchBody.getString("QuestionID") + "/}");
+            }
+            if (searchBody.has("StudentID") && !searchBody.getString("StudentID").equalsIgnoreCase("none")){
+                filtersList.add("StudentID:{$regex:/" + searchBody.getString("StudentID") + "/}");
+            }
+            if (searchBody.has("AnswerID") && !searchBody.getString("AnswerID").equalsIgnoreCase("none")){
+                filtersList.add("AnswerID:{$regex:/" + searchBody.getString("AnswerID") + "/}");
+            }
+            if (searchBody.has("info") && !searchBody.getString("info").equalsIgnoreCase("none")){
+                filtersList.add("info:{$regex:/" + searchBody.getString("info") + "/}");
+            }
+
+            if (searchBody.has("TeacherID") && !searchBody.getString("TeacherID").equalsIgnoreCase("none")){
+                filtersList.add("TeacherID:{$regex:/" + searchBody.getString("TeacherID") + "/}");
+            }
+            if (searchBody.has("TeacherComments") && !searchBody.getString("TeacherComments").equalsIgnoreCase("none")){
+                filtersList.add("TeacherComments:{$regex:/" + searchBody.getString("TeacherComments") + "/}");
+            }
+            if (searchBody.has("TeacherRatings") && !searchBody.getString("TeacherRatings").equalsIgnoreCase("none")){
+                filtersList.add("TeacherRatings:{$regex:/" + searchBody.getString("TeacherRatings") + "/}");
+            }
+
+            finalFilter += String.join("", filtersList);
+            filter = BsonDocument
+                    .parse("{ " +
+                            finalFilter +
+                            "}");
+
+            List<Document> documents = MongoDBUtil.getAllAnswers(filter);
+            if (documents == null || documents.size() == 0) {
+                return answers;
+            } else {
+                for (Document document : documents) {
+                    Answer answer = new Answer();
+
+                    answer.setTeacherID(document.containsKey("TeacherID") ? document.getString("TeacherID") : null);
+                    answer.setTeacherRatings(document.containsKey("TeacherRatings") ? document.getString("TeacherRatings") : null);
+                    answer.setTeacherComments(document.containsKey("TeacherComments") ? document.getString("TeacherComments") : null);
+
+                    answer.setStudentID(document.containsKey("StudentID") ? document.getString("StudentID") : null);
+                    answer.setAnswerID(document.containsKey("AnswerID") ? document.getString("AnswerID") : null);
+                    answer.setQuestionID(document.containsKey("QuestionID") ? document.getString("QuestionID") : null);
+                    answer.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
+                    answer.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                    answer.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
+
+                    answer.setInfo(document.containsKey("info") ? document.getString("info") : null);
+
+                    answer.setImages(document.containsKey("Images") ? document.getList("Images", Document.class) : null);
+                    answer.setVideos(document.containsKey("Videos") ? document.getList("Videos", Document.class) : null);
+
+                    answer.setObjectID(document.getString("_id"));
+                    answer.set_created_at(document.getDate("_created_at"));
+                    answer.set_updated_at(document.getDate("_updated_at"));
+                    answers.add(answer);
+                }
+            }
+        }catch (Exception e){
+            return new ArrayList<>();
+        }
+
+        return answers;
     }
 
     public static List<Question> getAll_Questions_LevelID(String LevelID) {

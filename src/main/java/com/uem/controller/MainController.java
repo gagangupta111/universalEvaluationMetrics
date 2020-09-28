@@ -2695,4 +2695,134 @@ public class MainController {
         }
     }
 
+    @PostMapping("/Answers")
+    @ResponseBody
+    public ResponseEntity<String> create_Answer(@RequestBody String body) throws Exception {
+
+        JSONObject jsonObject = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createAnswers(jsonObject);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/Answers/search")
+    @ResponseBody
+    public ResponseEntity<String> get_Answers_Input_Filter(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        if (object.length() > 0 ){
+            CustomResponse customResponse = mainService.get_Answers_Filter(object);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        }else {
+            return ResponseEntity.badRequest()
+                    .header("message", "LevelID, Name is required!")
+                    .body("LevelID, Name required!");
+        }
+    }
+
+    @PutMapping("/update/answers/{AnswerID}")
+    @ResponseBody
+    public ResponseEntity<String> update_Answer_Info(
+            @RequestBody String bodyString,
+            @PathVariable("AnswerID") String AnswerID) throws Exception {
+
+        try {
+            if (AnswerID == null || AnswerID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject(bodyString.trim());
+            body.put("AnswerID", AnswerID);
+
+            CustomResponse customResponse = mainService.update_Answer(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
+    @PutMapping("/update/answerImages/{AnswerID}")
+    @ResponseBody
+    public ResponseEntity<String> update_Answer_Images(
+            @RequestParam(value = "Image", required = true) MultipartFile Image,
+            @RequestParam(value = "Name", required = true) String Name,
+            @PathVariable("AnswerID") String AnswerID) throws Exception {
+
+        try {
+            if (AnswerID == null || AnswerID.equals("")) {
+                return ResponseEntity.badRequest()
+                        .header("message", "")
+                        .body("");
+            }
+            JSONObject body = new JSONObject();
+            body.put("AnswerID", AnswerID);
+            body.put("Name", Name);
+
+            if (Image != null) {
+
+                String key_name = "Answer_IMAGE" + AnswerID + "_" + Image.getOriginalFilename();;
+                File file = new File(key_name);
+                FileUtils.writeByteArrayToFile(file, Image.getBytes());
+
+                PutObjectResult putObjectResult = AmazonS3Util.uploadFileInS3Bucket(key_name, file);
+                if (putObjectResult == null) {
+                    return ResponseEntity.badRequest()
+                            .header("message", Constants.INTERNAL_ERROR)
+                            .body(Constants.AMAZON_S3_ERROR);
+                }
+                JSONObject object = new JSONObject();
+                object.put("ContentMd5", putObjectResult.getContentMd5());
+                object.put("ETag", putObjectResult.getETag());
+                ObjectMetadata objectMetadata = putObjectResult.getMetadata();
+                object.put("Photo", AmazonS3Util.ACCESS_URL + key_name);
+                object.put("Name", key_name);
+                body.put("Image", object);
+                file.delete();
+            }
+
+            CustomResponse customResponse = mainService.update_Answer(body);
+            if (customResponse.getSuccess()) {
+                return ResponseEntity.ok()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getInfoAsJson().toString());
+            } else {
+                return ResponseEntity.badRequest()
+                        .header("message", customResponse.getMessage())
+                        .body(customResponse.getMessage());
+            }
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            return ResponseEntity.badRequest()
+                    .header("message", Constants.INTERNAL_ERROR)
+                    .body(UtilsManager.exceptionAsString(e));
+        }
+    }
+
 }
