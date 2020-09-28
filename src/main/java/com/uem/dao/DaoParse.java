@@ -1170,7 +1170,11 @@ public class DaoParse implements DaoInterface {
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(true);
             customResponse.setMessage(Constants.SUCCESS);
-            customResponse.setInfo(moduleMap);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Levels", moduleMap);
+
+            customResponse.setInfo(map);
             return customResponse;
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
@@ -1232,7 +1236,11 @@ public class DaoParse implements DaoInterface {
             CustomResponse customResponse = new CustomResponse();
             customResponse.setSuccess(true);
             customResponse.setMessage(Constants.SUCCESS);
-            customResponse.setInfo(moduleMap);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Modules", moduleMap);
+
+            customResponse.setInfo(map);
             return customResponse;
         } catch (Exception e) {
             logger.debug(UtilsManager.exceptionAsString(e));
