@@ -483,6 +483,9 @@ public class UtilsManager {
         JSONObject object = new JSONObject();
         try {
 
+            object = level.getModuleID() != null ? object.put("ModuleID", level.getModuleID()) : object;
+            object = level.getUnivID() != null ? object.put("UnivID", level.getUnivID()) : object;
+
             object = level.getLevelID() != null ? object.put("LevelID", level.getLevelID()) : object;
             object = level.getQuestionID() != null ? object.put("QuestionID", level.getQuestionID()) : object;
             object = level.getInfo() != null ? object.put("info", level.getInfo()) : object;
@@ -941,6 +944,10 @@ public class UtilsManager {
         Question event = new Question();
 
         try {
+
+            event.setModuleID(jsonObject.has("ModuleID") ? jsonObject.getString("ModuleID") : null);
+            event.setUnivID(jsonObject.has("UnivID") ? jsonObject.getString("UnivID") : null);
+
             event.setQuestionID(jsonObject.has("QuestionID") ? jsonObject.getString("QuestionID") : null);
             event.setLevelID(jsonObject.has("levelID") ? jsonObject.getString("levelID") : null);
             event.setName(jsonObject.has("Name") ? jsonObject.getString("Name") : null);

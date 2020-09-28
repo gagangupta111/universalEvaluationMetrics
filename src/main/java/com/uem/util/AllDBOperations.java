@@ -2068,6 +2068,10 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 Question university = new Question();
+
+                university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
                 university.setQuestionID(document.containsKey("QuestionID") ? document.getString("QuestionID") : null);
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
@@ -2103,6 +2107,10 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 Question university = new Question();
+
+                university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
                 university.setQuestionID(document.containsKey("QuestionID") ? document.getString("QuestionID") : null);
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);
@@ -2138,6 +2146,9 @@ public class AllDBOperations {
         } else {
             for (Document document : documents) {
                 Question university = new Question();
+                university.setModuleID(document.containsKey("ModuleID") ? document.getString("ModuleID") : null);
+                university.setUnivID(document.containsKey("UnivID") ? document.getString("UnivID") : null);
+
                 university.setQuestionID(document.containsKey("QuestionID") ? document.getString("QuestionID") : null);
                 university.setLevelID(document.containsKey("LevelID") ? document.getString("LevelID") : null);
                 university.setInfo(document.containsKey("info") ? document.getString("info") : null);

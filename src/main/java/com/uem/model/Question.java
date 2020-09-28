@@ -8,6 +8,9 @@ import java.util.Objects;
 
 public class Question {
 
+    private String ModuleID;
+    private String UnivID;
+
     private String QuestionID;
     private String LevelID;
     private String Name;
@@ -20,6 +23,22 @@ public class Question {
     String objectID;
     private Date _created_at;
     private Date _updated_at;
+
+    public String getModuleID() {
+        return ModuleID;
+    }
+
+    public void setModuleID(String moduleID) {
+        ModuleID = moduleID;
+    }
+
+    public String getUnivID() {
+        return UnivID;
+    }
+
+    public void setUnivID(String univID) {
+        UnivID = univID;
+    }
 
     public String getQuestionID() {
         return QuestionID;

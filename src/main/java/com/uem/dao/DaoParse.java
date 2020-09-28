@@ -1166,7 +1166,10 @@ public class DaoParse implements DaoInterface {
     public CustomResponse createModules(JSONObject body) {
 
         try {
-            if (body.has("UnivID") && body.has("Name")) {
+            if (body.has("UnivID")
+                    && body.has("Name")
+                    && !body.getString("UnivID").equalsIgnoreCase("none")
+                    && !body.getString("Name").equalsIgnoreCase("none")) {
 
                 JSONObject searchBody = new JSONObject();
                 searchBody.put("ModuleID", body.getString("Name"));
@@ -1217,7 +1220,14 @@ public class DaoParse implements DaoInterface {
     public CustomResponse createQuestions(JSONObject body) {
 
         try {
-            if (body.has("LevelID") && body.has("Name")) {
+            if (body.has("UnivID")
+                    && body.has("ModuleID")
+                    && body.has("Name")
+                    && body.has("LevelID")
+                    && !body.getString("LevelID").equalsIgnoreCase("none")
+                    && !body.getString("Name").equalsIgnoreCase("none")
+                    && !body.getString("UnivID").equalsIgnoreCase("none")
+                    && !body.getString("ModuleID").equalsIgnoreCase("none")) {
 
                 JSONObject searchBody = new JSONObject();
                 searchBody.put("LevelID", body.getString("LevelID"));
@@ -1268,7 +1278,12 @@ public class DaoParse implements DaoInterface {
     public CustomResponse createLevels(JSONObject body) {
 
         try {
-            if (body.has("ModuleID") && body.has("UnivID") && body.has("Name")) {
+            if (body.has("UnivID")
+                    && body.has("ModuleID")
+                    && body.has("Name")
+                    && !body.getString("Name").equalsIgnoreCase("none")
+                    && !body.getString("UnivID").equalsIgnoreCase("none")
+                    && !body.getString("ModuleID").equalsIgnoreCase("none")) {
 
                 JSONObject searchBody = new JSONObject();
                 searchBody.put("ModuleID", body.getString("ModuleID"));
@@ -1319,7 +1334,10 @@ public class DaoParse implements DaoInterface {
     public CustomResponse createUniversity(JSONObject body) {
 
         try {
-            if (body.has("UnivID") && body.has("AdminID")) {
+            if (body.has("UnivID")
+                    && body.has("AdminID")
+                    && !body.getString("UnivID").equalsIgnoreCase("none")
+                    && !body.getString("AdminID").equalsIgnoreCase("none")) {
 
                 List<University> universities = AllDBOperations.getAllUniversities_UnivID(body.getString("UnivID"));
                 if (universities != null && universities.size() > 0){
