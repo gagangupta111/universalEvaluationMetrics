@@ -221,6 +221,66 @@ public class ParseUtil {
             ParseUtil.batchDeleteAllInParseTable(objectIDs, "UniversalUser");
         }
 
+        // e2111830-eeae-44db-a2aa-9ee72d1544e1
+        documentList = MongoDBUtil.getAllAnswers(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Answers");
+        }
+
+        // e2111830-eeae-44db-a2aa-9ee72d1544e1
+        documentList = MongoDBUtil.getAllQuestions(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Questions");
+        }
+
+        // e2111830-eeae-44db-a2aa-9ee72d1544e1
+        documentList = MongoDBUtil.getAllModules(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Module");
+        }
+
+        // e2111830-eeae-44db-a2aa-9ee72d1544e1
+        documentList = MongoDBUtil.getAllLevels(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Level");
+        }
+
+        // e2111830-eeae-44db-a2aa-9ee72d1544e1
+        documentList = MongoDBUtil.getAllLogs(filter);
+        objectIDs = new ArrayList<>();
+
+        for (Document document : documentList) {
+            objectIDs.add(document.getString("_id"));
+        }
+
+        if (objectIDs.size() > 0) {
+            ParseUtil.batchDeleteAllInParseTable(objectIDs, "Logs");
+        }
+
         return null;
     }
 

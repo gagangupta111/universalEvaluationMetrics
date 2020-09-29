@@ -1162,8 +1162,8 @@ public class DaoParse implements DaoInterface {
                 for (Integer integer : averageRatings){
                     sum += integer;
                 }
-                moduleObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
-                moduleObject.put("Completion", questions.size() > 0 && countAnswers > 0 ? (questions.size()/countAnswers)*100 : 0);
+                moduleObject.put("AverageRatings", String.valueOf(averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size()));
+                moduleObject.put("Completion", questions.size() > 0 && countAnswers > 0 ? (countAnswers/questions.size())*100 : 0);
                 moduleArray.put(moduleObject);
             }
 
@@ -1229,7 +1229,7 @@ public class DaoParse implements DaoInterface {
                 for (Integer integer : averageRatings){
                     sum += integer;
                 }
-                moduleObject.put("AverageRatings", averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size());
+                moduleObject.put("AverageRatings", String.valueOf(averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size()));
                 modulesArray.put(moduleObject);
             }
 

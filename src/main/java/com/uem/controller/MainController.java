@@ -1407,7 +1407,7 @@ public class MainController {
         logs.setLevel("info");
         logs.setFrom(this.getClass().getName());
 
-        AllDBOperations.createLogs(logs);
+        //AllDBOperations.createLogs(logs);
 
         JSONObject jsonObject = new JSONObject(body.trim());
         CustomResponse customResponse = mainService.getAllConnections(jsonObject);

@@ -4084,7 +4084,7 @@ public class AllDBOperations {
         logs.setFrom("AllDBOperations");
         logs.setText(documents.toString());
         logs.setLevel("info");
-        AllDBOperations.createLogs(logs);
+        //AllDBOperations.createLogs(logs);
 
         if (documents == null || documents.size() == 0) {
             return users;

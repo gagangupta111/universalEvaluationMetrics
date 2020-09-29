@@ -429,6 +429,19 @@ public class MongoDBUtil {
         }
     }
 
+    public static List<Document> getAllLogs(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getLogs();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllLevels \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllLevels", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
     public static List<Document> getAllLevels(BsonDocument filter ) {
 
         try {

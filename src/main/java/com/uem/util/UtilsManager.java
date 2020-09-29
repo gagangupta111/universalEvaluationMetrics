@@ -736,6 +736,7 @@ public class UtilsManager {
         JSONObject object = new JSONObject();
         try {
 
+            // start
             object = student.getUnivID() != null ? object.put("UnivID", student.getUnivID()) : object;
             object = student.getUEM_ID() != null ? object.put("UEM_ID", student.getUEM_ID()) : object;
             object = student.getUserID() != null ? object.put("UserID", student.getUserID()) : object;
@@ -744,6 +745,14 @@ public class UtilsManager {
             object = student.getObjectID() != null ? object.put("_id", student.getObjectID()) : object;
             object = student.get_created_at() != null ? object.put("_created_at", student.get_created_at()) : object;
             object = student.get_updated_at() != null ? object.put("_updated_at", student.get_updated_at()) : object;
+            // end
+
+            object = student.getPassword() != null ? object.put("password", student.getPassword()) : object;
+            object = student.getAboutMe() != null ? object.put("aboutMe", student.getAboutMe()) : object;
+            object = student.getInstitution() != null ? object.put("institution", student.getInstitution()) : object;
+            object = student.getProfession() != null ? object.put("profession", student.getProfession()) : object;
+            object = student.getLastLogin() != null ? object.put("lastLogin", student.getLastLogin()) : object;
+
 
             List<Document> batches = student.getBatches() != null ? student.getBatches() : new ArrayList<>();
             JSONArray array = new JSONArray();
