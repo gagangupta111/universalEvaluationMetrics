@@ -783,10 +783,17 @@ public class UtilsManager {
         Student univAdmin = new Student();
 
         try {
+
             univAdmin.setUnivID(jsonObject.has("UnivID") ? jsonObject.getString("UnivID") : null);
             univAdmin.setUEM_ID(jsonObject.has("UEM_ID") ? jsonObject.getString("UEM_ID") : null);
             univAdmin.setUserID(jsonObject.has("UserID") ? jsonObject.getString("UserID") : null);
             univAdmin.setInfo(jsonObject.has("info") ? jsonObject.getString("info") : null);
+
+            univAdmin.setPassword(jsonObject.has("password") ? jsonObject.getString("password") : null);
+            univAdmin.setAboutMe(jsonObject.has("aboutMe") ? jsonObject.getString("aboutMe") : null);
+            univAdmin.setInstitution(jsonObject.has("institution") ? jsonObject.getString("institution") : null);
+            univAdmin.setProfession(jsonObject.has("profession") ? jsonObject.getString("profession") : null);
+            univAdmin.setLastLogin(jsonObject.has("lastLogin") ? jsonObject.getString("lastLogin") : null);
 
             List<Document> batches = new ArrayList<>();
             JSONArray array = jsonObject.has("Batches") ? jsonObject.getJSONArray("Batches") : new JSONArray();

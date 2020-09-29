@@ -1706,7 +1706,7 @@ public class MainController {
 
     @PostMapping("/signup/{type}")
     @ResponseBody
-    public ResponseEntity<String> signUp(@RequestBody String body,  @PathVariable("type") String type) throws Exception {
+    public ResponseEntity<String> signUp_type(@RequestBody String body,  @PathVariable("type") String type) throws Exception {
 
         JSONObject jsonObject = new JSONObject(body.trim());
         String email = jsonObject.has("email") ? jsonObject.getString("email") : null;
@@ -1745,7 +1745,7 @@ public class MainController {
 
     @PostMapping("/signin/{type}")
     @ResponseBody
-    public ResponseEntity<String> signIn(@RequestBody String body, @PathVariable("type") String type) throws Exception {
+    public ResponseEntity<String> signIn_type(@RequestBody String body, @PathVariable("type") String type) throws Exception {
 
         JSONObject jsonObject = new JSONObject(body.trim());
         String email = jsonObject.has("email") ? jsonObject.getString("email") : null;

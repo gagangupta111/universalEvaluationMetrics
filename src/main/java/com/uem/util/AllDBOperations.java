@@ -1053,6 +1053,9 @@ public class AllDBOperations {
             if (body.has("lastLogin") && !body.getString("lastLogin").equalsIgnoreCase("none")){
                 bodyUpdate.put("lastLogin", body.getString("lastLogin"));
             }
+            if (body.has("UnivID") && !body.getString("UnivID").equalsIgnoreCase("none")){
+                bodyUpdate.put("UnivID", body.getString("UnivID"));
+            }
 
             if (bodyUpdate.length() > 0){
                 Map<String, JSONObject> map = new HashMap<>();
