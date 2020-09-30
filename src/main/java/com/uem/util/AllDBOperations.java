@@ -2552,6 +2552,28 @@ public class AllDBOperations {
         return universities;
     }
 
+    public static Map<String, Object> getAllConstants() {
+
+        Map<String, Object> map = new HashMap<>();
+        List<Constants> constants = new ArrayList<>();
+        BsonDocument filter = BsonDocument
+                .parse("{ " +
+                        "}");
+        List<Document> documents = MongoDBUtil.getAllConstants(filter);
+        if (documents == null || documents.size() == 0) {
+            return map;
+        } else {
+            for (Document document : documents) {
+                String key = "";
+                String value = "";
+                key = document.containsKey("key") ? document.getString("key") : "";
+                value = document.containsKey("value") ? document.getString("value") : "";
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+
     public static List<Teacher> getAllTeachers_UserID(String UserID) {
 
         List<Teacher> teachers = new ArrayList<>();

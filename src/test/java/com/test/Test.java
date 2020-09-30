@@ -28,7 +28,7 @@ public class Test {
 
     public static void main(String[] args) {
 
-        ParseUtil.deleteAllObjectsAllTables();
+        testS3Amazon();
 
     }
 
@@ -138,17 +138,8 @@ public class Test {
 
         try {
 
-            String bucketName = "universalevaluationmetrics";
+            String bucketName = AmazonS3Util.BUCKET_NAME;
             String keyName = "application1.properties";
-
-            // Admin
-            // Admin@123
-
-            AWSCredentials awsCreds = new BasicAWSCredentials("AKIA3UYRN6M2RF6QBNGC", "7USbzqfAhDuP23SrkKp3ai2CKQBuVeRXIOO6VDQX");
-            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(Regions.AP_SOUTH_1)
-                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                    .build();
 
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream inputStream = classloader.getResourceAsStream("application.properties");
@@ -162,10 +153,10 @@ public class Test {
                 // handle exception here
             }
 
-            PutObjectResult putObjectResult = s3Client.putObject(bucketName, keyName, file);
+            PutObjectResult putObjectResult = AmazonS3Util.getS3Client().putObject(bucketName, keyName, file);
             System.out.println(putObjectResult);
 
-            S3Object s3Object = s3Client.getObject(bucketName, keyName);
+            S3Object s3Object = AmazonS3Util.getS3Client().getObject(bucketName, keyName);
             System.out.println(s3Object);
 
             file = new File("file");

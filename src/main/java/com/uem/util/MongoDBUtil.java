@@ -41,6 +41,7 @@ public class MongoDBUtil {
     public static MongoCollection<Document> Level = null;
     public static MongoCollection<Document> Questions = null;
     public static MongoCollection<Document> Answers = null;
+    public static MongoCollection<Document> Constants = null;
 
     public static MongoDatabase getDataBase() {
 
@@ -176,6 +177,15 @@ public class MongoDBUtil {
             return UnivAdmin;
         } else {
             return UnivAdmin;
+        }
+    }
+
+    public static MongoCollection<Document> getConstants() {
+        if (null == Constants) {
+            Constants = getDataBase().getCollection("Constants");
+            return Constants;
+        } else {
+            return Constants;
         }
     }
 
@@ -490,6 +500,19 @@ public class MongoDBUtil {
         } catch (Exception e) {
             logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllUniversityAdmin \n" + UtilsManager.exceptionAsString(e));
             RollbarManager.sendExceptionOnRollBar("getAllUniversityAdmin", UtilsManager.exceptionAsString(e));
+            return new ArrayList<>();
+        }
+    }
+
+    public static List<Document> getAllConstants(BsonDocument filter ) {
+
+        try {
+            MongoCollection<Document> collection = MongoDBUtil.getConstants();
+            List<Document> allDocuments = collection.find(filter).into(new ArrayList<Document>());
+            return allDocuments;
+        } catch (Exception e) {
+            logger.info("EXCEPTION : CLASS - MONGOOP | METHOD - getAllConstants \n" + UtilsManager.exceptionAsString(e));
+            RollbarManager.sendExceptionOnRollBar("getAllConstants", UtilsManager.exceptionAsString(e));
             return new ArrayList<>();
         }
     }

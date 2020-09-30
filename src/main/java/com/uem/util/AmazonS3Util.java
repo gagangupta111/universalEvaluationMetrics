@@ -12,17 +12,34 @@ import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Map;
 
 public class AmazonS3Util {
 
-    private static final String ACCESS_KEY = "AKIAJ2K2ZRRPQFHWIBFA";
-    private static final String SECRET_KEY = "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";
-    private static final String BUCKET_NAME = "universalevaluationmetricslinkedin";
-    public static final String ACCESS_URL = "https://universalevaluationmetricslinkedin.s3.ap-south-1.amazonaws.com/";
+    public static String ACCESS_KEY = "AKIAJ2K2ZRRPQFHWIBFA";
+    public static String SECRET_KEY = "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";
+    public static String BUCKET_NAME = "universalevaluationmetricslinkedin";
+    public static String ACCESS_URL = "https://universalevaluationmetricslinkedin.s3.ap-south-1.amazonaws.com/";
+
+    public static String AmazonS3_bucket_Name = "AmazonS3_bucket_Name";
+    public static String AmazonS3_Access_Key = "AmazonS3_Access_Key";
+    public static String AmazonS3_Secret_key = "AmazonS3_Secret_key";
+    public static String AmazonS3_Region = "AmazonS3_Region";
+    public static String AmazonS3_Access_URL = "AmazonS3_Access_URL";
 
     private static AmazonS3 amazonS3 = null;
     private static Logger logger = LogUtil.getInstance();
     public static int retry = 3;
+
+    static {
+
+        Map<String, Object> map = AllDBOperations.getAllConstants();
+        BUCKET_NAME = String.valueOf(map.get(AmazonS3_bucket_Name));
+        ACCESS_KEY = String.valueOf(map.get(AmazonS3_Access_Key));
+        SECRET_KEY = String.valueOf(map.get(AmazonS3_Secret_key));
+        ACCESS_URL = String.valueOf(map.get(AmazonS3_Access_URL));
+
+    }
 
     public static AmazonS3 getS3Client(){
         if (amazonS3 == null){
