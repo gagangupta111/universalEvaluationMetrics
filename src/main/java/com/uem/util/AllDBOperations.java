@@ -2571,6 +2571,14 @@ public class AllDBOperations {
                 univAdmin.setUEM_ID(document.containsKey("UEM_ID") ? document.getString("UEM_ID") : null);
                 univAdmin.setInfo(document.containsKey("info") ? document.getString("info") : null);
                 univAdmin.setDocuments(document.containsKey("Documents") ? document.getList("Documents", Document.class) : null);
+                univAdmin.setBatches(document.containsKey("Batches") ? document.getList("Batches", Document.class) : null);
+
+                univAdmin.setPassword(document.containsKey("password") ? document.getString("password") : null);
+                univAdmin.setAboutMe(document.containsKey("aboutMe") ? document.getString("aboutMe") : null);
+                univAdmin.setInstitution(document.containsKey("institution") ? document.getString("institution") : null);
+                univAdmin.setProfession(document.containsKey("profession") ? document.getString("profession") : null);
+                univAdmin.setLastLogin(document.containsKey("lastLogin") ? document.getString("lastLogin") : null);
+
                 univAdmin.setObjectID(document.containsKey("_id") ? document.getString("_id") : null);
                 univAdmin.set_created_at(document.containsKey("_created_at") ? document.getDate("_created_at") : null);
                 univAdmin.set_updated_at(document.containsKey("_updated_at") ? document.getDate("_updated_at") : null);

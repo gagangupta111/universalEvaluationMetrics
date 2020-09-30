@@ -94,8 +94,24 @@ public class MainService {
         return dao.get_Question_Answer_Student(body);
     }
 
+    public CustomResponse get_All_Answers_Teacher(JSONObject body) {
+        return dao.get_All_Answers_Teacher(body);
+    }
+
+    public CustomResponse get_All_Questions_Teacher(JSONObject body) {
+        return dao.get_All_Questions_Teacher(body);
+    }
+
+    public CustomResponse get_All_Levels_Teacher(JSONObject body) {
+        return dao.get_All_Levels_Teacher(body);
+    }
+
     public CustomResponse get_All_Levels_Student(JSONObject body) {
         return dao.get_All_Levels_Student(body);
+    }
+
+    public CustomResponse get_All_Modules_Teacher(JSONObject body) {
+        return dao.get_All_Modules_Teacher(body);
     }
 
     public CustomResponse get_All_Modules_Student(JSONObject body) {
