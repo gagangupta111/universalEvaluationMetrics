@@ -1315,7 +1315,7 @@ public class UtilsManager {
             object = student.getProfession() != null ? object.put("profession", student.getProfession()) : object;
             object = student.getLastLogin() != null ? object.put("lastLogin", student.getLastLogin()) : object;
 
-            List<Document> documents = student.getDocuments();
+            List<Document> documents = student.getDocuments() != null ? student.getDocuments() : new ArrayList<>();
             JSONArray array = new JSONArray();
             for (Document document : documents) {
                 array.put(new JSONObject(document.toJson()));
