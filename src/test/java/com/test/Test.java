@@ -24,11 +24,12 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.*;
 
+// ParseUtil.deleteAllObjectsAllTables();
 public class Test {
 
     public static void main(String[] args) {
 
-        testS3Amazon();
+        ParseUtil.deleteAllObjectsAllTables();
 
     }
 

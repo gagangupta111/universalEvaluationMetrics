@@ -1162,7 +1162,7 @@ public class DaoParse implements DaoInterface {
                 for (Integer integer : averageRatings){
                     sum += integer;
                 }
-                moduleObject.put("AverageRatings", String.valueOf(averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size()));
+                moduleObject.put("AverageRatings", String.valueOf(averageRatings.size() == 0 ? 0 : sum/averageRatings.size()));
                 moduleObject.put("Completion", questions.size() > 0 && countAnswers > 0 ? (countAnswers/questions.size())*100 : 0);
                 moduleArray.put(moduleObject);
             }
@@ -1437,6 +1437,7 @@ public class DaoParse implements DaoInterface {
                 moduleObject.put("Total_Levels", levels.size());
 
                 int count = 0;
+                int answersCount = 0;
                 List<Integer> averageRatings = new ArrayList<>();
 
                 for (Level level : levels){
@@ -1448,6 +1449,7 @@ public class DaoParse implements DaoInterface {
                     if (answers != null && answers.size() > 0){
                         count++;
                         for (Answer answer : answers){
+                            answersCount++;
                             if (answer.getTeacherRatings() != null){
                                 averageRatings.add(Integer.valueOf(answer.getTeacherRatings()));
                             }
@@ -1455,11 +1457,12 @@ public class DaoParse implements DaoInterface {
                     }
                 }
                 moduleObject.put("Levels_Accessed", count);
+                moduleObject.put("Total_Answers", answersCount);
                 Integer sum = 0;
                 for (Integer integer : averageRatings){
                     sum += integer;
                 }
-                moduleObject.put("AverageRatings", String.valueOf(averageRatings.size() == 0 ? "No_Ratings" : sum/averageRatings.size()));
+                moduleObject.put("AverageRatings", String.valueOf(averageRatings.size() == 0 ? 0 : sum/averageRatings.size()));
                 modulesArray.put(moduleObject);
             }
 
@@ -1621,6 +1624,33 @@ public class DaoParse implements DaoInterface {
                     customResponse.setInfo(map);
                     return customResponse;
                 } else {
+
+                    Set<String> userIDs = new LinkedHashSet<>();
+                    List<Teacher> teachers = AllDBOperations.getAllTeachers_UnivID(body.getString("UnivID"));
+                    List<Student> students = AllDBOperations.getAllStudents_UnivID(body.getString("UnivID"));
+
+                    for (Teacher teacher : teachers){
+                        if (userIDs.contains(teacher.getUserID())){
+                            continue;
+                        }
+                        JSONObject notificationBody = new JSONObject();
+                        notificationBody.put("UserID", teacher.getUserID());
+                        notificationBody.put("text", "New Module Has Been Added in University! " + " Module Name: " + body.getString("Name"));
+                        createNotification(notificationBody);
+                        userIDs.add(teacher.getUserID());
+                    }
+
+                    for (Student student : students){
+                        if (userIDs.contains(student.getUserID())){
+                            continue;
+                        }
+                        JSONObject notificationBody = new JSONObject();
+                        notificationBody.put("UserID", student.getUserID());
+                        notificationBody.put("text", "New Module Has Been Added in University! " + " Module Name: " + body.getString("Name"));
+                        createNotification(notificationBody);
+                        userIDs.add(student.getUserID());
+                    }
+
                     CustomResponse customResponse = new CustomResponse();
                     customResponse.setSuccess(true);
                     customResponse.setMessage(Constants.SUCCESS);
