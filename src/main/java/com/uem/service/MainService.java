@@ -94,6 +94,14 @@ public class MainService {
         return dao.get_Question_Answer_Student(body);
     }
 
+    public CustomResponse student_reports(JSONObject body) {
+        return dao.student_reports(body);
+    }
+
+    public CustomResponse teacher_reports(JSONObject body) {
+        return dao.teacher_reports(body);
+    }
+
     public CustomResponse get_All_Answers_Teacher(JSONObject body) {
         return dao.get_All_Answers_Teacher(body);
     }

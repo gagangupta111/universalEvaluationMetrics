@@ -1292,6 +1292,121 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse teacher_reports(JSONObject body) {
+
+        try {
+
+            List<Teacher> teachers = AllDBOperations.getAllTeachers_UnivID(body.getString("UnivID"));
+            List<Module> modules = AllDBOperations.getAll_Modules_UnivID(body.getString("UnivID"));
+
+            if (body.has("TeacherID")){
+                List<Teacher> filterTeachers = new ArrayList<>();
+                for (Teacher teacher : teachers){
+                    if (teacher.getUserID().equalsIgnoreCase(body.getString("TeacherID"))){
+                        filterTeachers.add(teacher);
+                        break;
+                    }
+                }
+            }
+
+            if (body.has("ModuleID")){
+                List<Module> filterModules = new ArrayList<>();
+                for (Module module : modules){
+                    if (module.getModuleID().equalsIgnoreCase(body.getString("ModuleID"))){
+                        filterModules.add(module);
+                        break;
+                    }
+                }
+            }
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Levels", levelsArray);
+
+            customResponse.setInfo(map);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse student_reports(JSONObject body) {
+
+        try {
+
+            JSONArray levelsArray = new JSONArray();
+            List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(body.getString("ModuleID"));
+
+            for (Level level : levels){
+
+                JSONObject levelObject = new JSONObject();
+                levelObject.put("LevelInfo", UtilsManager.levelToJson(level));
+
+                List<Question> questions = AllDBOperations.getAll_Questions_LevelID(level.getLevelID());
+                levelObject.put("Total_Questions", questions.size());
+
+                JSONObject searchBody = new JSONObject();
+                searchBody.put("LevelID", level.getLevelID());
+                List<Answer> answers = AllDBOperations.get_All_Answers_Many_Filter(searchBody);
+
+                levelObject.put("Total_Answers", answers.size());
+
+                Set<String> students = new LinkedHashSet<>();
+                Integer newAnswers = 0;
+                Integer checkedByMeAnswers = 0;
+
+                for (Answer answer : answers){
+                    if (answer.getTeacherID() == null || answer.getTeacherID().isEmpty()){
+                        newAnswers++;
+                    }
+                    if (body.getString("TeacherID").equalsIgnoreCase(answer.getTeacherID())){
+                        checkedByMeAnswers++;
+                    }
+                    students.add(answer.getStudentID());
+                }
+
+                levelObject.put("Total_Students", students.size());
+                levelObject.put("New_Answers_Submitted", newAnswers);
+                levelObject.put("Answers_Checked_By_Me", checkedByMeAnswers);
+
+                levelsArray.put(levelObject);
+            }
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Levels", levelsArray);
+
+            customResponse.setInfo(map);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse get_All_Levels_Teacher(JSONObject body) {
 
         try {
