@@ -1295,27 +1295,66 @@ public class DaoParse implements DaoInterface {
     public CustomResponse teacher_reports(JSONObject body) {
 
         try {
-
+            JSONArray teacher_report_array = new JSONArray();
             List<Teacher> teachers = AllDBOperations.getAllTeachers_UnivID(body.getString("UnivID"));
             List<Module> modules = AllDBOperations.getAll_Modules_UnivID(body.getString("UnivID"));
 
-            if (body.has("TeacherID")){
+            if (body.has("TeacherName") && !body.getString("TeacherName").equalsIgnoreCase("none")){
                 List<Teacher> filterTeachers = new ArrayList<>();
                 for (Teacher teacher : teachers){
-                    if (teacher.getUserID().equalsIgnoreCase(body.getString("TeacherID"))){
+                    if (teacher.getUserID().toLowerCase().contains(body.getString("TeacherName").toLowerCase())){
                         filterTeachers.add(teacher);
                         break;
                     }
                 }
+                teachers = filterTeachers;
             }
 
-            if (body.has("ModuleID")){
+            if (body.has("ModuleName") && !body.getString("ModuleName").equalsIgnoreCase("none")){
                 List<Module> filterModules = new ArrayList<>();
                 for (Module module : modules){
-                    if (module.getModuleID().equalsIgnoreCase(body.getString("ModuleID"))){
+                    if (module.getName().toLowerCase().contains(body.getString("ModuleName").toLowerCase())){
                         filterModules.add(module);
                         break;
                     }
+                }
+                modules = filterModules;
+            }
+
+            for (Teacher teacher : teachers){
+                for (Module module : modules){
+
+                    JSONObject moduleObject = new JSONObject();
+                    moduleObject.put("TeacherInfo", UtilsManager.teacherToJson(teacher));
+                    moduleObject.put("ModuleInfo", UtilsManager.moduleToJson(module));
+
+                    List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(module.getModuleID());
+                    moduleObject.put("Total_Levels", levels.size());
+
+                    JSONObject searchBody = new JSONObject();
+                    searchBody.put("ModuleID", module.getModuleID());
+                    List<Answer> answers = AllDBOperations.get_All_Answers_Many_Filter(searchBody);
+
+                    moduleObject.put("Total_Answers", answers.size());
+                    Set<String> students = new LinkedHashSet<>();
+                    Integer newAnswers = 0;
+                    Integer checkedByMeAnswers = 0;
+
+                    for (Answer answer : answers){
+                        if (answer.getTeacherID() == null || answer.getTeacherID().isEmpty()){
+                            newAnswers++;
+                        }
+                        if (teacher.getUserID().equalsIgnoreCase(answer.getTeacherID())){
+                            checkedByMeAnswers++;
+                        }
+                        students.add(answer.getStudentID());
+                    }
+
+                    moduleObject.put("Total_Students", students.size());
+                    moduleObject.put("New_Answers_Submitted", newAnswers);
+                    moduleObject.put("Answers_Checked_By_Teacher", checkedByMeAnswers);
+
+                    teacher_report_array.put(moduleObject);
                 }
             }
 
@@ -1324,7 +1363,7 @@ public class DaoParse implements DaoInterface {
             customResponse.setMessage(Constants.SUCCESS);
 
             Map<String, Object> map = new HashMap<>();
-            map.put("Levels", levelsArray);
+            map.put("Teacher_Report", teacher_report_array);
 
             customResponse.setInfo(map);
             return customResponse;
@@ -1345,43 +1384,72 @@ public class DaoParse implements DaoInterface {
     public CustomResponse student_reports(JSONObject body) {
 
         try {
+            JSONArray students_report_array = new JSONArray();
+            List<Student> students = AllDBOperations.getAllStudents_UnivID(body.getString("UnivID"));
+            List<Module> modules = AllDBOperations.getAll_Modules_UnivID(body.getString("UnivID"));
 
-            JSONArray levelsArray = new JSONArray();
-            List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(body.getString("ModuleID"));
-
-            for (Level level : levels){
-
-                JSONObject levelObject = new JSONObject();
-                levelObject.put("LevelInfo", UtilsManager.levelToJson(level));
-
-                List<Question> questions = AllDBOperations.getAll_Questions_LevelID(level.getLevelID());
-                levelObject.put("Total_Questions", questions.size());
-
-                JSONObject searchBody = new JSONObject();
-                searchBody.put("LevelID", level.getLevelID());
-                List<Answer> answers = AllDBOperations.get_All_Answers_Many_Filter(searchBody);
-
-                levelObject.put("Total_Answers", answers.size());
-
-                Set<String> students = new LinkedHashSet<>();
-                Integer newAnswers = 0;
-                Integer checkedByMeAnswers = 0;
-
-                for (Answer answer : answers){
-                    if (answer.getTeacherID() == null || answer.getTeacherID().isEmpty()){
-                        newAnswers++;
+            if (body.has("StudentName") && !body.getString("StudentName").equalsIgnoreCase("none")){
+                List<Student> filterStudents = new ArrayList<>();
+                for (Student student : students){
+                    if (student.getUserID().toLowerCase().contains(body.getString("StudentName").toLowerCase())){
+                        filterStudents.add(student);
+                        break;
                     }
-                    if (body.getString("TeacherID").equalsIgnoreCase(answer.getTeacherID())){
-                        checkedByMeAnswers++;
-                    }
-                    students.add(answer.getStudentID());
                 }
+                students = filterStudents;
+            }
 
-                levelObject.put("Total_Students", students.size());
-                levelObject.put("New_Answers_Submitted", newAnswers);
-                levelObject.put("Answers_Checked_By_Me", checkedByMeAnswers);
+            if (body.has("ModuleName") && !body.getString("ModuleName").equalsIgnoreCase("none")){
+                List<Module> filterModules = new ArrayList<>();
+                for (Module module : modules){
+                    if (module.getName().toLowerCase().contains(body.getString("ModuleName").toLowerCase())){
+                        filterModules.add(module);
+                        break;
+                    }
+                }
+                modules = filterModules;
+            }
 
-                levelsArray.put(levelObject);
+            for (Student student : students){
+                for (Module module : modules){
+
+                    JSONObject moduleObject = new JSONObject();
+                    moduleObject.put("StudentInfo", UtilsManager.studentToJson(student));
+                    moduleObject.put("ModuleInfo", UtilsManager.moduleToJson(module));
+
+                    List<Level> levels = AllDBOperations.getAll_Levels_ModuleID(module.getModuleID());
+                    moduleObject.put("Total_Levels", levels.size());
+
+                    JSONObject searchBody = new JSONObject();
+                    searchBody.put("ModuleID", module.getModuleID());
+                    List<Answer> answers = AllDBOperations.get_All_Answers_Many_Filter(searchBody);
+
+                    moduleObject.put("Total_Answers", answers.size());
+                    Set<String> studentsSize = new LinkedHashSet<>();
+                    Integer newAnswers = 0;
+                    Integer submittedByMeAnswers = 0;
+                    Integer newAnswersSubmittedByMe = 0;
+
+                    for (Answer answer : answers){
+                        if (answer.getTeacherID() == null || answer.getTeacherID().isEmpty()){
+                            newAnswers++;
+                        }
+                        if (student.getUserID().equalsIgnoreCase(answer.getStudentID())){
+                            submittedByMeAnswers++;
+                        }
+                        if (answer.getTeacherID() == null || answer.getTeacherID().isEmpty() && student.getUserID().equalsIgnoreCase(answer.getStudentID())){
+                            newAnswersSubmittedByMe++;
+                        }
+                        studentsSize.add(answer.getStudentID());
+                    }
+
+                    moduleObject.put("Total_Students", studentsSize.size());
+                    moduleObject.put("New_Answers_Submitted", newAnswers);
+                    moduleObject.put("Answers_Submitted_By_Student", submittedByMeAnswers);
+                    moduleObject.put("New_Answers_Submitted_By_Student", newAnswersSubmittedByMe);
+
+                    students_report_array.put(moduleObject);
+                }
             }
 
             CustomResponse customResponse = new CustomResponse();
@@ -1389,7 +1457,7 @@ public class DaoParse implements DaoInterface {
             customResponse.setMessage(Constants.SUCCESS);
 
             Map<String, Object> map = new HashMap<>();
-            map.put("Levels", levelsArray);
+            map.put("Student_Report", students_report_array);
 
             customResponse.setInfo(map);
             return customResponse;
