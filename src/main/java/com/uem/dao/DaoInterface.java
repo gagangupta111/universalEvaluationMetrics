@@ -78,6 +78,9 @@ public interface DaoInterface {
     public CustomResponse get_All_Modules_Teacher(JSONObject body);
     public CustomResponse get_All_Levels_Teacher(JSONObject body);
 
+    public CustomResponse get_all_teachers(JSONObject body);
+    public CustomResponse get_all_students(JSONObject body);
+
     public CustomResponse teacher_reports(JSONObject body);
     public CustomResponse student_reports(JSONObject body);
 

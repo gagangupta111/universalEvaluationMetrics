@@ -3043,4 +3043,38 @@ public class MainController {
         }
     }
 
+    @PostMapping("/teacher/search")
+    @ResponseBody
+    public ResponseEntity<String> get_All_Teachers(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.get_all_teachers(object);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
+    @PostMapping("/student/search")
+    @ResponseBody
+    public ResponseEntity<String> get_All_Students(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.get_all_students(object);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
 }

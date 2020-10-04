@@ -1292,6 +1292,88 @@ public class DaoParse implements DaoInterface {
     }
 
     @Override
+    public CustomResponse get_all_students(JSONObject body) {
+
+        try {
+            JSONArray teacher_report_array = new JSONArray();
+            List<Student> students = AllDBOperations.getAllStudents_UnivID(body.getString("UnivID"));
+
+            if (body.has("StudentName") && !body.getString("StudentName").equalsIgnoreCase("none")){
+                for (Student student : students){
+                    if (student.getUserID().toLowerCase().contains(body.getString("StudentName").toLowerCase())){
+                        teacher_report_array.put(UtilsManager.studentToJson(student));
+                    }
+                }
+            }else {
+                for (Student student : students){
+                    teacher_report_array.put(UtilsManager.studentToJson(student));
+                }
+            }
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Students", teacher_report_array);
+
+            customResponse.setInfo(map);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
+    public CustomResponse get_all_teachers(JSONObject body) {
+
+        try {
+            JSONArray teacher_report_array = new JSONArray();
+            List<Teacher> teachers = AllDBOperations.getAllTeachers_UnivID(body.getString("UnivID"));
+
+            if (body.has("TeacherName") && !body.getString("TeacherName").equalsIgnoreCase("none")){
+                for (Teacher teacher : teachers){
+                    if (teacher.getUserID().toLowerCase().contains(body.getString("TeacherName").toLowerCase())){
+                        teacher_report_array.put(UtilsManager.teacherToJson(teacher));
+                    }
+                }
+            }else {
+                for (Teacher teacher : teachers){
+                        teacher_report_array.put(UtilsManager.teacherToJson(teacher));
+                }
+            }
+
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(true);
+            customResponse.setMessage(Constants.SUCCESS);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("Teachers", teacher_report_array);
+
+            customResponse.setInfo(map);
+            return customResponse;
+        } catch (Exception e) {
+            logger.debug(UtilsManager.exceptionAsString(e));
+            CustomResponse customResponse = new CustomResponse();
+            customResponse.setSuccess(false);
+            customResponse.setMessage(Constants.INTERNAL_ERROR);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("exception", UtilsManager.exceptionAsString(e));
+            customResponse.setInfo(map);
+            return customResponse;
+        }
+    }
+
+    @Override
     public CustomResponse teacher_reports(JSONObject body) {
 
         try {
