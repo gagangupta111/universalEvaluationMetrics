@@ -116,4 +116,6 @@ public interface DaoInterface {
     public CustomResponse updateBatch(JSONObject body, Boolean append);
     public CustomResponse deleteFromBatch(JSONObject body);
 
+    public CustomResponse createVisitor(JSONObject body);
+
 }

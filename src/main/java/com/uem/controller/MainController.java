@@ -3077,4 +3077,21 @@ public class MainController {
         }
     }
 
+    @PostMapping("/visitor")
+    @ResponseBody
+    public ResponseEntity<String> visitor(@RequestBody String body) throws Exception {
+
+        JSONObject object = new JSONObject(body.trim());
+        CustomResponse customResponse = mainService.createVisitor(object);
+        if (customResponse.getSuccess()) {
+            return ResponseEntity.ok()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getInfoAsJson().toString());
+        } else {
+            return ResponseEntity.badRequest()
+                    .header("message", customResponse.getMessage())
+                    .body(customResponse.getMessage());
+        }
+    }
+
 }

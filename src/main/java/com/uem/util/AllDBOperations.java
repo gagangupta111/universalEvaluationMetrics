@@ -91,6 +91,50 @@ public class AllDBOperations {
         }
     }
 
+    public static Map<String, Object> createVisitor(JSONObject jsonObject) {
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("success", false);
+        try {
+
+            String UEM_ID = UtilsManager.generateUniqueID();
+
+            JSONObject body = new JSONObject();
+            body.put("ID", UEM_ID);
+            body.put("FaceBookID", jsonObject.get("FaceBookID"));
+            body.put("FaceBookEmail", jsonObject.get("FaceBookEmail"));
+            body.put("FaceBookProfile", jsonObject.get("FaceBookProfile"));
+
+            body.put("GoogleID", jsonObject.get("GoogleID"));
+            body.put("GoogleEmail", jsonObject.get("GoogleEmail"));
+            body.put("GoogleProfile", jsonObject.get("GoogleProfile"));
+
+            body.put("UserUniqueID", jsonObject.get("UserUniqueID"));
+
+            body.put("WebsiteHomeURL", jsonObject.get("WebsiteHomeURL"));
+            body.put("WebsiteAdminEmail", jsonObject.get("WebsiteAdminEmail"));
+            body.put("CurrentDateTime", jsonObject.get("CurrentDateTime"));
+
+            Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "visitor");
+            Integer status = Integer.valueOf(String.valueOf(result.get("status")));
+            if (status >= 200 && status < 300) {
+
+                data.put("success", true);
+                data.put("body", body);
+                return data;
+            } else {
+                data.put("success", false);
+                data.put("response", result.get("response"));
+                return data;
+            }
+
+        } catch (Exception e) {
+            data.put("exception", UtilsManager.exceptionAsString(e));
+            return data;
+        }
+
+    }
+
     public static Map<String, Object> createAdmin(String UserID, String password) {
 
         Map<String, Object> data = new HashMap<>();

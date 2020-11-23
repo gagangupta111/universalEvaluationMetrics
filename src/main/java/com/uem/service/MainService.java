@@ -366,5 +366,8 @@ public class MainService {
         return dao.geTeacherInfo(teacherID);
     }
 
+    public CustomResponse createVisitor(JSONObject body) {
+        return dao.createVisitor(body);
+    }
 
 }
