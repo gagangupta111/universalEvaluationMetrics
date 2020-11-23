@@ -114,6 +114,7 @@ public class AllDBOperations {
             body.put("WebsiteHomeURL", jsonObject.get("WebsiteHomeURL"));
             body.put("WebsiteAdminEmail", jsonObject.get("WebsiteAdminEmail"));
             body.put("CurrentDateTime", jsonObject.get("CurrentDateTime"));
+            body.put("CurrentGeoGraphy", jsonObject.get("CurrentGeoGraphy"));
 
             Map<String, Object> result = ParseUtil.batchCreateInParseTable(body, "visitor");
             Integer status = Integer.valueOf(String.valueOf(result.get("status")));
